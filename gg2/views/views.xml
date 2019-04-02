@@ -1,0 +1,1652 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <menuitem
+            name="TSA"
+            id="tsa_top_menu"
+            sequence="0"
+        />
+        <menuitem
+            name="Reports"
+            id="tsa_reports_menu"
+            parent="tsa_top_menu"
+            sequence="10"
+        />
+        <menuitem
+            name="Under Construction"
+            id="tsa_report_tests_menu"
+            parent="tsa_top_menu"
+            sequence="100"
+        />
+        <menuitem
+            name="TSA Actions"
+            id="tsa_actions_menu"
+            parent="tsa_top_menu"
+            sequence="200"
+        />
+        <menuitem
+            name="Live"
+            id="tsa_report_live_menu"
+            parent="tsa_reports_menu"
+            sequence="60"
+        />
+
+        <!-- PRODUCT FORM Modifications -->
+        <record id="view_form_product_template_tsa" model="ir.ui.view">
+            <field name="name">Product Template TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//div[@class='oe_title']" position="replace">-->
+                <xpath expr="//sheet/div[2]" position="replace">
+                    <div class="oe_title" name="product_title_dots">
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                    </div>
+                    <div class="col-12" style="font-size:16px">
+                        <i><label for="name" string="Short Description: " style="padding-left:16px"/></i>
+                        <b><field name="name" placeholder="Product Description (brief)"/></b>
+                    </div>
+                    <div class="col-12" name="options" groups="base.group_user">
+                        <label for="x_bcause" style="padding-left:16px"/>
+                        <field name="x_bcause"/>
+                        <label for="sale_ok" style="padding-left:16px"/>
+                        <field name="sale_ok"/>
+                        <label for="purchase_ok" style="padding-left:16px"/>
+                        <field name="purchase_ok"/>
+                        <label for="can_be_expensed" style="padding-left:16px"/>
+                        <field name="can_be_expensed"/>
+                    </div>
+                </xpath>
+                <xpath expr="//div[@name='product_title_dots']" position="after">
+                        <div class="col-12" style="font-size:16px" name="two_codes">
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="default_code" string="TSA Code: "/></i>
+                                <b><field name="default_code" placeholder="TSA Item Code a.k.a. Internal Reference)" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="barcode" string="Barcode: "/></i>
+                                <b><field name="barcode" placeholder="Barcode  COPY FROM   TSA Code" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                        </div>
+                        <div class="col-12" style="font-size:16px" name="cat_type">
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="categ_id" string="Product Category: "/></i></b>
+                                <b><field name="categ_id" placeholder="Product Category" style="font-size:15px"/></b>
+                            </span>
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="type" string="Product Type: "/></i></b>
+                                <b><field name="type" placeholder="Product Type" style="font-size:15px"/></b>
+                            </span>
+                        </div>
+                </xpath>
+
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="x_cost_price" string="Cost Price (TSA)"/>
+                </xpath>
+
+                <!--<xpath expr="//field[@name='type']" position="before">-->
+                    <!--<field name="id" string="product_tmpl_id"/>-->
+                <!--</xpath>-->
+
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="TSA" name="page_tsa">
+                        <group>
+                            <group string="TSA Location Info">
+                                <field name="x_default_location"/>
+                                <field name="x_default_position"/>
+                                <field name="x_default_location2"/>
+                                <field name="x_default_position2"/>
+                                <field name="x_expert"/>
+                                <field name="x_expert2"/>
+                            </group>
+                            <group string="TSA Dimensions" name="group_tsa_dimensions">
+                                <label for="x_item_height" string="H x L x D (cm)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height"> </field><b> x </b>
+                                    <field name="x_item_length"> </field><b> x </b>
+                                    <field name="x_item_depth"> </field><b> = </b>
+                                    <field name="x_volume_cm3"> </field><b> cm 3</b>
+                                </div>
+                                <label for="x_item_height" string="H x L x D (cm) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height_mfr"> </field><b> x </b>
+                                    <field name="x_item_width_mfr"> </field><b> x </b>
+                                    <field name="x_item_depth_mfr"> </field><b> = </b>
+                                    <field name="x_item_volume_mfr_cm3"> </field><b> cm 3 (MFR)</b>
+                                </div>
+                                <label for="volume" string="Volume (m3)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="volume" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="volume"/><b> m 3</b><i> (divide cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="x_item_volume_mfr" string="Volume (m3) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_volume_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_volume_mfr"/><b> m 3</b><i> (divide MFR cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="weight" string="Weight"/><b> kg</b>
+                                </div>
+                                <label for="x_item_weight_mfr" string="Weight MFR (kg)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_weight_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_weight_mfr" string="Weight"/><b> kg (MFR)</b>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="TSA Notes" name="group_tsa_notes">
+                            <field name="x_comment"/>
+                            <!--<field name="x_description"/>-->
+                            <field name="x_shortcut"/>
+                            <field name="x_image_filename"/>
+                            <field name="x_jos_product_id"/>
+                            <field name="x_imported_date"/>
+                        </group>
+                        <group>
+                            <group string="Stocktake" name="group_tsa_stocktake">
+                                <field name="x_counted_date"/>
+                                <field name="x_counted_qty"/>
+                                <field name="x_odoo_qty_b4_stocktake"/>
+                                <field name="x_odoo_qty_capture_date"/>
+                                <field name="x_odoo_qty_last_30Jun"/>
+                            </group>
+                            <group string="TSA SBT Info" name="group_tsa_sbt">
+                                <field name="x_sbt_fields"/>
+                                <field name="x_sbt_item"/>
+                                <field name="x_sbt_last_buy"/>
+                                <field name="x_sbt_last_sold"/>
+                                <field name="x_sbt_product_sku"/>
+                                <field name="x_v8_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_form_view_a_tsa">
+            <field name="name">Product Template TSA Mod A</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='group_general']" position="replace">
+                    <group name="group_general">
+                        <field name="categ_id"/>
+                        <field name="type"/>
+                        <field name="default_code" invisible="True"/>
+                        <field name="barcode" invisible="True"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='categ_id']/following-sibling::field[@name='default_code']" position="replace">
+                    <field name="default_code" invisible="True"/>
+                </xpath>
+                <xpath expr="//field[@name='categ_id']/following-sibling::field[@name='default_code']//following-sibling::field[@name='barcode']" position="replace">
+                    <field name="barcode" invisible="True"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_form_view_sale_order_button">
+            <field name="name">product.template.sale.order</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_sale_list)d" type="action" string="Sales=" icon="fa-shopping-cart">
+                        <field string="Sales" name="x_total_qty_sold"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_form_view_purchase_order_button">
+            <field name="name">product_form_view_purchase_order_button</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
+                        <field string="Purchases" name="x_total_qty_bought"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+
+        <!-- PRODUCT: E-COMMERCE -->
+        <record id="product_template_form_view_tsa" model="ir.ui.view">
+            <field name="name">E-Commerce TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="website_sale.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='shop']" position="before">
+                    <group name="WebDesc" string="Website Description">
+                        <field name="website_description"/>
+                        <field name="website_meta_description"/>
+                        <field name="website_meta_title"/>
+                        <field name="website_meta_keywords"/>
+                        <field name="website_price"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!--BOM DESIGNATOR AND FOOTPRINT-->
+        <record id="mrp_bom_form_view_tsa" model="ir.ui.view">
+            <field name="name">BoM Form TSA Extension</field>
+            <field name="model">mrp.bom</field>
+            <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='attribute_value_ids']" position="before">
+                    <field name="x_designator"/>
+                    <field name="x_footprint"/>
+                </xpath>
+                <xpath expr="//notebook/page/field/tree/field[@name='product_uom_id']" position="replace">
+                    <field name="product_uom_id" string="UoM"/>
+                </xpath>
+                <!--<xpath expr="//tree/field[@name='attribute_value_ids']" position="inside">-->
+                    <!--<field name="attribute_value_ids" string="ForVariants"/>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+
+
+        <!--MANUFACTURE ORDERS BUTTON ON PRODUCT FORM-->
+        <record id="tsa_manufactureorders_treeview" model="ir.ui.view">
+            <field name="name">tsa_manufactureorders_treeview</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <tree string="Manufacturing Orders for selected product">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="name"/>
+                    <field name="date_planned_start"/>
+                    <field name="product_id"/>
+                    <field name="origin"/>
+                    <field name="product_qty" sum="Total Qty" string="Quantity"/>
+                    <field name="product_uom_id" string="Unit of Measure" options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
+                    <field name="availability"/>
+                    <field name="routing_id" groups="mrp.group_mrp_routings"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_product_manufacture_list" model="ir.actions.act_window">
+            <field name="name">Manufacture Orders for product</field>
+            <field name="res_model">mrp.production</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_manufactureorders_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productmanufacture_searchview"/>-->
+        </record>
+
+        <record model="ir.ui.view" id="product_form_view_manufacture_order_button">
+            <field name="name">product_form_view_manufacture_order_button</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="mrp.product_template_form_view_bom_button"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_manufacture_list)d" type="action" string="Manufactured=" icon="fa-list-alt" attrs="{'invisible': [('type', 'not in', ['product'])]}">
+                        <field string="Manufactured" name="x_total_qty_made"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+
+        <!--PURCHASE ORDERS BUTTON ON PRODUCT FORM-->
+        <record id="tsa_purchaseorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_purchaseorderline_treeview</field>
+            <field name="model">purchase.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Purchases for selected product">
+                    <field name="order_id"/>
+                    <field name="partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_id" invisible="0"/>
+                    <field name="product_uom_qty" string="Qty" sum="Total"/>
+                    <field name="qty_received" sum="Total"/>
+                    <field name="qty_invoiced" sum="Total"/>
+                    <field name="product_uom" string="Units"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_product_purchases_list" model="ir.actions.act_window">
+            <field name="name">Purchase Order Lines</field>
+            <field name="res_model">purchase.order.line</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[]</field>
+            <!--Many fields in purchase.order.line have state=NULL .. when fixed use the following line-->
+            <!--<field name="domain">[('state', 'in', ['purchase', 'done'])]</field>-->
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_purchaseorderline_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productpurchases_searchview"/>-->
+        </record>
+
+        <!--SALES ORDERS BUTTONS ON PRODUCT FORM-->
+        <record id="tsa_saleorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_saleorderline_treeview</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Sales for selected product">
+                    <field name="order_id"/>
+                    <field name="order_partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_id" invisible="0"/>
+                    <field name="salesman_id"/>
+                    <field name="product_uom_qty" string="Qty" sum="Total"/>
+                    <field name="qty_delivered" sum="Total"/>
+                    <field name="qty_invoiced" sum="Total"/>
+                    <field name="qty_to_invoice" sum="Total"/>
+                    <field name="product_uom" string="Units"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_product_sale_list" model="ir.actions.act_window">
+            <field name="name">Sale Order Lines</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
+        </record>
+        <record id="tsa_rpt100_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt100_treeview</field>
+            <field name="model">account.full.reconcile</field>
+            <field name="arch" type="xml">
+                <tree string="Full Reconcile">
+                    <field name="id" string="id"/>
+                    <field name="name" string="name" invisible="0"/>
+                    <field name="display_name" string="display_name" invisible="0"/>
+                    <field name="exchange_move_id" string="exchange_move_id"/>
+                    <field name="partial_reconcile_ids" string="Reconciliation Parts"/>
+                    <field name="reconciled_line_ids" string="Matched Journal Items"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_rpt100_action" model="ir.actions.act_window">
+            <field name="name">Rpt No100  Full Reconcile</field>
+            <field name="res_model">account.full.reconcile</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt100_treeview"/>
+            <!--<field name="search_view_id" ref="gg2.tsa_rpt090_searchview"/>-->
+            <field name="target">current</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="100 Full Reconcile Report"
+                id="tsa_report_100_menu"
+                parent="tsa_report_tests_menu"
+                action="tsa_rpt100_action"
+                sequence="100"
+        />
+        <record id="tsa_rpt090_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt_090_treeview</field>
+            <field name="model">gg2.rpt090</field>
+            <field name="arch" type="xml">
+                <tree string="Balance Sheet">
+                    <field name="date" string="Date" widget="date" options="{'format': 'dd/MM/yyyy'}"/>
+                    <field name="name" string="Acct" invisible="1"/>
+                    <field name="code" string="Code" invisible="1"/>
+                    <field name="codename" string="Account"/>
+                    <field name="debit" string="debit" sum="DebitTot"/>
+                    <field name="credit" string="credit" sum="CreditTot"/>
+                    <field name="balance" string="balance" sum="BalTot"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_rpt090_searchview" model="ir.ui.view">
+            <field name="name">tsa_rpt_090_searchview</field>
+            <field name="model">gg2.rpt090</field>
+            <field name="arch" type="xml">
+                <search string="Search Balance Sheet">
+                    <field name="date" filter_domain="[('date','&lt;=',self)]" string="Balance At Date"/>
+                </search>
+            </field>
+        </record>
+        <record id="tsa_rpt090_action" model="ir.actions.act_window">
+            <field name="name">Rpt No90  Balance Sheet (Note: Please enter date into search  dd/mm/yyyy )</field>
+            <field name="res_model">gg2.rpt090</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt090_treeview"/>
+            <field name="search_view_id" ref="gg2.tsa_rpt090_searchview"/>
+            <field name="target">current</field>
+            <field name="context">{'group_by':'codename'}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="90 Balance Sheet"
+                id="tsa_report_90_menu"
+                parent="tsa_report_live_menu"
+                action="tsa_rpt090_action"
+                sequence="90"
+        />
+
+        <record id="tsa_rpt080_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt_080test_treeview</field>
+            <field name="model">gg2.rpt080</field>
+            <field name="arch" type="xml">
+                <tree string="Invoiced Not Delivered" default_order="orderdate desc">
+                    <button name="showsalesorder" string=".." type="object"/>
+                    <field name="soid" string="SO id" invisible="0"/>
+                    <field name="orderdate" string="SO Date" widget="date" options="{'format': 'dd/MM/yyyy'}"/>
+                    <field name="soname" string="SO"/>
+                    <field name="whotoinvoice" string="Inv To"/>
+                    <field name="name" string="Item"/>
+                    <field name="orderqty" string="Ordered Qty"/>
+                    <field name="invqty" string="Invoiced Qty"/>
+                    <field name="qty_delivered"/>
+                    <field name="item" string="itemid" invisible="1"/>
+                    <field name="sostate" string="SO Status" invisible="1"/>
+                    <field name="customer" string="custid" invisible="1"/>
+                    <field name="partnerid" string="custid" invisible="1"/>
+                    <field name="invto" string="invtoid" invisible="1"/>
+                    <field name="shipto" string="shiptoid" invisible="1"/>
+                    <field name="qty_delivered_manual" string="ManDlvr" invisible="1"/>
+                    <field name="id" string="solineid" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_rpt080_action" model="ir.actions.act_window">
+            <field name="name">Invoiced Items not yet delivered (detail)</field>
+            <field name="res_model">gg2.rpt080</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt080_treeview"/>
+            <field name="target">current</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="80 Invoiced Items not yet delivered"
+                id="tsa_report_test80_menu"
+                parent="tsa_report_tests_menu"
+                action="tsa_rpt080_action"
+                sequence="71"
+        />
+        <record id="tsa_rpt082_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt_082_treeview</field>
+            <field name="model">gg2.rpt082</field>
+            <field name="arch" type="xml">
+                <tree string="Sales Orders Invoiced - but not all the items on the order have been Delivered yet" default_order="orderdate desc">
+                    <button name="showsalesorder" string=".." type="object"/>
+                    <field name="orderdate" string="SO Date" widget="date" options="{'format': 'dd/MM/yyyy'}"/>
+                    <field name="soname" string="SO"/>
+                    <field name="whotoinvoice" string="Inv To"/>
+                    <field name="sostate" string="SO Status" invisible="0"/>
+                    <field name="id" string="SO id" invisible="0"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_rpt082_action" model="ir.actions.act_window">
+            <field name="name">Rpt No82 Sales Orders Invoiced - but not all the items on the order have been Delivered yet</field>
+            <field name="res_model">gg2.rpt082</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt082_treeview"/>
+            <field name="target">current</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="82 Sales Orders Invoiced not yet delivered"
+                id="tsa_report_82_menu"
+                parent="tsa_report_live_menu"
+                action="tsa_rpt082_action"
+                sequence="82"
+        />
+        <record id="tsa_rpt070_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt070_treeview</field>
+            <field name="model">gg2.rpt070</field>
+            <field name="arch" type="xml">
+                <tree string="Paid Invoices">
+                    <!-- <button name="countme" string="RowCount" type="object"/> -->
+                    <field name="id"/>
+                    <field name="who"/>
+                    <field name="number"/>
+                    <field name="origin"/>
+                    <field name="invid" string="item"/>
+                    <field name="state"/>
+                    <field name="amt"/>
+                    <field name="topay"/>
+                    <!-- <field name="invlineid"/> -->
+                    <!-- <field name="soname"/> -->
+                    <!-- <field name="invoice_line_id"/> -->
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_rpt070_action" model="ir.actions.act_window">
+            <field name="name">Rpt No70 SO to Invoice</field>
+            <field name="res_model">gg2.rpt070</field>
+            <field name="view_mode">tree</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt070_treeview"/>
+            <field name="target">current</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="70 Paid Invoices"
+                id="tsa_report_test70_menu"
+                parent="tsa_report_tests_menu"
+                action="tsa_rpt070_action"
+                sequence="70"
+        />
+
+        <record id="tsa_rpt030_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt030</field>
+            <field name="model">gg2.rpt030</field>
+            <field name="arch" type="xml">
+                <tree string="Rpt No30 Sales Orders PAID but not yet DELIVERED" default_order="origin desc">
+                    <field name="invid"/>
+                    <field name="state"/>
+                    <field name="salesorder"/>
+                    <field name="partner_invoice_id"/>
+                    <field name="inv_status"/>
+                    <field name="qtynotdelivered"/>
+                    <field name="itemcode"/>
+                    <field name="item"/>
+                    <field name="ordered"/>
+                    <field name="qtyinvoiced"/>
+                    <field name="qtydelivered"/>
+                    <field name="price_total"/>
+                    <field name="id" invisible="0"/>
+                    <!-- <field name="create_date"/> -->
+                    <!-- <field name="inv"/> -->
+                    <!-- <field name="so"/> -->
+                    <!-- <field name="invoice_id"/> -->
+                    <!-- <field name="solineid"/> -->
+                    <!-- <field name="invoice_line_id"/> -->
+                    <!-- <field name="soid"/> -->
+                    <!--<field name="origin"/>-->
+                    <!--<field name="solineid"/>--><!-- Error when trying to display this field "if comodel._fields(inverse].type == 'many2one' else int-->
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_rpt030_action" model="ir.actions.act_window">
+            <field name="name">Rpt No30 Sales Orders Paid but Not yet fully Delivered</field>
+            <field name="res_model">gg2.rpt030</field>
+            <field name="view_mode">tree</field>
+            <!--<field name="views">["gg2.tsa_rpt030", "tree"]</field>--><!-- EXAMPLE -->
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt030_treeview"/>
+            <field name="target">current</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="30 Sales Orders Paid but not delivered (Under Construction!)"
+                id="tsa_report_030_menu"
+                parent="tsa_report_tests_menu"
+                action="tsa_rpt030_action"
+                sequence="60"
+        />
+        <record id="tsa_rpt050_searchview" model="ir.ui.view">
+            <field name="name">tsa_rpt_050_searchview</field>
+            <field name="model">gg2.bankjou</field>
+            <field name="arch" type="xml">
+                <search string="Search Bank Jou XRef">
+                    <field name="stmt" filter_domain="[('stmt','ilike',self)]" string="Bank Statement"/>
+                    <field name="statement_id" filter_domain="[('statement_id','=',self)]" string="Bank Statement ID"/>
+                    <field name="stmt_row" filter_domain="[('stmt_row','=',self)]" string="Bank Statement Row"/>
+                    <field name="jou_item" filter_domain="[('jou_item','ilike',self)]" string="Journal Item"/>
+                    <field name="jou_entry" filter_domain="[('jou_entry','ilike',self)]" string="Journal Entry"/>
+                    <field name="jouitem_debit" filter_domain="[('jouitem_debit','ilike',self)]" string="Debit Contains"/>
+                    <field name="jouitem_debit" filter_domain="[('jouitem_debit','=',self)]" string="Debit Equals"/>
+                    <field name="jouitem_credit" filter_domain="[('jouitem_credit','ilike',self)]" string="Credit Contains"/>
+                    <field name="jouitem_credit" filter_domain="[('jouitem_credit','=',self)]" string="Credit Equals"/>
+                    <field name="amount" filter_domain="[('amount','ilike',self)]" string="Statement Amount Contains"/>
+                    <field name="amount" filter_domain="[('amount','=',self)]" string="Statement Amount Equals"/>
+                    <field name="jou_line_ref" filter_domain="[('jou_line_ref','ilike',self)]" string="Journal Reference Contains"/>
+                    <field name="joudate" filter_domain="[('joudate','=',self)]" string="Journal Date"/>
+                    <field name="joudate" filter_domain="[('joudate','&gt;=',self)]" string="Journals after or equals Date"/>
+                    <field name="joudate" filter_domain="[('joudate','&lt;=',self)]" string="Journals prior to or equals Date"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Jou Entry" name="jouentry_gp" context="{'group_by':'jou_entry'}"/>
+                        <separator/>
+                        <filter string="Jou Date" name="joudate_gp" context="{'group_by':'joudate'}"/>
+                        <separator/>
+                        <filter string="Statement" name="stmtid_gp" context="{'group_by':'stmtid'}"/>
+                        <separator/>
+                        <filter string="Statement Row" name="stmtrow_gp" context="{'group_by':'stmt_row'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="tsa_rpt050_treeview" model="ir.ui.view">
+            <field name="name">tsa_rpt050_treeview</field>
+            <field name="model">gg2.bankjou</field>
+            <field name="arch" type="xml">
+                <tree string="Rpt No50 Bank Jou XRef" default_order="stmtid desc, stmt_row">
+                    <button name="showjournalentry" string="Jou" type="object"/>
+                    <button name="showbankstatement" string="Stmt" type="object"/>
+                    <button name="showpayment" string="Paymt" type="object"/>
+                    <field name="joudate" string="JouDate"/>
+                    <field name="jou_item"/>
+                    <field name="jou_entry"/>
+                    <field name="statement_id" invisible="0"/>
+                    <field name="stmt" string="StatementName" invisible="1"/>
+                    <field name="stmtid" string="Statement"/>
+                    <field name="stmt_row" string="RowNo"/>
+                    <field name="stmtlineid" string="Transaction"/>
+                    <field name="jouitem_debit" string="Debit" sum="DbAmt"/>
+                    <field name="jouitem_credit" string="Credit" sum="CrAmt"/>
+                    <field name="amount" string="StmtAmt" sum="TotalAmt"/>
+                    <field name="jou_line_ref"/>
+                    <field name="jou_entry_id" invisible="0"/>
+                    <field name="statement_line_id" invisible="1"/>
+                    <field name="id" string="JiId" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="tsa_bankjou_action" model="ir.actions.act_window">
+            <field name="name">Bank Journal X-Ref</field>
+            <field name="res_model">gg2.bankjou</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_rpt050_treeview"/>
+            <field name="search_view_id" ref="gg2.tsa_rpt050_searchview"/>
+            <field name="target">current</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+                name="50 Bank Statement to Journals X-Ref"
+                id="tsa_report_050_menu"
+                parent="tsa_report_live_menu"
+                action="tsa_bankjou_action"
+                sequence="50"
+        />
+        <record id="bank_statement_tsa" model="ir.ui.view">
+            <field name="name">Bank Statement TSA Extension</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='307']" position="after">
+                    <button name="%(tsa_bankjou_action)d" string="Journal Bank XRef" type="action" context="{'search_default_statement_id': [id]}"/>
+                </xpath>
+                <xpath expr="//page[@name='statement_line_ids']" position="replace">
+                    <page string="Transactions" name="statement_line_ids">
+                        <field name="line_ids" context="{'date':date}">
+                            <tree editable="bottom" string="Statement lines" decoration-muted="journal_entry_ids" limit="500">
+                                <field name="sequence" string="row"/>
+                                <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="name" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]" context="{'default_supplier': 1}" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one"/>
+                                <field name="amount" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="journal_currency_id" invisible="1"/>
+                                <field name="amount_currency" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="bank_account_id" invisible="1"/>
+                                <field name="journal_entry_ids" invisible="0" string="Reconciled Against"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_journal_entry_search_tsa" model="ir.ui.view">
+            <field name="name">Journal Entry Search TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="amount"/>
+                    <field name="amount" filter_domain="[('amount','ilike',self)]" string="Amount Contains"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_journal_items_search_tsa" model="ir.ui.view">
+            <field name="name">Journal Items Search TSA Extension</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search" position="replace">
+                    <search string="Search Journal Items">
+                        <field name="name" filter_domain="['|', ('name','ilike',self), ('ref','ilike',self)]" string="Move"/>
+                        <field name="date"/>
+                        <field name="debit"/>
+                        <field name="credit"/>
+                        <field name="balance"/>
+                        <field name="balance" filter_domain="[('balance','ilike',self)]" string="Balance Contains"/>
+                        <separator/>
+                        <filter string="Unposted" name="unposted" domain="[('move_id.state','=','draft')]" help="Unposted Journal Items"/>
+                        <filter name="posted" string="Posted" domain="[('move_id.state','=','posted')]" help="Posted Journal Items"/>
+                        <separator/>
+                        <filter string="No Matching Number" domain="[('full_reconcile_id', '=', False), ('balance','!=', 0), ('account_id.reconcile','=',True)]" help="Journal items without Matching Number" name="unreconciled"/>
+                        <filter string="With Matching Number" domain="[('full_reconcile_id', '!=', False)]" help="Journal items with Matching Number" name="matchingnum"/>
+                        <filter string="Rec'd un-ticked" domain="[('reconciled', '=', False)]" help="Journal items where Rec'd flag is not ticked" name="isnotrecd"/>
+                        <filter string="Rec'd Ticked" domain="[('reconciled', '=', True)]" help="Journal items where Rec'd flag is not ticked" name="isrecd"/>
+                        <separator/>
+                        <filter string="No Bank Statement" domain="[('statement_line_id', '=', False)]" help="No associated Bank Statement" name="nobankstmt"/>
+                        <filter string="Bank Statement" domain="[('statement_line_id', '!=', False)]" help="Has associated Bank Statement" name="bankstmt"/>
+                        <separator/>
+                        <filter string="Payable" domain="[('account_id.internal_type', '=', 'payable')]" help="From Payable accounts" name="payable"/>
+                        <filter string="Receivable" domain="[('account_id.internal_type', '=', 'receivable')]" help="From Receivable accounts" name="receivable"/>
+                        <separator/>
+                        <filter string="MainBank" domain="[('account_id', '=', '11111')]" help="Main Bank Account" name="mainbank"/>
+                        <filter string="Visa" domain="[('account_id', '=', '21113')]" help="Visa Account" name="visa"/>
+                        <filter string="Jetstar" domain="[('account_id', '=', '21114')]" help="Jetstar Account" name="jetstar"/>
+                        <filter string="Paypal" domain="[('account_id', '=', '11112')]" help="Paypal Account" name="mainbank"/>
+                        <filter string="InterestBearing" domain="[('account_id', '=', '11110')]" help="Interest Bearing Bank Account" name="mainbank"/>
+                        <separator/>
+                        <field name="account_id"/>
+                        <field name="partner_id"/>
+                        <field name="journal_id"/>
+                        <field name="move_id" string="Number (Move)"/>
+                        <field name="tax_line_id"/>
+                        <field name="tax_ids"/>
+                        <group expand="0" string="Group By">
+                            <filter string="Partner" name="partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                            <filter string="Journal" name="journal" domain="[]" context="{'group_by':'journal_id'}"/>
+                            <filter string="Account" name="account" context="{'group_by':'account_id'}"/>
+                            <filter string="Bank Statement" name="bankstmtgp" context="{'group_by':'statement_id'}"/>
+                            <filter string="Date" name="groupby_date" domain="[]" context="{'group_by':'date'}"/>
+                        </group>
+                    </search>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_journal_items_tree_tsa" model="ir.ui.view">
+            <field name="name">Journal Items List TSA Extension</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Journal Items" create="false">
+                        <field name="date"/>
+                        <field name="move_id" required="0" groups="account.group_account_user"/>
+                        <field name="journal_id" options="{&quot;no_open&quot;:True}"/>
+                        <field name="name"/>
+                        <field name="ref"/>
+                        <field name="statement_id" string="BankStmt" invisible="0"/>
+                        <field name="statement_line_id" string="StmtLine"/>
+                        <field name="partner_id"/>
+                        <field name="account_id" options="{&quot;no_open&quot;:True}" domain="[('company_id', '=', company_id)]" groups="account.group_account_user"/>
+                        <field name="analytic_account_id" groups="account.group_account_user"/>
+                        <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_tags"/>
+                        <field name="reconciled" string="rec'd" invisible="0"/>
+                        <field name="full_reconcile_id"/>
+                        <field name="debit" sum="Total Debit"/>
+                        <field name="credit" sum="Total Credit"/>
+                        <field name="balance" sum="Total Balance"/>
+                        <field name="amount_currency" readonly="True" groups="base.group_multi_currency"/>
+                        <field name="currency_id" readonly="True" invisible="1"/>
+                        <field name="date_maturity"/>
+                        <field name="company_currency_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_journal_tree_tsa" model="ir.ui.view">
+            <field name="name">List of Journals TSA Extension</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Account Journal">
+                        <field name="sequence" widget="handle"/>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="default_debit_account_id"/>
+                        <field name="default_credit_account_id"/>
+                        <field name="update_posted" string="cancel entries"/>
+                        <field name="type"/>
+                        <field name="belongs_to_company" invisible="1"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_purchaseorder_tree_tsa" model="ir.ui.view">
+            <field name="name">Purchase Order List TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'" decoration-info="state in ('wait','confirmed')" string="Purchase Order" default_order="id desc">
+                        <field name="message_unread" invisible="1"/>
+                        <field name="name" string="Reference"/>
+                        <field name="date_order"/>
+                        <field name="partner_id"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        <field name="date_planned" invisible="context.get('quotation_only', False)"/>
+                        <field name="user_id"/>
+                        <field name="origin"/>
+                        <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"/>
+                        <field name="amount_total" sum="Total amount" widget="monetary"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="state"/>
+                        <field name="invoice_status" attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_purchase_order_filter_tsa" model="ir.ui.view">
+            <field name="name">Purchase Order Search TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="amount_total" string="Total Equals"/>
+                    <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Total Contains"/>
+                    <field name="amount_untaxed" string="Untaxed Amt Equals"/>
+                    <field name="amount_untaxed" filter_domain="[('amount_untaxed','ilike',self)]" string="Untaxed Amt Contains"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_sales_order_filter_tsa" model="ir.ui.view">
+            <field name="name">Sale Order Search TSA Extension</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']" position="replace">
+                    <field name="order_line" string="Product" filter_domain="['|',('order_line.product_id.default_code','ilike',self),('order_line.product_id.name', 'ilike', self)]"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="amount_total" string="Total Equals"/>
+                    <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Total Contains"/>
+                </xpath>
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <separator/>
+                    <filter string="To Deliver" name="to_deliver" domain="[('order_line.qty_delivered','=', 0),('state','=','sale')]"/>
+                    <filter string="Invoiced" name="invoiced" domain="[('order_line.qty_invoiced','!=', 0),('state','=','sale')]"/>
+                    <filter string="Invoiced not 100% Delivered" name="invoiced_to_deliver" domain="[('order_line.qty_invoiced','!=', 0),('order_line.qty_delivered','=', 0),('state','=','sale')]"/>
+                    <separator/>
+                        <group expand="0" string="Group By">
+                            <filter name="status"              string="Status"       context="{'group_by':'state'}"/>
+                            <filter name="invoicestatus"      string="Invoice Status"  context="{'group_by':'invoice_status'}"/>
+                            <!--<filter name="clientorderref"     string="Desc/Ref"     context="{'group_by':'client_order_ref'}"/>-->
+                            <separator/>
+                        </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_orders_tsa" model="ir.actions.act_window">
+            <field name="inherit_id" ref="sale.action_orders"/>
+            <field name="name">Sales Orders and Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem id="sales_and_quotes"
+            name="Sales and Quotations"
+            parent="sale.sale_order_menu"
+            groups="base.group_user"
+            action="action_orders_tsa"
+            sequence="0"
+        />
+        <record id="view_saleorder_tree_tsa" model="ir.ui.view">
+            <field name="name">Sale Order List TSA Extension</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Sales Orders Only (no Quotations)" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
+                        <field name="message_needaction" invisible="1"/>
+                        <field name="name" string="OrderNo."/>
+                        <field name="date_order" string="OrderDate"/>
+                        <!--<field name="confirmation_date" string="Confirmation Date"/>-->
+                        <!--<field name="commitment_date" groups="sale.group_sale_order_dates"/>-->
+                        <!--<field name="expected_date" groups="sale.group_sale_order_dates"/>-->
+                        <field name="partner_id"/>
+                        <field name="client_order_ref"/>
+                        <field name="user_id"/>
+                        <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="invoice_status" invisible="0"/>
+                        <field name="state" invisible="0"/>
+                        <field name="id" invisible="0"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_quotation_tree_tsa" model="ir.ui.view">
+            <field name="name">Sale Order Quotation List TSA Extension</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Quotations and Sales Orders" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
+                        <field name="message_needaction" invisible="1"/>
+                        <field name="name" string="QuoteNo."/>
+                        <field name="date_order" string="QuoteDate"/>
+                        <field name="commitment_date" groups="sale.group_sale_order_dates" invisible="1"/>
+                        <field name="expected_date" groups="sale.group_sale_order_dates" invisible="1"/>
+                        <field name="partner_id"/>
+                        <field name="client_order_ref"/>
+                        <field name="user_id"/>
+                        <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="state"/>
+                        <field name="id" invisible="0"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_category_list_view_tsa" model="ir.ui.view">
+            <field name="name">Product Category List TSA Extension</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_list_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Product Categories">
+                        <field name="id"/>
+                        <field name="parent_id"/>
+                        <field name="display_name" string="Product Category"/>
+                        <field name="x_description"/>
+                        <field name="property_account_income_categ_id"/>
+                        <field name="property_account_expense_categ_id"/>
+                        <field name="property_stock_account_output_categ_id"/>
+                        <field name="property_stock_account_input_categ_id"/>
+                        <field name="property_stock_valuation_account_id"/>
+                        <field name="create_uid"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_payment_search_tsa" model="ir.ui.view">
+            <field name="name">Customer Payment Search TSA Extension</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="amount" string="Amount contains" filter_domain="[('amount','ilike',self)]"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="amount" string="Amount equals" filter_domain="[('amount','=',self)]"/>
+                    <field name="payment_date" string="Payment Date" filter_domain="[('payment_date','=',self)]"/>
+                </xpath>
+                <xpath expr="//filter[@name='paymentmethod']" position="replace">
+                    <filter string="Payment Method TSA" name="paymentmethod2" domain="[]" context="{'group_by': 'journal_id'}"/>
+                </xpath>
+                <xpath expr="//filter[@name='reconciled']" position="after">
+                    <separator/>
+                    <filter string="Payment Date .." name="paymentdate" date="payment_date"/>
+                </xpath>
+                <xpath expr="//filter[@name='state']" position="after">
+                    <filter string="Payment Date .." name="payment_date" domain="[]" context="{'group_by': 'payment_date'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_payment_tree_tsa" model="ir.ui.view">
+            <field name="name">Customer Payment List TSA Extension</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Payments" default_order="id desc" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                        <field name="id"/>
+                        <field name="payment_date"/>
+                        <field name="communication" string="Memo"/>
+                        <field name="partner_id" string="Customer"/>
+                        <field name="amount" string="Amount" sum="Total (as now filtered / as displayed now)"/>
+                        <field name="payment_method_id" string="Type" invisible="1"/>
+                        <field name="currency_id" invisible="0"/>
+                        <field name="x_payment_method" string="Payment Method"/>
+                        <field name="x_payment_type" string="Direction"/>
+                        <field name="x_amount_signed" string="Amount(+/-)" sum="Total (with Direction)"/>
+                        <field name="name" string="Journal Ref"/>
+                        <field name="state" string="Stauts"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="partner_type" invisible="1"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_supplier_payment_tree_tsa" model="ir.ui.view">
+            <field name="name">Supplier Payment List TSA Extension</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Payments" default_order="id desc" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                        <field name="id"/>
+                        <field name="payment_date"/>
+                        <field name="communication" string="Memo"/>
+                        <field name="partner_id" string="Customer"/>
+                        <field name="amount" string="Amount" sum="Total (as now filtered / as displayed now)"/>
+                        <field name="payment_method_id" string="Type" invisible="1"/>
+                        <field name="currency_id" invisible="0"/>
+                        <field name="x_payment_method" string="Payment Method"/>
+                        <field name="x_payment_type" string="Direction"/>
+                        <field name="x_amount_signed" string="Amount(+/-)" sum="Total (with Direction)"/>
+                        <field name="name" string="Journal Ref"/>
+                        <field name="state" string="Stauts"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="partner_type" invisible="1"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="invoice_tree_tsa" model="ir.ui.view">
+            <field name="name">Invoice List TSA Extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" >
+                    <tree string="Invoice" default_order="id desc">
+                        <field name="partner_id" groups="base.group_user" string="Customer"/>
+                        <field name="date_invoice"/>
+                        <field name="number"/>
+                        <field name="commercial_partner_id" invisible="1"/>
+                        <field name="reference" invisible="1"/>
+                        <field name="origin" string="Source Doc"/>
+                        <field name="x_name_truncated"/>
+                        <field name="x_tracking_ref" invisible="1"/>
+                        <field name="journal_id" invisible="1"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        <field name="user_id"/>
+                        <field name="date_due"/>
+                        <field name="amount_untaxed" string="ExGST" sum="ExGSTTot" invisible="0"/>
+                        <field name="amount_tax" string="GST" sum="GSTTot" invisible="0"/>
+                        <field name="amount_total_signed" string="Total" sum="Tot"/>
+                        <field name="residual_signed" string="Amt Due" sum="DueTot" invisible="0"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="company_currency_id" invisible="1"/>
+                        <field name="state"/>
+                        <field name="id"/>
+                        <field name="type" invisible="context.get('type',True)"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_bills_tsa" model="ir.actions.act_window">
+            <field name="inherit_id" ref="account.action_vendor_bill_template"/>
+            <field name="name">Vendor Bills and Refunds</field>
+            <field name="res_model">account.invoice</field>
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+        <menuitem id="bills_and_refunds"
+            name="Vendor Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_bills_tsa"
+            sequence="0"
+        />
+        <record id="action_invoices_tsa" model="ir.actions.act_window">
+            <field name="inherit_id" ref="account.invoice_tree_with_onboarding"/>
+            <field name="name">Customer Invoices and Refunds</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="res_model">account.invoice</field>
+            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
+        </record>
+        <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="act_window_id" ref="action_invoices_tsa"/>
+        </record>
+        <record id="action_invoices_form_tsa" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="action_invoices_tsa"/>
+        </record>
+        <menuitem id="invoices_and_refunds"
+            name="Customer Invoices and Refunds"
+            parent="account.menu_finance_receivables"
+            groups="account.group_account_user"
+            action="action_invoices_tsa"
+            sequence="0"
+        />
+        <record id="product_template_search2_tsa" model="ir.ui.view">
+            <field name="name">Product Search TSA Extension2</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Product">
+                        <field name="name" string="1) Product (Ignore Case)" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
+                        <field name="name" string="2) Internal Ref (match entire + case. e.g. KA% starts with KA, %Ab ends with Ab)" filter_domain="[('default_code','=like',self)]"/>
+                        <field name="name" string="3) Product (match entire, excl case)" filter_domain="['|',('default_code','=ilike',self),('name','=ilike',self)]"/>
+                        <field name="name" string="4) Internal Ref (Ignore Case)" filter_domain="[('default_code','ilike',self)]"/>
+                        <field name="name" string="5) Description (Ignore Case)" filter_domain="[('name','ilike',self)]"/>
+                        <field name="name" string="6) Description (Case Sensitive)" filter_domain="[('name','like',self)]"/>
+
+                        <separator/>
+
+                        <filter string="Services" name="services" domain="[('type','=','service')]"/>
+                        <filter string="Consumable" name="consumable" domain="[('type','=','consu')]" help="Consumable Products (Non-Inventory)"/>
+                        <filter string="Inventory Stock" name="inventory" domain="[('type','=','product')]" help="Products you store in the inventory"/>
+
+                        <separator/>
+
+                        <filter string="Tracking" name="tracking" domain="[('tracking','=','serial')]" help="Products with Serial No."/>
+                        <filter string="No Tracking" name="notracking" domain="[('tracking','=','none')]" help="Products without Serial No."/>
+
+                        <separator/>
+
+                        <filter string="Can be Sold" name="filter_to_sell" domain="[('sale_ok','=',1)]"/>
+                        <filter string="Can be Purchased" name="filter_to_purchase" domain="[('purchase_ok', '=', 1)]"/>
+                        <filter string="BCause" name="filter_bcause" domain="[('x_bcause', '=', 1)]"/>
+                        <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                        <field name="x_sbt_item" filter_domain="[('x_sbt_item', 'ilike', self)]"/>
+
+                        <separator/>
+
+                        <field name="x_shortcut" string="OurShortcuts" filter_domain="[('x_shortcut','ilike', self)]"/>
+                        <field name="type" string="Product Type" filter_domain="[('type','ilike',self)]"/>
+
+                        <field name="standard_price" string="Cost to Us" filter_domain="[('standard_price','ilike',self)]"/>
+                        <field name="list_price" string="Retail Price" filter_domain="[('list_price','ilike',self)]"/>
+
+                        <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                        <field string="Attributes" name="attribute_line_ids"/>
+                        <field string="id" name="id"/>
+                        <field name="pricelist_id" widget="selection" context="{'pricelist': self}" filter_domain="[]" groups="product.group_sale_pricelist"/> <!-- Keep widget=selection on this field to pass numeric `self` value, which is not the case for regular m2o widgets! -->
+
+                        <separator/>
+                        <field name="seller_ids" string="Vendor"  filter_domain="[('seller_ids','ilike',self)]"/>
+
+                    </search>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_search_tsa" model="ir.ui.view">
+            <field name="name">Product Search TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Product">
+                        <field name="name" string="1) Product (Ignore Case)" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
+                        <field name="name" string="2) Internal Ref (match entire + case. e.g. KA% starts with KA, %Ab ends with Ab)" filter_domain="[('default_code','=like',self)]"/>
+                        <field name="name" string="3) Product (match entire, excl case)" filter_domain="['|',('default_code','=ilike',self),('name','=ilike',self)]"/>
+                        <field name="name" string="4) Internal Ref (Ignore Case)" filter_domain="[('default_code','ilike',self)]"/>
+                        <field name="name" string="5) Description (Ignore Case)" filter_domain="[('name','ilike',self)]"/>
+                        <field name="name" string="6) Description (Case Sensitive)" filter_domain="[('name','like',self)]"/>
+
+                        <separator/>
+
+                        <filter string="Services" name="services" domain="[('type','=','service')]"/>
+                        <filter string="Consumable" name="consumable" domain="[('type','=','consu')]" help="Consumable Products (Non-Inventory)"/>
+                        <filter string="Inventory Stock" name="inventory" domain="[('type','=','product')]" help="Products you store in the inventory"/>
+
+                        <separator/>
+
+                        <filter string="Tracking" name="tracking" domain="[('tracking','=','serial')]" help="Products with Serial No."/>
+                        <filter string="No Tracking" name="notracking" domain="[('tracking','=','none')]" help="Products without Serial No."/>
+
+                        <separator/>
+
+                        <filter string="Can be Sold" name="filter_to_sell" domain="[('sale_ok','=',1)]"/>
+                        <filter string="Can be Purchased" name="filter_to_purchase" domain="[('purchase_ok', '=', 1)]"/>
+                        <filter string="BCause" name="filter_bcause" domain="[('x_bcause', '=', 1)]"/>
+                        <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                        <field name="x_sbt_item" filter_domain="[('x_sbt_item', 'ilike', self)]"/>
+
+                        <separator/>
+
+                        <field name="x_shortcut" string="OurShortcuts" filter_domain="[('x_shortcut','ilike', self)]"/>
+                        <field name="type" string="Product Type" filter_domain="[('type','ilike',self)]"/>
+
+                        <field name="standard_price" string="Cost to Us" filter_domain="[('standard_price','ilike',self)]"/>
+                        <field name="list_price" string="Retail Price" filter_domain="[('list_price','ilike',self)]"/>
+
+                        <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                        <field string="Attributes" name="attribute_line_ids"/>
+                        <field string="id" name="id"/>
+                        <field name="pricelist_id" widget="selection" context="{'pricelist': self}" filter_domain="[]" groups="product.group_sale_pricelist"/> <!-- Keep widget=selection on this field to pass numeric `self` value, which is not the case for regular m2o widgets! -->
+
+                        <separator/>
+                        <field name="seller_ids" string="Vendor"  filter_domain="[('seller_ids','ilike',self)]"/>
+
+                    </search>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_invoice_filter_tsa" model="ir.ui.view">
+            <field name="name">Invoice Search TSA Extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Search Invoice">
+                        <field name="number"     string="Invoice" filter_domain="['|','|','|', ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                        <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/>
+                        <field name="journal_id" string="Journal"/>
+                        <filter name="draft"     string="Draft"    domain="[('state','in',('draft', 'proforma'))]"/>
+                        <filter name="proforma"  string="Proforma" domain="[('state','=','proforma2')]" groups="account.group_account_user"/>
+                        <filter name="invoices"  string="Invoices" domain="[('state','in',['open','paid']),('type','in',('out_invoice','in_invoice'))]"/>
+                        <filter name="refunds"   string="Refunds"  domain="[('state','in',['open','paid']),('type','in',('out_refund','in_refund'))]"/>
+
+                        <separator/>
+                        <filter name="unpaid"    string="Not Paid" domain="[('state','=','open')]"/>
+                        <filter name="late"      string="Overdue"  domain="[('date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
+
+                        <separator/>
+                        <filter string="Invoice Date" name="filter_date" date="date"/>
+
+                        <separator/>
+                        <field name="residual" string="AmtDue"/>
+                        <field name="amount_untaxed" string="ExGST"/>
+                        <field name="amount_tax" string="GST"/>
+                        <separator/>
+                        <field name="partner_id" operator="child_of"/>
+                        <field name="name"           string="Description/Reference"/>
+                        <field name="x_tracking_ref" string="Tracking Ref"/>
+                        <field name="date_invoice"   string="Invoice Date"/>
+                        <field name="date_due"       string="Due Date"/>
+                        <field name="date"           string="Period"/>
+                        <field name="move_id"        string="Journal Entry Transaction Ref"/>
+                        <field name="origin"         string="Source Doc"/>
+                        <field name="user_id"        string="Salesperson"/>
+                        <separator/>
+                        <!--<filter domain="[('user_id','=',uid)]" help="My Invoices"/>-->
+                        <group expand="0" string="Group By">
+                            <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
+                            <filter name="salesperson"         string="Salesperson"  context="{'group_by':'user_id'}"/>
+                            <filter name="status"              string="Status"       context="{'group_by':'state'}"/>
+                            <filter name="name"                string="Desc/Ref"     context="{'group_by':'name'}"/>
+                            <filter name="type"    string="Type(Bill or Refund)"     context="{'group_by':'type'}"/>
+                            <separator/>
+                            <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'date_invoice'}"/>
+                            <filter name="duedate"            string="Due Date"     context="{'group_by':'date_due'}"/>
+                        </group>
+                    </search>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_res_partner_filter_tsa" model="ir.ui.view">
+            <field name="name">Contact Search TSA Extension</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Search Partner">
+                        <field name="name" filter_domain="['|','|',('display_name','ilike',self),('ref','ilike',self),('email','ilike',self)]"/>
+                        <!--<filter help="My Partners" domain="[('user_id','=',uid)]"/>-->
+                        <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>
+                        <filter name="filter_my_partners" help="My Contacts" domain="[('user_id','=',uid)]"/>
+                        <separator/>
+                        <filter string="Individuals" name="type_person" domain="[('is_company','=',0)]"/>
+                        <filter string="Companies" name="type_company" domain="[('is_company','=',1)]"/>
+                        <separator/>
+                        <filter string="Customers" name="customer" domain="[('customer','=',1), ('parent_id', '=', False)]"/>
+                        <filter string="Vendors" name="supplier" domain="[('supplier','=',1), ('parent_id', '=', False)]"/>
+                        <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                        <separator/>
+                        <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>
+                        <field name="x_sbt_custno" string="SBT custno" filter_domain="[('x_sbt_custno','ilike',self)]"/>
+                        <field name="x_sbt_vendno" string="SBT vendno" filter_domain="[('x_sbt_vendno','ilike',self)]"/>
+                        <field name="x_sbt_fields" string="SBT fields" filter_domain="[('x_sbt_fields','ilike',self)]"/>
+                        <field name="x_shortcut" string="Shortcut" filter_domain="[('x_shortcut','ilike',self)]"/>
+                        <field name="street" string="Name and Address" filter_domain="['|','|',('display_name','ilike',self),('street','ilike',self),('street2','ilike',self)]"/>
+                        <field name="zip" string="Zip" filter_domain="[('zip','ilike',self)]"/>
+                        <field name="city" string="Suburb/City" filter_domain="[('city','ilike',self)]"/>
+                        <field name="phone" string="Phone" filter_domain="[('phone','ilike',self)]"/>
+                        <field name="mobile" string="Mobile" filter_domain="[('mobile','ilike',self)]"/>
+                        <field name="email" string="Email" filter_domain="[('email','ilike',self)]"/>
+                        <field name="id" string="id" filter_domain="[('id','=',self)]"/>
+                        <field name="user_id"/>
+                        <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>
+                        <!--<group expand="0" name="group_by" string="Group By">
+                            <filter name="salesperson" string="Salesperson" domain="[]" context="{'group_by' : 'user_id'}"/>
+                            <filter string="Company" context="{'group_by': 'parent_id'}"/>
+                            <filter string="Country" context="{'group_by': 'country_id'}"/>
+                        </group>-->
+                    </search>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_tree_tsa" model="ir.ui.view">
+            <field name="name">Contact List TSA Extension</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Contacts" default_order="display_name, zip">
+                        <field name="x_sbt_vendno" invisible="1"/>
+                        <field name="x_sbt_custno" invisible="1"/>
+                        <field name="x_sbt_disc" string="discount" invisible="1"/>
+                        <field name="company_type" string="ContactType"/>
+                        <field name="type" string="AddrType"/>
+                        <field name="display_name"/>
+                        <field name="function" invisible="1"/>
+                        <field name="city"/>
+                        <field name="zip"/>
+                        <field name="phone"/>
+                        <field name="email"/>
+                        <field name="user_id" invisible="1"/>
+                        <field name="is_company" invisible="1"/>
+                        <field name="country_id"/>
+                        <field name="property_account_position_id"/>
+                        <field name="parent_id" invisible="1"/>
+                        <field name="write_date" invisible="1"/>
+                        <field name="create_date" invisible="1"/>
+                        <field name="write_uid" invisible="1"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_tree_product_tsa" model="ir.ui.view">
+            <field name="name">Product List TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Product" default_order="default_code, name">
+                        <!-- NOTE: To allow EDITS within TreeView use the following line instead of the one above
+                        <tree string="Product" default_order='default_code, name' editable="top">
+                        -->
+                        <field name="sequence" widget="handle"/>
+                        <field name="categ_id" string="Category"/>
+                        <field name="x_shortcut" invisible="1"/>
+                        <field name="default_code" string="Code" invisible="0"/>
+                        <field name="name"/>
+                        <field name="qty_available" string="OnHand"/>
+                        <field name="virtual_available" string="ForecastQty"/>
+                        <field name="x_default_location" string="Location"/>
+                        <field name="x_default_position" string="Pos'n"/>
+                        <field name="standard_price" string="Costs Us"/>
+                        <field name="list_price" string="Retail"/>
+                        <field name="volume" invisible="1"/>
+                        <field name="weight" invisible="1"/>
+                        <field name="uom_id" invisible="1"/>
+                        <field name="purchase_ok" string="WeBuy"/>
+                        <field name="sale_ok" string="WeSell"/>
+                        <field name="x_bcause" string="BCos"/>
+                        <field name="type" string="Type" invisible="1"/>
+                        <!--<field name="seller_ids" expand="1" string="Vendors"/>-->
+                        <field name="tracking" string="SerialNo"/>
+                        <field name="write_date" string="LastUpdate"/>
+                        <field name="create_date" invisible="1"/>
+                        <field name="write_uid" invisible="1"/>
+                        <field name="id" string="tmpl id"/>
+                        <field name="x_total_qty_sold" invisible="0"/>
+                        <field name="x_total_qty_bought" invisible="0"/>
+                        <field name="x_total_qty_made" invisible="0"/>
+                        <!--<field name="barcode" invisible="1"/>-->
+                        <!--<field name="property_account_expense_id" invisible="1"/>-->
+                        <!--<field name="property_account_income_id" invisible="1"/>-->
+                        <!--<field name="x_sbt_last_sold" string="SBT Last Sold"/>-->
+                        <!--<field name="x_sbt_last_buy" string="SBT Last Buy"/>-->
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_invoice_inherited" model="ir.ui.view">
+            <field name="name">Invoice TSA Extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_items_for_partner_id"/>
+                    <field name="x_customer_email"/>
+                </xpath>
+                <xpath expr="//field[@name='reference']" position="replace">
+                </xpath>
+                <xpath expr="//page[@name='other_info']//field[@name='name']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="name"/>
+                    <field name="reference"/>  <!-- ORIG had these attributes    attrs="{'readonly':[('state','!=','draft')]}"/>-->
+                    <field name="x_tracking_ref"/>
+                    <!--<field name="x_extra_notes"/>-->
+                </xpath>
+            </field>
+        </record>
+        <record id="invoice_supplier_form_view_tsa" model="ir.ui.view">
+            <field name="name">Vendor Bill Form TSA Extension</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_customer_email"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='reference']" position="after">
+                    <field name="payment_term_id" options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_jou_entry_inherited" model="ir.ui.view">
+            <field name="name">Journal Entry TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="x_credit_or_debit_note"/>
+                    <field name="x_gst_clearing"/>
+                </xpath>
+                <xpath expr="//field[@name='date_maturity']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='account_id']" position="before">
+                    <field name="date_maturity" string="Due"/>
+                    <field name="date"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_attendance_inherited" model="ir.ui.view">
+            <field name="name">Attendance TSA Extension</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='check_out']" position="after">
+                    <field name="x_notes"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_product_category_inherited" model="ir.ui.view">
+            <field name="name">Product Category TSA Extension</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="before">
+                    <field name="x_description"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_production_lot_tree_tsa" model="ir.ui.view">
+            <field name="name">Stock Production Lot Tree TSA Extension</field>
+            <field name="model">stock.production.lot</field>
+            <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="id"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_production_lot_form_tsa" model="ir.ui.view">
+            <field name="name">Stock Production Lot Form TSA Extension</field>
+            <field name="model">stock.production.lot</field>
+            <field name="inherit_id" ref="stock.view_production_lot_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="before">
+                    <field name="id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_form_stock_picking_inherited" model="ir.ui.view">
+            <field name="name">Stock Picking TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='button_scrap']" position="after">
+                    <button name="quick_do" type="object" string="Do Remainder" groups="base.group_user"/>
+                </xpath>
+                <xpath expr="//button[@name='button_scrap']" position="after">
+                    <button name="fix_unreserved_qty" type="object" string="Fix Unreserved Qty ALL" groups="base.group_system" context="{'dry_run': False}"/>
+                </xpath>
+                <xpath expr="//button[@name='button_scrap']" position="after">
+                    <button name="fix_unreserved_qty" type="object" string="Fix Unreserved Qty ALL (Dry Run)" groups="base.group_system" context="{'dry_run': True}"/>
+                </xpath>
+                 <xpath expr="//button[@name='button_scrap']" position="after">
+                    <button name="fix_unreserved_qty_me_only" type="object" string="Fix Unreserved Qty ME ONLY" groups="base.group_system" context="{'dry_run': False}"/>
+                </xpath>
+                <xpath expr="//button[@name='button_scrap']" position="after">
+                    <button name="fix_unreserved_qty_me_only" type="object" string="Fix Unreserved Qty ME ONLY (Dry Run)" groups="base.group_system" context="{'dry_run': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_special_address"/>
+                </xpath>
+                <xpath expr="//field[@name='date_done']" position="after">
+                    <field name="x_ship_in_out_date" string="Date Sent/Received"/>
+                </xpath>
+                <xpath expr="//field[@name='backorder_id']" position="after">
+                    <field name="x_extra_notes" placeholder="Enter notes to appear on packing slip (e.g. Customer Ref. or PO No.)"/>
+                </xpath>
+                <xpath expr="//field[@name='owner_id']" position="after">
+                    <field name="x_extra_notes_ext" placeholder="Notes for TSA staff only (won't appear on packing slip)"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_contact_inherited" model="ir.ui.view">
+            <field name="name">Contacts TSA Extension</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="before">
+                    <field name="id"/>
+                    <field name="x_shortcut"/>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='customer']" position="before">
+                    <field name="credit"/>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='supplier']" position="before">
+                    <field name="debit"/>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']" position="after">
+                    <page string="TSA" name="page_tsa">
+                        <group>
+                            <field name="x_sbt_fields" placeholder="Used to store values from SBT for future reference"/>
+                            <field name="x_sbt_custno"/>
+                            <field name="x_sbt_vendno"/>
+                            <field name="x_sbt_disc"/>
+                            <field name="x_sbt_ref"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_sale_order_tsa" model="ir.ui.view">
+            <field name="name">Sales Order TSA Extension</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//button[@name='action_unlock']" position="after">-->
+                    <!--<button name="%(tsa_rpt030_action)d" string="Sales Paid Not Delivered" type="action"/>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='partner_shipping_id']" position="after">
+                    <field name="x_customer_email"/>
+                </xpath>
+                <xpath expr="//field[@name='reference']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='client_order_ref']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="client_order_ref"/>
+                    <field name="reference" readonly="1" attrs="{'invisible': [('reference', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='validity_date']" position="replace">
+                    <field name="date_order" string="Order Created"/>
+                    <field name="validity_date" string="Quote Valid Until" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_form_purchase_order_inherited" model="ir.ui.view">
+            <field name="name">Purchase Order TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_customer_email" string="Vendor Email"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_ref']" position="after">
+                    <field name="x_ordered_by"/>
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="after">
+                    <field name="x_back_count"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- WIP -->
+        <!--<record id="product_moves_tree_tsa" model="ir.ui.view">
+                <field name="name">Product Moves List TSA Extension</field>
+                <field name="model">stock.move.line</field>
+                <field name="inherit_id" ref="stock.view_move_line_tree"/>
+                <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree decoration-muted="state == 'cancel'" decoration-danger="(state not in ('cancel','done'))" string="Move Lines" create="0" default_order="date">
+                        <field name="date"/>
+                        <field name="reference" string="Reference"/>
+                        <field name="product_id"/>
+                        <field name="location_id"/>
+                        <field name="location_dest_id"/>
+                        <field name="qty_done" string="Quantity Done"/>
+                        <field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
+                        <field name="state"/>
+                    </tree>
+                </xpath>
+                </field>
+            </record>-->
+
+
+
+        <!--<menuitem-->
+                <!--name="Fix Cannot Unreserve more Qty than in stock Error"-->
+                <!--id="tsa_fix_unreserve_qty_error"-->
+                <!--parent="tsa_actions_menu"-->
+                <!--action="action_fix_unreserved_qty"-->
+                <!--sequence="100"-->
+        <!--/>-->
+        <!--<menuitem-->
+                <!--name="Fix Cannot Unreserve more Qty than in stock Error (Dry Run - No changes)"-->
+                <!--id="tsa_fix_unreserve_qty_error_trial"-->
+                <!--parent="tsa_actions_menu"-->
+                <!--action="fix_unreserved_qty_trial"-->
+                <!--sequence="90"-->
+        <!--/>-->
+
+        <!--<record id="gg2.action_fix_unreserved_qty" model="ir.actions.server">-->
+            <!--<field name="name">Fix Unreserve Qty Error</field>-->
+            <!--<field name="condition">True</field>-->
+            <!--<field name="type">ir.actions.server</field>-->
+            <!--<field name="model_id" ref="model_stock_picking" />-->
+            <!--<field name="state">code</field>-->
+            <!--<field name="code">model.fix_unreserved_qty()</field>-->
+        <!--</record>-->
+
+    </data>
+</odoo>
