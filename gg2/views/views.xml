@@ -31,6 +31,9 @@
             sequence="60"
         />
 
+        <!-- DEFAULT PRODUCT SEARCHES - remove Consumable filter !-->
+
+
         <!-- PRODUCT FORM Modifications -->
         <record id="view_form_product_template_tsa" model="ir.ui.view">
             <field name="name">Product Template TSA Extension</field>
@@ -56,8 +59,6 @@
                         <field name="sale_ok"/>
                         <label for="purchase_ok" style="padding-left:16px"/>
                         <field name="purchase_ok"/>
-                        <label for="can_be_expensed" style="padding-left:16px"/>
-                        <field name="can_be_expensed"/>
                     </div>
                 </xpath>
                 <xpath expr="//div[@name='product_title_dots']" position="after">
@@ -185,7 +186,38 @@
                 </xpath>
             </field>
         </record>
-
+        <!--SALES ORDERS BUTTONS ON PRODUCT FORM-->
+        <record id="tsa_saleorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_saleorderline_treeview</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Sales for selected product">
+                    <field name="order_id"/>
+                    <field name="order_partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_id" invisible="0"/>
+                    <field name="salesman_id"/>
+                    <field name="product_uom_qty" string="Qty" sum="Total"/>
+                    <field name="qty_delivered" sum="Total"/>
+                    <field name="qty_invoiced" sum="Total"/>
+                    <field name="qty_to_invoice" sum="Total"/>
+                    <field name="product_uom" string="Units"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_product_sale_list_tsa" model="ir.actions.act_window">
+            <field name="name">Sale Order Lines TSA</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
+        </record>
         <record model="ir.ui.view" id="product_form_view_sale_order_button">
             <field name="name">product.template.sale.order</field>
             <field name="model">product.template</field>
@@ -193,22 +225,8 @@
             <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
             <field name="arch" type="xml">
                 <div name="button_box" position="inside">
-                    <button class="oe_stat_button" name="%(gg2.action_product_sale_list)d" type="action" string="Sales=" icon="fa-shopping-cart">
+                    <button class="oe_stat_button" name="%(gg2.action_product_sale_list_tsa)d" type="action" string="Sales=" icon="fa-shopping-cart">
                         <field string="Sales" name="x_total_qty_sold"/>
-                        <field name="uom_name"/>
-                    </button>
-                </div>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="product_form_view_purchase_order_button">
-            <field name="name">product_form_view_purchase_order_button</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
-            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
-            <field name="arch" type="xml">
-                <div name="button_box" position="inside">
-                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
-                        <field string="Purchases" name="x_total_qty_bought"/>
                         <field name="uom_name"/>
                     </button>
                 </div>
@@ -282,9 +300,7 @@
             <field name="views">[]</field>
             <field name="view_id" ref="gg2.tsa_manufactureorders_treeview"/>
             <field name="limit">150</field>
-            <!--<field name="search_view_id" ref="gg2.tsa_productmanufacture_searchview"/>-->
         </record>
-
         <record model="ir.ui.view" id="product_form_view_manufacture_order_button">
             <field name="name">product_form_view_manufacture_order_button</field>
             <field name="model">product.template</field>
@@ -319,7 +335,6 @@
                 </tree>
             </field>
         </record>
-
         <record id="action_product_purchases_list" model="ir.actions.act_window">
             <field name="name">Purchase Order Lines</field>
             <field name="res_model">purchase.order.line</field>
@@ -333,39 +348,19 @@
             <field name="limit">150</field>
             <!--<field name="search_view_id" ref="gg2.tsa_productpurchases_searchview"/>-->
         </record>
-
-        <!--SALES ORDERS BUTTONS ON PRODUCT FORM-->
-        <record id="tsa_saleorderline_treeview" model="ir.ui.view">
-            <field name="name">tsa_saleorderline_treeview</field>
-            <field name="model">sale.order.line</field>
+        <record model="ir.ui.view" id="product_form_view_purchase_order_button">
+            <field name="name">product_form_view_purchase_order_button</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
             <field name="arch" type="xml">
-                <tree string="Sales for selected product">
-                    <field name="order_id"/>
-                    <field name="order_partner_id"/>
-                    <field name="name" invisible="1"/>
-                    <field name="product_id" invisible="0"/>
-                    <field name="salesman_id"/>
-                    <field name="product_uom_qty" string="Qty" sum="Total"/>
-                    <field name="qty_delivered" sum="Total"/>
-                    <field name="qty_invoiced" sum="Total"/>
-                    <field name="qty_to_invoice" sum="Total"/>
-                    <field name="product_uom" string="Units"/>
-                    <field name="price_subtotal" sum="Total" widget="monetary"/>
-                    <field name="state"/>
-                </tree>
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
+                        <field string="Purchases" name="x_total_qty_bought"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
             </field>
-        </record>
-
-        <record id="action_product_sale_list" model="ir.actions.act_window">
-            <field name="name">Sale Order Lines</field>
-            <field name="res_model">sale.order.line</field>
-            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
-            <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
-            <field name="view_mode">tree,form</field>
-            <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/>
-            <field name="limit">150</field>
-            <!--<field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
         </record>
         <record id="tsa_rpt100_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt100_treeview</field>
@@ -889,7 +884,6 @@
             </field>
         </record>
         <record id="action_orders_tsa" model="ir.actions.act_window">
-            <field name="inherit_id" ref="sale.action_orders"/>
             <field name="name">Sales Orders and Quotations</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
@@ -1080,23 +1074,7 @@
                 </xpath>
             </field>
         </record>
-        <record id="action_bills_tsa" model="ir.actions.act_window">
-            <field name="inherit_id" ref="account.action_vendor_bill_template"/>
-            <field name="name">Vendor Bills and Refunds</field>
-            <field name="res_model">account.invoice</field>
-            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
-            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
-            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
-        </record>
-        <menuitem id="bills_and_refunds"
-            name="Vendor Bills and Refunds"
-            parent="account.menu_finance_payables"
-            groups="account.group_account_user"
-            action="action_bills_tsa"
-            sequence="0"
-        />
         <record id="action_invoices_tsa" model="ir.actions.act_window">
-            <field name="inherit_id" ref="account.invoice_tree_with_onboarding"/>
             <field name="name">Customer Invoices and Refunds</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -1282,6 +1260,20 @@
                 </xpath>
             </field>
         </record>
+        <record id="action_bills_tsa" model="ir.actions.act_window">
+            <field name="name">Vendor Bills and Refunds</field>
+            <field name="res_model">account.invoice</field>
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+        <menuitem id="bills_and_refunds"
+            name="Vendor Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_bills_tsa"
+            sequence="0"
+        />
         <record id="view_res_partner_filter_tsa" model="ir.ui.view">
             <field name="name">Contact Search TSA Extension</field>
             <field name="model">res.partner</field>
@@ -1600,53 +1592,5 @@
                 </xpath>
             </field>
         </record>
-
-        <!-- WIP -->
-        <!--<record id="product_moves_tree_tsa" model="ir.ui.view">
-                <field name="name">Product Moves List TSA Extension</field>
-                <field name="model">stock.move.line</field>
-                <field name="inherit_id" ref="stock.view_move_line_tree"/>
-                <field name="arch" type="xml">
-                <xpath expr="/tree" position="replace">
-                    <tree decoration-muted="state == 'cancel'" decoration-danger="(state not in ('cancel','done'))" string="Move Lines" create="0" default_order="date">
-                        <field name="date"/>
-                        <field name="reference" string="Reference"/>
-                        <field name="product_id"/>
-                        <field name="location_id"/>
-                        <field name="location_dest_id"/>
-                        <field name="qty_done" string="Quantity Done"/>
-                        <field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
-                        <field name="state"/>
-                    </tree>
-                </xpath>
-                </field>
-            </record>-->
-
-
-
-        <!--<menuitem-->
-                <!--name="Fix Cannot Unreserve more Qty than in stock Error"-->
-                <!--id="tsa_fix_unreserve_qty_error"-->
-                <!--parent="tsa_actions_menu"-->
-                <!--action="action_fix_unreserved_qty"-->
-                <!--sequence="100"-->
-        <!--/>-->
-        <!--<menuitem-->
-                <!--name="Fix Cannot Unreserve more Qty than in stock Error (Dry Run - No changes)"-->
-                <!--id="tsa_fix_unreserve_qty_error_trial"-->
-                <!--parent="tsa_actions_menu"-->
-                <!--action="fix_unreserved_qty_trial"-->
-                <!--sequence="90"-->
-        <!--/>-->
-
-        <!--<record id="gg2.action_fix_unreserved_qty" model="ir.actions.server">-->
-            <!--<field name="name">Fix Unreserve Qty Error</field>-->
-            <!--<field name="condition">True</field>-->
-            <!--<field name="type">ir.actions.server</field>-->
-            <!--<field name="model_id" ref="model_stock_picking" />-->
-            <!--<field name="state">code</field>-->
-            <!--<field name="code">model.fix_unreserved_qty()</field>-->
-        <!--</record>-->
-
     </data>
 </odoo>
