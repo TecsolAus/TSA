@@ -20,7 +20,7 @@
     'version': '12',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'account', 'hr', 'mrp', 'purchase', 'stock', 'repair', 'product', 
+    'depends': ['base', 'sale', 'account', 'hr', 'hr_attendance', 'mrp', 'purchase', 'stock', 'repair', 'product', 
                'stock_account', 'website', 'website_sale'],
 
     # always loaded
