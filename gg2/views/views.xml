@@ -56,8 +56,8 @@
                         <field name="sale_ok"/>
                         <label for="purchase_ok" style="padding-left:16px"/>
                         <field name="purchase_ok"/>
-                        <label for="can_be_expensed" style="padding-left:16px"/>
-                        <field name="can_be_expensed"/>
+                        <!--<label for="can_be_expensed" style="padding-left:16px"/>-->
+                        <!--<field name="can_be_expensed"/>-->
                     </div>
                 </xpath>
                 <xpath expr="//div[@name='product_title_dots']" position="after">
