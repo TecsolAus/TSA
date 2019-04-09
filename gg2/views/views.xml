@@ -30,10 +30,6 @@
             parent="tsa_reports_menu"
             sequence="60"
         />
-
-        <!-- DEFAULT PRODUCT SEARCHES - remove Consumable filter !-->
-
-
         <!-- PRODUCT FORM Modifications -->
         <record id="view_form_product_template_tsa" model="ir.ui.view">
             <field name="name">Product Template TSA Extension</field>
