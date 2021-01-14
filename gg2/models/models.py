@@ -48,7 +48,7 @@ class TsaMailTrackingValue(models.Model):
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.invoice']
 
-    @api.multi
+    # @api.multi
     def invoice_validate(self):
         for invoice in self:
             # refuse to validate a vendor bill/refund if there exists one with the same reference for the same partner,
@@ -70,7 +70,7 @@ class TsaAccountInvoice(models.Model):
             if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
                 if invoice.name:
                     mydupe = self.search([('type', '=', invoice.type), ('name', '=', invoice.name),
-                                          ('company_id', '=', invoice.company_id.id),
+                                          ('company_id', 'in', invoice.company_ids),
                                           ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                           ('id', '!=', invoice.id),
                                           ('state', 'in', ('open', 'in_payment', 'paid'))])
@@ -78,7 +78,7 @@ class TsaAccountInvoice(models.Model):
                 if (not mydupe) and (invoice.x_tracking_ref):
                     # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
                     mydupe = self.search([('type', '=', invoice.type), ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          ('company_id', '=', invoice.company_id.id),
+                                          ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
                                           ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                           ('id', '!=', invoice.id),
                                           ('state', 'in', ('open', 'in_payment', 'paid'))])
@@ -234,19 +234,19 @@ class TsaProductTemplate(models.Model):
         for record in self:
             record['x_volume_cm3'] = record.x_item_height * record.x_item_length * record.x_item_depth
 
-    @api.multi
+    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_sold')
     def _total_qty_sold2(self):
         for product in self:
             product.x_total_qty_sold = sum([p.x_total_qty_sold for p in product.product_variant_ids])
 
-    @api.multi
+    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_bought')
     def _total_qty_bought2(self):
         for product in self:
             product.x_total_qty_bought = sum([p.x_total_qty_bought for p in product.product_variant_ids])
 
-    @api.multi
+    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_made')
     def _total_qty_made2(self):
         for product in self:
@@ -428,7 +428,7 @@ class TsaSaleOrder(models.Model):
 
     # def so_qty_to_deliver(self):
 
-    @api.multi
+    # @api.multi
     def action_confirm(self):
         for order in self:
             # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
@@ -454,15 +454,13 @@ class TsaSaleOrder(models.Model):
                                    help='Read-only display of Customer Email Address (if defined in Contacts)',
                                    copy=False, readonly=True, required=False, selectable=False,
                                    compute='_get_customer_email')
-    x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer',
+    # x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer',
                                    copy=False, readonly=False, required=False, selectable=True)
-    x_promised_by_date = fields.Date(string='Promised by Date',
+    # x_promised_by_date = fields.Date(string='Promised by Date',
                                      help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!',
                                      copy=False, readonly=False, required=False, selectable=True)
-    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,
-                                 selectable=True)
-    x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',
-                                      copy=False, readonly=False, required=False, selectable=True)
+    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,                               selectable=True)
+    # x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',                                      copy=False, readonly=False, required=False, selectable=True)
     # x_items_for_partner_id = fields.Integer()
 
 
@@ -804,7 +802,7 @@ class TsaStockPicking(models.Model):
 class TsaProductProduct(models.Model):
     _inherit = ['product.product']
 
-    @api.multi
+    # @api.multi
     def _total_qty_sold(self):
         r = {}
         domain = [
@@ -817,7 +815,7 @@ class TsaProductProduct(models.Model):
             product.x_total_qty_sold = r.get(product.id, 0)
         return r
 
-    @api.multi
+    # @api.multi
     def _total_qty_bought(self):
         r = {}
         domain = [
@@ -830,7 +828,7 @@ class TsaProductProduct(models.Model):
             product.x_total_qty_bought = r.get(product.id, 0)
         return r
 
-    @api.multi
+    # @api.multi
     def _total_qty_made(self):
         r = {}
         domain = [
@@ -1060,7 +1058,7 @@ class TsaRpt030PaidNotDeliveredA(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, orderby_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -1108,7 +1106,7 @@ class TsaRpt070PaidInvoices(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s)' % (with_, select_, from_, where_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -1210,7 +1208,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, order_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -1280,7 +1278,7 @@ class TsaRpt082SalesToDeliverD(models.Model):
 
         return '%s (SELECT %s FROM %s GROUP BY %s ORDER BY %s)' % (with_, select_, from_, groupby_, order_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -1364,7 +1362,7 @@ class TsaRpt090BalanceSheetH(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, order_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
