@@ -17,11 +17,10 @@
     # for the full list
     'category': 'Uncategorized',
     # Developed under the following version of Odoo
-    'version': '12',
+    'version': '13.0.1.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'account', 'hr', 'hr_attendance', 'mrp', 'purchase', 'stock', 'repair', 'product', 
-               'stock_account', 'website', 'website_sale'],
+    'depends': ['base', 'sale', 'account', 'hr', 'mrp', 'purchase', 'stock', 'repair', 'product', 'stock_account'],
 
     # always loaded
     'data': [
