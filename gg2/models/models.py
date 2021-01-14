@@ -592,7 +592,7 @@ class TsaRpt030PaidNotDeliveredA(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, orderby_)
 
-    # @api.model_cr # ADAPT CODE HERE
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -639,7 +639,7 @@ class TsaRpt070PaidInvoices(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s)' % (with_, select_, from_, where_)
 
-    # @api.model_cr # ADAPT CODE HERE
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -741,7 +741,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, order_)
 
-    # @api.model_cr # ADAPT CODE HERE
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -811,7 +811,7 @@ class TsaRpt082SalesToDeliverD(models.Model):
 
         return '%s (SELECT %s FROM %s GROUP BY %s ORDER BY %s)' % (with_, select_, from_, groupby_, order_)
 
-    # @api.model_cr # ADAPT CODE HERE
+    # @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -894,7 +894,7 @@ class TsaRpt090BalanceSheetH(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, order_)
 
-    # @api.model_cr # ADAPT CODE HERE
+    # @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
