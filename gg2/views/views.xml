@@ -253,7 +253,7 @@
             <field name="model">mrp.bom</field>
             <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree/field[@name='attribute_value_ids']" position="before">
+                <xpath expr="//tree/field[@name='product_qty']" position="after">
                     <field name="x_designator"/>
                     <field name="x_footprint"/>
                 </xpath>
