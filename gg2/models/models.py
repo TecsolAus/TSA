@@ -27,7 +27,7 @@ from mock.mock import self
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.invoice']
 
-    # @api.multi # v12
+    # @api.multi
     def invoice_validate(self):
         for invoice in self:
             # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
@@ -53,6 +53,7 @@ class TsaAccountInvoice(models.Model):
                                 ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                 ('id', '!=', invoice.id),
                                 ('state', 'in', ('open', 'in_payment', 'paid'))])
+
                     myref = invoice.name
                 if (not mydupe) and (invoice.x_tracking_ref):
                     # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
@@ -136,8 +137,8 @@ class tsaextd(models.Model):
                 record['x_payment_type'] = 'Receive'
             if record['payment_type'] == 'transfer':
                 record['x_payment_type'] = 'Transfer'
-			else:
-			    record['x_payment_type'] = 'Unknown'
+            else:
+                record['x_payment_type'] = 'Unknown'
 
     x_amount_signed = fields.Monetary(string='Amount', help='Negative if payment_type=outbound (Send Money) else positive', copy=False, readonly=True, required=False, selectable=False, compute='_get_amount_signed')
     x_payment_method = fields.Char(string='Payment Method', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_payment_method')
@@ -315,11 +316,17 @@ class TsaSaleOrder(models.Model):
         for record in self:
             record['x_customer_email']=record.partner_id.email
 
-    x_customer_email = fields.Char(string='Customer Email', help='Read-only display of Customer Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
-    # x_internal_notes = fields.Text(string='.', help='Promise made by TSA staff to customer', copy=True, readonly=False, required=False, selectable=True)
-    #x_promised_by_date = fields.Date(string='.', help='Date the customer is expecting some or all of the goods to be received. Be careful! DO NOT cry-wolf!', copy=True, readonly=False, required=False, selectable=True)
-    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=True, readonly=False, required=False, selectable=True)
-    # x_who_next_step = fields.Many2one('res.users', string='.', help='Which staff member needs to deal with this next?', copy=True, readonly=False, required=False, selectable=True)
+    x_customer_email = fields.Char(string='Customer Email',
+                                   help='Read-only display of Customer Email Address (if defined in Contacts)',
+                                   copy=False, readonly=True, required=False, selectable=False,
+                                   compute='_get_customer_email')
+    # x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer',
+                                   copy=False, readonly=False, required=False, selectable=True)
+    # x_promised_by_date = fields.Date(string='Promised by Date',
+                                     help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!',
+                                     copy=False, readonly=False, required=False, selectable=True)
+    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,                               selectable=True)
+    # x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',                                      copy=False, readonly=False, required=False, selectable=True)
     # x_items_for_partner_id = fields.Integer()
 
 class tsaextq(models.Model):
@@ -899,5 +906,3 @@ class TsaRpt090BalanceSheetH(models.Model):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
-
-

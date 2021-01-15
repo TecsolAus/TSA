@@ -25,6 +25,246 @@
             sequence="60"
         />
 
+        <!-- DEFAULT PRODUCT SEARCHES - remove Consumable filter !-->
+
+        <!-- PRODUCT FORM Modifications -->
+        <record id="view_form_product_template_tsa" model="ir.ui.view">
+            <field name="name">Product Template TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//div[@class='oe_title']" position="replace">-->
+                <xpath expr="//sheet/div[2]" position="replace">
+                    <div class="oe_title" name="product_title_dots">
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                    </div>
+                    <div class="col-12" style="font-size:16px">
+                        <i><label for="name" string="Short Description: " style="padding-left:16px"/></i>
+                        <b><field name="name" placeholder="Product Description (brief)"/></b>
+                    </div>
+                    <div class="col-12" name="options" groups="base.group_user">
+                        <label for="x_bcause" style="padding-left:16px"/>
+                        <field name="x_bcause"/>
+                        <label for="sale_ok" style="padding-left:16px"/>
+                        <field name="sale_ok"/>
+                        <label for="purchase_ok" style="padding-left:16px"/>
+                        <field name="purchase_ok"/>
+                        <!--<label for="can_be_expensed" style="padding-left:16px"/>-->
+                        <!--<field name="can_be_expensed"/>-->
+                    </div>
+                </xpath>
+                <xpath expr="//div[@name='product_title_dots']" position="after">
+                        <div class="col-12" style="font-size:16px" name="two_codes">
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="default_code" string="TSA Code: "/></i>
+                                <b><field name="default_code" placeholder="TSA Item Code a.k.a. Internal Reference)" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="barcode" string="Barcode: "/></i>
+                                <b><field name="barcode" placeholder="Barcode  COPY FROM   TSA Code" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                        </div>
+                        <div class="col-12" style="font-size:16px" name="cat_type">
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="categ_id" string="Product Category: "/></i></b>
+                                <b><field name="categ_id" placeholder="Product Category" style="font-size:15px"/></b>
+                            </span>
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="type" string="Product Type: "/></i></b>
+                                <b><field name="type" placeholder="Product Type" style="font-size:15px"/></b>
+                            </span>
+                        </div>
+                </xpath>
+
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="x_cost_price" string="Cost Price (TSA)"/>
+                </xpath>
+
+                <!--<xpath expr="//field[@name='type']" position="before">-->
+                    <!--<field name="id" string="product_tmpl_id"/>-->
+                <!--</xpath>-->
+
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="TSA" name="page_tsa">
+                        <group>
+                            <group string="TSA Location Info">
+                                <field name="x_default_location"/>
+                                <field name="x_default_position"/>
+                                <field name="x_default_location2"/>
+                                <field name="x_default_position2"/>
+                                <field name="x_expert"/>
+                                <field name="x_expert2"/>
+                            </group>
+                            <group string="TSA Dimensions" name="group_tsa_dimensions">
+                                <label for="x_item_height" string="H x L x D (cm)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height"> </field><b> x </b>
+                                    <field name="x_item_length"> </field><b> x </b>
+                                    <field name="x_item_depth"> </field><b> = </b>
+                                    <field name="x_volume_cm3"> </field><b> cm 3</b>
+                                </div>
+                                <label for="x_item_height" string="H x L x D (cm) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height_mfr"> </field><b> x </b>
+                                    <field name="x_item_width_mfr"> </field><b> x </b>
+                                    <field name="x_item_depth_mfr"> </field><b> = </b>
+                                    <field name="x_item_volume_mfr_cm3"> </field><b> cm 3 (MFR)</b>
+                                </div>
+                                <label for="volume" string="Volume (m3)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="volume" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="volume"/><b> m 3</b><i> (divide cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="x_item_volume_mfr" string="Volume (m3) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_volume_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_volume_mfr"/><b> m 3</b><i> (divide MFR cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="weight" string="Weight"/><b> kg</b>
+                                </div>
+                                <label for="x_item_weight_mfr" string="Weight MFR (kg)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_weight_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_weight_mfr" string="Weight"/><b> kg (MFR)</b>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="TSA Notes" name="group_tsa_notes">
+                            <field name="x_comment"/>
+                            <!--<field name="x_description"/>-->
+                            <field name="x_shortcut"/>
+                            <field name="x_image_filename"/>
+                            <field name="x_jos_product_id"/>
+                            <field name="x_imported_date"/>
+                        </group>
+                        <group>
+                            <group string="Stocktake" name="group_tsa_stocktake">
+                                <field name="x_counted_date"/>
+                                <field name="x_counted_qty"/>
+                                <field name="x_odoo_qty_b4_stocktake"/>
+                                <field name="x_odoo_qty_capture_date"/>
+                                <field name="x_odoo_qty_last_30Jun"/>
+                            </group>
+                            <group string="TSA SBT Info" name="group_tsa_sbt">
+                                <field name="x_sbt_fields"/>
+                                <field name="x_sbt_item"/>
+                                <field name="x_sbt_last_buy"/>
+                                <field name="x_sbt_last_sold"/>
+                                <field name="x_sbt_product_sku"/>
+                                <field name="x_v8_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_form_view_a_tsa">
+            <field name="name">Product Template TSA Mod A</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='group_general']" position="replace">
+                    <group name="group_general">
+                        <field name="categ_id"/>
+                        <field name="type"/>
+                        <field name="default_code" invisible="True"/>
+                        <field name="barcode" invisible="True"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='categ_id']/following-sibling::field[@name='default_code']" position="replace">
+                    <field name="default_code" invisible="True"/>
+                </xpath>
+                <xpath expr="//field[@name='categ_id']/following-sibling::field[@name='default_code']//following-sibling::field[@name='barcode']" position="replace">
+                    <field name="barcode" invisible="True"/>
+                </xpath>
+            </field>
+        </record>
+        <!--SALES ORDERS BUTTONS ON PRODUCT FORM-->
+        <record id="tsa_saleorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_saleorderline_treeview</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Sales for selected product">
+                    <field name="order_id"/>
+                    <field name="order_partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_id" invisible="0"/>
+                    <field name="salesman_id"/>
+                    <field name="product_uom_qty" string="Qty" sum="Total"/>
+                    <field name="qty_delivered" sum="Total"/>
+                    <field name="qty_invoiced" sum="Total"/>
+                    <field name="qty_to_invoice" sum="Total"/>
+                    <field name="product_uom" string="Units"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_product_sale_list_tsa" model="ir.actions.act_window">
+            <field name="name">Sale Order Lines TSA</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
+        </record>
+        <record model="ir.ui.view" id="product_form_view_sale_order_button">
+            <field name="name">product.template.sale.order</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_sale_list_tsa)d" type="action" string="Sales=" icon="fa-shopping-cart">
+                        <field string="Sales" name="x_total_qty_sold"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+
+        <!-- PRODUCT: E-COMMERCE -->
+        <record id="product_template_form_view_tsa" model="ir.ui.view">
+            <field name="name">E-Commerce TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="website_sale.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='shop']" position="before">
+                    <group name="WebDesc" string="Website Description">
+                        <field name="website_description"/>
+                        <field name="website_meta_description"/>
+                        <field name="website_meta_title"/>
+                        <field name="website_meta_keywords"/>
+                        <field name="website_price"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!--BOM DESIGNATOR AND FOOTPRINT-->
+        <record id="mrp_bom_form_view_tsa" model="ir.ui.view">
+            <field name="name">BoM Form TSA Extension</field>
+            <field name="model">mrp.bom</field>
+            <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='attribute_value_ids']" position="before">
+                    <field name="x_designator"/>
+                    <field name="x_footprint"/>
+                </xpath>
+                <xpath expr="//notebook/page/field/tree/field[@name='product_uom_id']" position="replace">
+                    <field name="product_uom_id" string="UoM"/>
+                </xpath>
+                <!--<xpath expr="//tree/field[@name='attribute_value_ids']" position="inside">-->
+                    <!--<field name="attribute_value_ids" string="ForVariants"/>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+
         <!--MANUFACTURE ORDERS BUTTON ON PRODUCT FORM-->
         <record id="tsa_manufactureorders_treeview" model="ir.ui.view">
             <field name="name">tsa_manufactureorders_treeview</field>
@@ -54,9 +294,7 @@
             <field name="views">[]</field>
             <field name="view_id" ref="gg2.tsa_manufactureorders_treeview"/>
             <field name="limit">150</field>
-            <!--<field name="search_view_id" ref="gg2.tsa_productmanufacture_searchview"/>-->
         </record>
-
         <record model="ir.ui.view" id="product_form_view_manufacture_order_button">
             <field name="name">product_form_view_manufacture_order_button</field>
             <field name="model">product.template</field>
@@ -91,7 +329,6 @@
                 </tree>
             </field>
         </record>
-
         <record id="action_product_purchases_list" model="ir.actions.act_window">
             <field name="name">Purchase Order Lines</field>
             <field name="res_model">purchase.order.line</field>
@@ -105,12 +342,12 @@
             <field name="limit">150</field>
             <!--<field name="search_view_id" ref="gg2.tsa_productpurchases_searchview"/>-->
         </record>
-
         <record model="ir.ui.view" id="product_form_view_purchase_order_button">
             <field name="name">product_form_view_purchase_order_button</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+
             <field name="arch" type="xml">
                 <div name="button_box" position="inside">
                     <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
@@ -128,23 +365,15 @@
             <field name="name">tsa_saleorderline_treeview</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
-                <tree string="Sales for selected product">
-                    <field name="order_id"/>
-                    <field name="order_partner_id"/>
-                    <field name="name" invisible="1"/>
-                    <field name="product_id" invisible="0"/>
-                    <field name="salesman_id"/>
-                    <field name="product_uom_qty" string="Qty" sum="Total"/>
-                    <field name="qty_delivered" sum="Total"/>
-                    <field name="qty_invoiced" sum="Total"/>
-                    <field name="qty_to_invoice" sum="Total"/>
-                    <field name="product_uom" string="Units"/>
-                    <field name="price_subtotal" sum="Total" widget="monetary"/>
-                    <field name="state"/>
-                </tree>
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
+                        <field string="Purchases" name="x_total_qty_bought"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
             </field>
         </record>
-
+      
         <record id="action_product_sale_list" model="ir.actions.act_window">
             <field name="name">Sale Order Lines</field>
             <field name="res_model">sale.order.line</field>
@@ -173,6 +402,7 @@
         </record>
 
         <!--REPORT FULL RECONCILE -->
+      
         <record id="tsa_rpt100_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt100_treeview</field>
             <field name="model">account.full.reconcile</field>
@@ -666,6 +896,21 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="action_orders_tsa" model="ir.actions.act_window">
+            <field name="name">Sales Orders and Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem id="sales_and_quotes"
+            name="Sales and Quotations"
+            parent="sale.sale_order_menu"
+            groups="base.group_user"
+            action="action_orders_tsa"
+            sequence="0"
+        />
+
         <record id="view_saleorder_tree_tsa" model="ir.ui.view">
             <field name="name">Sale Order List TSA Extension</field>
             <field name="model">sale.order</field>
@@ -815,6 +1060,36 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="action_invoices_tsa" model="ir.actions.act_window">
+            <field name="name">Customer Invoices and Refunds</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="res_model">account.invoice</field>
+            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
+        </record>
+        <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="act_window_id" ref="action_invoices_tsa"/>
+        </record>
+        <record id="action_invoices_form_tsa" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="action_invoices_tsa"/>
+        </record>
+        <menuitem id="invoices_and_refunds"
+            name="Customer Invoices and Refunds"
+            parent="account.menu_finance_receivables"
+            groups="account.group_account_user"
+            action="action_invoices_tsa"
+            sequence="0"
+        />
+
         <record id="product_template_search2_tsa" model="ir.ui.view">
             <field name="name">Product Search TSA Extension2</field>
             <field name="model">product.template</field>
@@ -965,6 +1240,20 @@
                 </xpath>
             </field>
         </record>
+        <record id="action_bills_tsa" model="ir.actions.act_window">
+            <field name="name">Vendor Bills and Refunds</field>
+            <field name="res_model">account.invoice</field>
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+        <menuitem id="bills_and_refunds"
+            name="Vendor Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_bills_tsa"
+            sequence="0"
+        />
         <record id="view_res_partner_filter_tsa" model="ir.ui.view">
             <field name="name">Contact Search TSA Extension</field>
             <field name="model">res.partner</field>
@@ -1233,6 +1522,7 @@
                 </xpath>
             </field>
         </record>
+
         <record id="view_form_product_template_inherited" model="ir.ui.view">
             <field name="name">Product Template TSA Extension</field>
             <field name="model">product.template</field>
