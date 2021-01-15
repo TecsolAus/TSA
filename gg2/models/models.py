@@ -320,11 +320,8 @@ class TsaSaleOrder(models.Model):
                                    help='Read-only display of Customer Email Address (if defined in Contacts)',
                                    copy=False, readonly=True, required=False, selectable=False,
                                    compute='_get_customer_email')
-    # x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer',
-                                   copy=False, readonly=False, required=False, selectable=True)
-    # x_promised_by_date = fields.Date(string='Promised by Date',
-                                     help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!',
-                                     copy=False, readonly=False, required=False, selectable=True)
+    # x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer', copy=False, readonly=False, required=False, selectable=True)
+    # x_promised_by_date = fields.Date(string='Promised by Date', help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!', copy=False, readonly=False, required=False, selectable=True)
     x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,                               selectable=True)
     # x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',                                      copy=False, readonly=False, required=False, selectable=True)
     # x_items_for_partner_id = fields.Integer()
