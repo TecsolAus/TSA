@@ -357,7 +357,7 @@
 		</field>
 	</record>
 
-	<record id="invoice_tree_tsa" model="ir.ui.view">
+<!-- 	<record id="invoice_tree_tsa" model="ir.ui.view">
             <field name="name">Invoice List TSA Extension</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_tree"/>
@@ -386,7 +386,7 @@
                 </tree>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 	<record id="product_template_search2_tsa" model="ir.ui.view">
 		<field name="name">Product Search TSA Extension2</field>
 		<field name="model">product.template</field>
@@ -493,7 +493,7 @@
 			</xpath>
 		</field>
 	</record>
-	<record id="view_account_invoice_filter_tsa" model="ir.ui.view">
+<!-- 	<record id="view_account_invoice_filter_tsa" model="ir.ui.view">
 		<field name="name">Invoice Search TSA Extension</field>
 		<field name="model">account.invoice</field>
 		<field name="inherit_id" ref="account.view_account_invoice_filter"/>
@@ -522,9 +522,9 @@
 					<field name="move_id"        string="Journal Entry Transaction Ref"/>
 					<field name="origin"         string="Source Doc"/>
 					<field name="user_id"        string="Salesperson"/>
-					<separator/>
+					<separator/> -->
 					<!--<filter domain="[('user_id','=',uid)]" help="My Invoices"/>-->
-					<group expand="0" string="Group By">
+<!-- 					<group expand="0" string="Group By">
 						<filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
 						<filter name="salesperson"        string="Salesperson"  context="{'group_by':'user_id'}"/>
 						<filter name="status"              string="Status"       context="{'group_by':'state'}"/>
@@ -536,7 +536,7 @@
 				</search>
 			</xpath>
 		</field>
-	</record>
+	</record> -->
 	<record id="view_res_partner_filter_tsa" model="ir.ui.view">
 		<field name="name">Contact Search TSA Extension</field>
 		<field name="model">res.partner</field>
@@ -652,7 +652,7 @@
 			</tree>
 		</xpath>
 		</field>
-	</record>
+<!-- 	</record>
         <record id="view_form_invoice_inherited" model="ir.ui.view">
             <field name="name">Invoice TSA Extension</field>
             <field name="model">account.invoice</field>
@@ -668,13 +668,14 @@
                 </xpath>
                 <xpath expr="//field[@name='team_id']" position="after">
                     <field name="name"/>
-                    <field name="reference"/>  <!-- ORIG had these attributes    attrs="{'readonly':[('state','!=','draft')]}"/>-->
-                    <field name="x_tracking_ref"/>
+                    <field name="reference"/>  --> 
+					<!-- ORIG had these attributes    attrs="{'readonly':[('state','!=','draft')]}"/>-->
+<!--                     <field name="x_tracking_ref"/>
                     <field name="x_extra_notes"/>
                 </xpath>
             </field>
-        </record>
-        <record id="invoice_supplier_form_view_tsa" model="ir.ui.view">
+        </record> -->
+<!--         <record id="invoice_supplier_form_view_tsa" model="ir.ui.view">
             <field name="name">Vendor Bill Form TSA Extension</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
@@ -683,7 +684,7 @@
                     <field name="x_customer_email"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
         <record id="view_form_jou_entry_inherited" model="ir.ui.view">
             <field name="name">Journal Entry TSA Extension</field>
             <field name="model">account.move</field>

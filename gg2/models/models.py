@@ -24,76 +24,76 @@ from mock.mock import self
 #                //ORIG: topbar_name = _.str.sprintf("%s (%s)", topbar_name, session.db);
 #            }
 
-class TsaAccountInvoice(models.Model):
-    _inherit = ['account.invoice']
+# class TsaAccountInvoice(models.Model):
+    # _inherit = ['account.invoice']
 
-    # @api.multi
-    def invoice_validate(self):
-        for invoice in self:
-            # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
-            # because it's probably a double encoding of the same bill/refund
-            # VENDOR BILL - DUPE CHECK
-            if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
-                mydupe = self.search([('type', '=', invoice.type), ('reference', '=', invoice.reference),
-                                ('company_id', 'in', invoice.company_ids),
-                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                ('id', '!=', invoice.id),
-                                ('state', 'in', ('open', 'in_payment', 'paid'))])
-                if mydupe:
-                    myinvlist = ""
-                    for eachdupe in mydupe:
-                        myinvlist = myinvlist + ", " + eachdupe.number
-                    raise UserError(_(
-                        "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
-            # CUSTOMER INVOICE - DUPE CHECK
-            if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
-                if invoice.name:
-                    mydupe = self.search([('type', '=', invoice.type), ('name', '=', invoice.name),
-                                ('company_id', 'in', invoice.company_ids),
-                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                ('id', '!=', invoice.id),
-                                ('state', 'in', ('open', 'in_payment', 'paid'))])
+    # # @api.multi
+    # def invoice_validate(self):
+        # for invoice in self:
+            # # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
+            # # because it's probably a double encoding of the same bill/refund
+            # # VENDOR BILL - DUPE CHECK
+            # if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
+                # mydupe = self.search([('type', '=', invoice.type), ('reference', '=', invoice.reference),
+                                # ('company_id', 'in', invoice.company_ids),
+                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                # ('id', '!=', invoice.id),
+                                # ('state', 'in', ('open', 'in_payment', 'paid'))])
+                # if mydupe:
+                    # myinvlist = ""
+                    # for eachdupe in mydupe:
+                        # myinvlist = myinvlist + ", " + eachdupe.number
+                    # raise UserError(_(
+                        # "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
+            # # CUSTOMER INVOICE - DUPE CHECK
+            # if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
+                # if invoice.name:
+                    # mydupe = self.search([('type', '=', invoice.type), ('name', '=', invoice.name),
+                                # ('company_id', 'in', invoice.company_ids),
+                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                # ('id', '!=', invoice.id),
+                                # ('state', 'in', ('open', 'in_payment', 'paid'))])
 
-                    myref = invoice.name
-                if (not mydupe) and (invoice.x_tracking_ref):
-                    # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
-                    mydupe = self.search([('type', '=', invoice.type), ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
-                                          ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          ('id', '!=', invoice.id),
-                                          ('state', 'in', ('open', 'in_payment', 'paid'))])
-                    myref = invoice.x_tracking_ref
-                if mydupe:
-                    myinvlist = ""
-                    for eachdupe in mydupe:
-                        myinvlist = myinvlist + ", " + eachdupe.number
-                    raise UserError(_(
-                        "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
-        return super(TsaAccountInvoice, self).invoice_validate()
+                    # myref = invoice.name
+                # if (not mydupe) and (invoice.x_tracking_ref):
+                    # # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
+                    # mydupe = self.search([('type', '=', invoice.type), ('x_tracking_ref', '=', invoice.x_tracking_ref),
+                                          # ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
+                                          # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                          # ('id', '!=', invoice.id),
+                                          # ('state', 'in', ('open', 'in_payment', 'paid'))])
+                    # myref = invoice.x_tracking_ref
+                # if mydupe:
+                    # myinvlist = ""
+                    # for eachdupe in mydupe:
+                        # myinvlist = myinvlist + ", " + eachdupe.number
+                    # raise UserError(_(
+                        # "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
+        # return super(TsaAccountInvoice, self).invoice_validate()
 
-    @api.depends('partner_id')
-    def _get_customer_email(self):
-        for record in self:
-            record['x_customer_email'] = record.partner_id.email
-    @api.depends('name')
-    def _get_name_truncated(self):
-        for record in self:
-            if (record.name):
-                if (len(record.name) > 32):
-                    record['x_name_truncated'] = (record.name[:30] + '..')
-                else:
-                    record.name
-            else:
-                record.name
+    # @api.depends('partner_id')
+    # def _get_customer_email(self):
+        # for record in self:
+            # record['x_customer_email'] = record.partner_id.email
+    # @api.depends('name')
+    # def _get_name_truncated(self):
+        # for record in self:
+            # if (record.name):
+                # if (len(record.name) > 32):
+                    # record['x_name_truncated'] = (record.name[:30] + '..')
+                # else:
+                    # record.name
+            # else:
+                # record.name
 
-    name = fields.Char(readonly=False)
-    reference = fields.Char(readonly=False)
-    x_customer_email = fields.Char(string='Email', help='Read-only display of Customer or Vendors Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
-    x_items_for_partner_id = fields.Many2one('res.partner', string='Items For', help='', copy=True, readonly=False, required=False, selectable=True)
-    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False, selectable=True)
-    #x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False)
-    x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False, compute='_get_name_truncated')
-    x_extra_notes = fields.Text(string='Additional Notes', help='', copy=False, readonly=False, required=False, selectable=True)
+    # name = fields.Char(readonly=False)
+    # reference = fields.Char(readonly=False)
+    # x_customer_email = fields.Char(string='Email', help='Read-only display of Customer or Vendors Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
+    # x_items_for_partner_id = fields.Many2one('res.partner', string='Items For', help='', copy=True, readonly=False, required=False, selectable=True)
+    # x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False, selectable=True)
+    # #x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False)
+    # x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False, compute='_get_name_truncated')
+    # x_extra_notes = fields.Text(string='Additional Notes', help='', copy=False, readonly=False, required=False, selectable=True)
 
 class tsaextb(models.Model):
     _inherit = ['account.move']
@@ -514,139 +514,139 @@ class TsaRpt050BankJouA(models.Model):
 
 # BELOW MODEL IS NOT WORKING 100% !!!
 # Postgres view gets created ok BUT odoo model only displays a sub-set of the full number of records (no matter what I do)
-class TsaRpt030PaidNotDeliveredA(models.Model):
-    _name = "gg2.rpt030"
-    _description = "Sales Orders that have been PAID but NOT Delivered!"
-    _auto = False
+# class TsaRpt030PaidNotDeliveredA(models.Model):
+    # _name = "gg2.rpt030"
+    # _description = "Sales Orders that have been PAID but NOT Delivered!"
+    # _auto = False
 
-    #id = fields.Many2one('sale.order', string='SOId', readonly=True)
-    state = fields.Char(string='SOState', readonly=True)
-    salesorder = fields.Char(string='SO', readonly=True)
-    #create_date = fields.Date(string='SOCreated', readonly=True) # Created Type error .. said it wanted type of Date or String not Datetime!
-    partner_invoice_id = fields.Integer(string='ClientY', readonly=True)
-    partnerid = fields.Many2one('res.partner', string='Client', readonly=True) # ? One2many ? Many2many
-    whotoinvoice = fields.Char(string='WhoToInvoice', readonly=True)
-    invid = fields.Many2one('account.invoice', string='InvId', readonly=True) # ? One2many ? Many2many
-    origin = fields.Char(string='InvOrigin', readonly=True)
-    inv_status = fields.Char(string='InvState', readonly=True)
-    solineid = fields.One2many('sale.order.line', string='SoLineId', readonly=True) # ? One2many ? Many2many
-    qtynotdelivered = fields.Float(string='QtyNotDelivered', readonly=True)
-    item = fields.Char(string='item', readonly=True)
-    ordered = fields.Float(string='OrderQty', readonly=True)
-    qtyinvoiced = fields.Float(string='InvQty', readonly=True)
-    qtydelivered = fields.Float(string='DeliveredQty', readonly=True)
-    price_total = fields.Float(string='Total', readonly=True)
-    productid = fields.Many2one('product.product', string='ProdId', readonly=True) # ? One2many ? Many2many
-    itemcode = fields.Char(string='ItemCode', readonly=True)
-    producttmplid = fields.Many2one('product.template', string='ProdTmplId', readonly=True)
+    # #id = fields.Many2one('sale.order', string='SOId', readonly=True)
+    # state = fields.Char(string='SOState', readonly=True)
+    # salesorder = fields.Char(string='SO', readonly=True)
+    # #create_date = fields.Date(string='SOCreated', readonly=True) # Created Type error .. said it wanted type of Date or String not Datetime!
+    # partner_invoice_id = fields.Integer(string='ClientY', readonly=True)
+    # partnerid = fields.Many2one('res.partner', string='Client', readonly=True) # ? One2many ? Many2many
+    # whotoinvoice = fields.Char(string='WhoToInvoice', readonly=True)
+    # invid = fields.Many2one('account.invoice', string='InvId', readonly=True) # ? One2many ? Many2many
+    # origin = fields.Char(string='InvOrigin', readonly=True)
+    # inv_status = fields.Char(string='InvState', readonly=True)
+    # solineid = fields.One2many('sale.order.line', string='SoLineId', readonly=True) # ? One2many ? Many2many
+    # qtynotdelivered = fields.Float(string='QtyNotDelivered', readonly=True)
+    # item = fields.Char(string='item', readonly=True)
+    # ordered = fields.Float(string='OrderQty', readonly=True)
+    # qtyinvoiced = fields.Float(string='InvQty', readonly=True)
+    # qtydelivered = fields.Float(string='DeliveredQty', readonly=True)
+    # price_total = fields.Float(string='Total', readonly=True)
+    # productid = fields.Many2one('product.product', string='ProdId', readonly=True) # ? One2many ? Many2many
+    # itemcode = fields.Char(string='ItemCode', readonly=True)
+    # producttmplid = fields.Many2one('product.template', string='ProdTmplId', readonly=True)
 
-    def _query(self, with_clause='', fields={}, from_clause=''):
-        with_ = ("WITH %s" % with_clause) if with_clause else ""
+    # def _query(self, with_clause='', fields={}, from_clause=''):
+        # with_ = ("WITH %s" % with_clause) if with_clause else ""
 
-        select_ = """
-            sale_order.id,
-            sale_order.state AS state,
-            sale_order.name AS salesorder,
-            sale_order.create_date,
-            sale_order.partner_invoice_id,
-            res_partner.id AS partnerid,
-            res_partner.display_name AS whotoinvoice,
-            account_invoice.id as invid,
-            account_invoice.origin,
-            account_invoice.state AS inv_status,
-            sale_order_line.id AS solineid,
-            sale_order_line.product_uom_qty - sale_order_line.qty_delivered AS qtynotdelivered,
-            sale_order_line.name AS item,
-            sale_order_line.product_uom_qty AS ordered,
-            sale_order_line.qty_invoiced AS qtyinvoiced,
-            sale_order_line.qty_delivered AS qtydelivered,
-            sale_order_line.price_total,
-            product_product.id as productid,
-            product_product.default_code as itemcode,
-            product_template.id as producttmplid
-        """
+        # select_ = """
+            # sale_order.id,
+            # sale_order.state AS state,
+            # sale_order.name AS salesorder,
+            # sale_order.create_date,
+            # sale_order.partner_invoice_id,
+            # res_partner.id AS partnerid,
+            # res_partner.display_name AS whotoinvoice,
+            # account_invoice.id as invid,
+            # account_invoice.origin,
+            # account_invoice.state AS inv_status,
+            # sale_order_line.id AS solineid,
+            # sale_order_line.product_uom_qty - sale_order_line.qty_delivered AS qtynotdelivered,
+            # sale_order_line.name AS item,
+            # sale_order_line.product_uom_qty AS ordered,
+            # sale_order_line.qty_invoiced AS qtyinvoiced,
+            # sale_order_line.qty_delivered AS qtydelivered,
+            # sale_order_line.price_total,
+            # product_product.id as productid,
+            # product_product.default_code as itemcode,
+            # product_template.id as producttmplid
+        # """
 
-        for field in fields.values():
-            select_ += field
+        # for field in fields.values():
+            # select_ += field
 
-        from_ = """
-            sale_order
-            INNER JOIN res_partner ON sale_order.partner_invoice_id = res_partner.id
-            INNER JOIN account_invoice ON sale_order.name::text = account_invoice.origin::text
-            INNER JOIN sale_order_line ON sale_order.id = sale_order_line.order_id
-            INNER JOIN product_product ON sale_order_line.product_id = product_product.id
-            INNER JOIN product_template ON product_product.product_tmpl_id = product_template.id
-            %s
-        """ % from_clause
+        # from_ = """
+            # sale_order
+            # INNER JOIN res_partner ON sale_order.partner_invoice_id = res_partner.id
+            # INNER JOIN account_invoice ON sale_order.name::text = account_invoice.origin::text
+            # INNER JOIN sale_order_line ON sale_order.id = sale_order_line.order_id
+            # INNER JOIN product_product ON sale_order_line.product_id = product_product.id
+            # INNER JOIN product_template ON product_product.product_tmpl_id = product_template.id
+            # %s
+        # """ % from_clause
 
-        where_ = """
-            sale_order.state::text <> 'draft'::text AND 
-            sale_order.state::text <> 'cancel'::text AND 
-            account_invoice.state::text = 'paid'::text AND 
-            product_template.type::text <> 'service'::text AND 
-            product_template.type::text <> 'consu'::text AND 
-            (sale_order_line.product_uom_qty - sale_order_line.qty_delivered) > 0::numeric AND 
-            product_product.default_code::text <> 'SHIPPING'::text AND 
-            product_product.default_code::text NOT ILIKE 'POST%'::text
-        """
+        # where_ = """
+            # sale_order.state::text <> 'draft'::text AND 
+            # sale_order.state::text <> 'cancel'::text AND 
+            # account_invoice.state::text = 'paid'::text AND 
+            # product_template.type::text <> 'service'::text AND 
+            # product_template.type::text <> 'consu'::text AND 
+            # (sale_order_line.product_uom_qty - sale_order_line.qty_delivered) > 0::numeric AND 
+            # product_product.default_code::text <> 'SHIPPING'::text AND 
+            # product_product.default_code::text NOT ILIKE 'POST%'::text
+        # """
 
-        orderby_ = """
-            sale_order.id DESC
-        """
+        # orderby_ = """
+            # sale_order.id DESC
+        # """
 
-        return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, orderby_)
+        # return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, orderby_)
 
-    # @api.model_cr
-    def init(self):
-        tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
+    # # @api.model_cr
+    # def init(self):
+        # tools.drop_view_if_exists(self.env.cr, self._table)
+        # self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
 
 class TsaRpt070PaidInvoices(models.Model):
     _name = "gg2.rpt070"
     _description = "Paid Invoices"
     _auto = False
 
-    invid = fields.Many2one('account.invoice.line', string='InvLineId', readonly=True)
-    state = fields.Char(readonly=True)
-    number = fields.Char(readonly=True)
-    origin = fields.Char(readonly=True)
-    amt =  fields.Float(readonly=True)
-    topay =  fields.Float(readonly=True)
-    who =  fields.Char(readonly=True)
+    # invid = fields.Many2one('account.invoice.line', string='InvLineId', readonly=True)
+    # state = fields.Char(readonly=True)
+    # number = fields.Char(readonly=True)
+    # origin = fields.Char(readonly=True)
+    # amt =  fields.Float(readonly=True)
+    # topay =  fields.Float(readonly=True)
+    # who =  fields.Char(readonly=True)
 
-    def _query(self, with_clause='', fields={}, groupby='', from_clause=''):
-        with_ = ("WITH %s" % with_clause) if with_clause else ""
+    # def _query(self, with_clause='', fields={}, groupby='', from_clause=''):
+        # with_ = ("WITH %s" % with_clause) if with_clause else ""
 
-        select_ = """
-            account_invoice_line.id AS id, 
-            account_invoice.id AS invid,
-            account_invoice.state AS state,
-            account_invoice.number AS number,
-            account_invoice.origin AS origin,
-            account_invoice.amount_total_company_signed AS amt,
-            account_invoice.residual_company_signed AS topay,
-            account_invoice.partner_shipping_id AS who
-        """
+        # select_ = """
+            # account_invoice_line.id AS id, 
+            # account_invoice.id AS invid,
+            # account_invoice.state AS state,
+            # account_invoice.number AS number,
+            # account_invoice.origin AS origin,
+            # account_invoice.amount_total_company_signed AS amt,
+            # account_invoice.residual_company_signed AS topay,
+            # account_invoice.partner_shipping_id AS who
+        # """
 
-        for field in fields.values():
-            select_ += field
+        # for field in fields.values():
+            # select_ += field
 
-        from_ = """
-            account_invoice_line 
-            INNER JOIN account_invoice ON account_invoice_line.invoice_id = account_invoice.id
-            %s
-        """ % from_clause
+        # from_ = """
+            # account_invoice_line 
+            # INNER JOIN account_invoice ON account_invoice_line.invoice_id = account_invoice.id
+            # %s
+        # """ % from_clause
         
-        where_ = """
-            state = 'paid'
-        """
+        # where_ = """
+            # state = 'paid'
+        # """
 
-        return '%s (SELECT %s FROM %s WHERE %s)' % (with_, select_, from_, where_)
+        # return '%s (SELECT %s FROM %s WHERE %s)' % (with_, select_, from_, where_)
 
-    # @api.model_cr
-    def init(self):
-        tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
+    # # @api.model_cr
+    # def init(self):
+        # tools.drop_view_if_exists(self.env.cr, self._table)
+        # self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
 
 
 class TsaRpt080SalesToDeliverD(models.Model):
