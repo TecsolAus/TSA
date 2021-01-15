@@ -387,20 +387,20 @@
             <!-- # <field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
         <!-- </record> -->
 
-        <record model="ir.ui.view" id="product_form_view_sale_order_button">
-            <field name="name">product.template.sale.order</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
-            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
-            <field name="arch" type="xml">
-                <div name="button_box" position="inside">
-                    <button class="oe_stat_button" name="%(gg2.action_product_sale_list)d" type="action" string="Sales=" icon="fa-shopping-cart">
-                        <field string="Sales" name="x_total_qty_sold"/>
-                        <field name="uom_name"/>
-                    </button>
-                </div>
-            </field>
-        </record>
+        <!-- <record model="ir.ui.view" id="product_form_view_sale_order_button"> -->
+            <!-- <field name="name">product.template.sale.order</field> -->
+            <!-- <field name="model">product.template</field> -->
+            <!-- <field name="inherit_id" ref="product.product_template_only_form_view"/> -->
+            <!-- <field name="groups_id" eval="[(4, ref('base.group_user'))]"/> -->
+            <!-- <field name="arch" type="xml"> -->
+                <!-- <div name="button_box" position="inside"> -->
+                    <!-- <button class="oe_stat_button" name="%(gg2.action_product_sale_list)d" type="action" string="Sales=" icon="fa-shopping-cart"> -->
+                        <!-- <field string="Sales" name="x_total_qty_sold"/> -->
+                        <!-- <field name="uom_name"/> -->
+                    <!-- </button> -->
+                <!-- </div> -->
+            <!-- </field> -->
+        <!-- </record> -->
 
         <!--REPORT FULL RECONCILE -->
       
