@@ -1474,7 +1474,7 @@
                     <field name="id"/>
                     <field name="x_shortcut"/>
                 </xpath>
-                <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='customer']" position="before">
+                <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='user_id']" position="before">
                     <field name="credit"/>
                 </xpath>
                 <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='supplier']" position="before">
