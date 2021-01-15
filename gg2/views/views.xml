@@ -552,43 +552,43 @@
                 action="tsa_rpt082_action"
                 sequence="82"
         />
-        <record id="tsa_rpt070_treeview" model="ir.ui.view">
-            <field name="name">tsa_rpt070_treeview</field>
-            <field name="model">gg2.rpt070</field>
-            <field name="arch" type="xml">
-                <tree string="Paid Invoices">
-                    <!-- <button name="countme" string="RowCount" type="object"/> -->
-                    <field name="id"/>
-                    <field name="who"/>
-                    <field name="number"/>
-                    <field name="origin"/>
-                    <field name="invid" string="item"/>
-                    <field name="state"/>
-                    <field name="amt"/>
-                    <field name="topay"/>
-                    <!-- <field name="invlineid"/> -->
-                    <!-- <field name="soname"/> -->
-                    <!-- <field name="invoice_line_id"/> -->
-                </tree>
-            </field>
-        </record>
-        <record id="tsa_rpt070_action" model="ir.actions.act_window">
-            <field name="name">Rpt No70 SO to Invoice</field>
-            <field name="res_model">gg2.rpt070</field>
-            <field name="view_mode">tree</field>
-            <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt070_treeview"/>
-            <field name="target">current</field>
-            <field name="context">{}</field>
-            <field name="domain">[]</field>
-        </record>
-        <menuitem
-                name="70 Paid Invoices"
-                id="tsa_report_test70_menu"
-                parent="tsa_report_tests_menu"
-                action="tsa_rpt070_action"
-                sequence="70"
-        />
+        <!-- <record id="tsa_rpt070_treeview" model="ir.ui.view"> -->
+            <!-- <field name="name">tsa_rpt070_treeview</field> -->
+            <!-- <field name="model">gg2.rpt070</field> -->
+            <!-- <field name="arch" type="xml"> -->
+                <!-- <tree string="Paid Invoices"> -->
+                    <!-- <!-- <button name="countme" string="RowCount" type="object"/> --> -->
+                    <!-- <field name="id"/> -->
+                    <!-- <field name="who"/> -->
+                    <!-- <field name="number"/> -->
+                    <!-- <field name="origin"/> -->
+                    <!-- <field name="invid" string="item"/> -->
+                    <!-- <field name="state"/> -->
+                    <!-- <field name="amt"/> -->
+                    <!-- <field name="topay"/> -->
+                    <!-- #<field name="invlineid"/> -->
+                    <!-- #<field name="soname"/> -->
+                    <!-- #<field name="invoice_line_id"/> -->
+                <!-- </tree> -->
+            <!-- </field> -->
+        <!-- </record> -->
+        <!-- <record id="tsa_rpt070_action" model="ir.actions.act_window"> -->
+            <!-- <field name="name">Rpt No70 SO to Invoice</field> -->
+            <!-- <field name="res_model">gg2.rpt070</field> -->
+            <!-- <field name="view_mode">tree</field> -->
+            <!-- <field name="views">[]</field> -->
+            <!-- <field name="view_id" ref="gg2.tsa_rpt070_treeview"/> -->
+            <!-- <field name="target">current</field> -->
+            <!-- <field name="context">{}</field> -->
+            <!-- <field name="domain">[]</field> -->
+        <!-- </record> -->
+        <!-- <menuitem -->
+                <!-- name="70 Paid Invoices" -->
+                <!-- id="tsa_report_test70_menu" -->
+                <!-- parent="tsa_report_tests_menu" -->
+                <!-- action="tsa_rpt070_action" -->
+                <!-- sequence="70" -->
+        <!-- /> -->
 
         <record id="tsa_rpt030_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt030</field>
