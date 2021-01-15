@@ -557,7 +557,7 @@
             <!-- <field name="model">gg2.rpt070</field> -->
             <!-- <field name="arch" type="xml"> -->
                 <!-- <tree string="Paid Invoices"> -->
-                    <!-- <!-- <button name="countme" string="RowCount" type="object"/> --> -->
+                    <!-- <button name="countme" string="RowCount" type="object"/> -->
                     <!-- <field name="id"/> -->
                     <!-- <field name="who"/> -->
                     <!-- <field name="number"/> -->
