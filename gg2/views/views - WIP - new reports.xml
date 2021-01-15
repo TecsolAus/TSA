@@ -20,38 +20,38 @@
 		</xpath>
 		</field>
 	</record>-->
-	<record id="tsa_rpt030" model="ir.ui.view">
-		<field name="name">tsa_rpt030</field>
-		<field name="model">gg2.rpt030</field>
-		<field name="arch" type="xml">
-			<tree string="Sales Orders PAID but not yet DELIVERED" default_order="id desc">
-				<field name="state"/>
-				<field name="salesorder"/>
+	<!-- <record id="tsa_rpt030" model="ir.ui.view"> -->
+		<!-- <field name="name">tsa_rpt030</field> -->
+		<!-- <field name="model">gg2.rpt030</field> -->
+		<!-- <field name="arch" type="xml"> -->
+			<!-- <tree string="Sales Orders PAID but not yet DELIVERED" default_order="id desc"> -->
+				<!-- <field name="state"/> -->
+				<!-- <field name="salesorder"/> -->
 				<!--<field name="create_date"/>-->
-				<field name="partnerid"/>
-				<field name="inv_status"/>
-				<field name="qtynotdelivered"/>
-				<field name="itemcode"/>
-				<field name="item"/>
-				<field name="ordered"/>
-				<field name="qtyinvoiced"/>
-				<field name="qtydelivered"/>
-				<field name="price_total"/>
-				<field name="id" invisible="1"/>
-			</tree>
-		</field>
-	</record>
-	<record id="tsa_rpt030_x" model="ir.actions.act_window">
-		   <field name="name">Sales Orders Paid Not Delivered</field>
-		   <field name="res_model">gg2.rpt030</field>
-		   <field name="view_mode">tree</field>
+				<!-- <field name="partnerid"/> -->
+				<!-- <field name="inv_status"/> -->
+				<!-- <field name="qtynotdelivered"/> -->
+				<!-- <field name="itemcode"/> -->
+				<!-- <field name="item"/> -->
+				<!-- <field name="ordered"/> -->
+				<!-- <field name="qtyinvoiced"/> -->
+				<!-- <field name="qtydelivered"/> -->
+				<!-- <field name="price_total"/> -->
+				<!-- <field name="id" invisible="1"/> -->
+			<!-- </tree> -->
+		<!-- </field> -->
+	<!-- </record> -->
+	<!-- <record id="tsa_rpt030_x" model="ir.actions.act_window"> -->
+		   <!-- <field name="name">Sales Orders Paid Not Delivered</field> -->
+		   <!-- <field name="res_model">gg2.rpt030</field> -->
+		   <!-- <field name="view_mode">tree</field> -->
 		   <!--<field name="views">["gg2.tsa_rpt030", "tree"]</field>--><!-- EXAMPLE -->
-		   <field name="views">[]</field>
-		   <field name="view_id" ref="gg2.tsa_rpt030"/>
-		   <field name="target">current</field>
-		   <field name="context">{}</field>
-		   <field name="domain">[]</field>
-	</record>
+		   <!-- <field name="views">[]</field> -->
+		   <!-- <field name="view_id" ref="gg2.tsa_rpt030"/> -->
+		   <!-- <field name="target">current</field> -->
+		   <!-- <field name="context">{}</field> -->
+		   <!-- <field name="domain">[]</field> -->
+	<!-- </record> -->
 
 	<record id="tsa_bankjou" model="ir.ui.view">
 		<field name="name">tsa_bankjou</field>
@@ -357,7 +357,7 @@
 		</field>
 	</record>
 
-	<record id="invoice_tree_tsa" model="ir.ui.view">
+<!-- 	<record id="invoice_tree_tsa" model="ir.ui.view">
             <field name="name">Invoice List TSA Extension</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_tree"/>
@@ -386,7 +386,7 @@
                 </tree>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 	<record id="product_template_search2_tsa" model="ir.ui.view">
 		<field name="name">Product Search TSA Extension2</field>
 		<field name="model">product.template</field>
@@ -493,7 +493,7 @@
 			</xpath>
 		</field>
 	</record>
-	<record id="view_account_invoice_filter_tsa" model="ir.ui.view">
+<!-- 	<record id="view_account_invoice_filter_tsa" model="ir.ui.view">
 		<field name="name">Invoice Search TSA Extension</field>
 		<field name="model">account.invoice</field>
 		<field name="inherit_id" ref="account.view_account_invoice_filter"/>
@@ -522,9 +522,9 @@
 					<field name="move_id"        string="Journal Entry Transaction Ref"/>
 					<field name="origin"         string="Source Doc"/>
 					<field name="user_id"        string="Salesperson"/>
-					<separator/>
+					<separator/> -->
 					<!--<filter domain="[('user_id','=',uid)]" help="My Invoices"/>-->
-					<group expand="0" string="Group By">
+<!-- 					<group expand="0" string="Group By">
 						<filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
 						<filter name="salesperson"        string="Salesperson"  context="{'group_by':'user_id'}"/>
 						<filter name="status"              string="Status"       context="{'group_by':'state'}"/>
@@ -536,7 +536,7 @@
 				</search>
 			</xpath>
 		</field>
-	</record>
+	</record> -->
 	<record id="view_res_partner_filter_tsa" model="ir.ui.view">
 		<field name="name">Contact Search TSA Extension</field>
 		<field name="model">res.partner</field>
@@ -652,7 +652,7 @@
 			</tree>
 		</xpath>
 		</field>
-	</record>
+<!-- 	</record>
         <record id="view_form_invoice_inherited" model="ir.ui.view">
             <field name="name">Invoice TSA Extension</field>
             <field name="model">account.invoice</field>
@@ -668,13 +668,14 @@
                 </xpath>
                 <xpath expr="//field[@name='team_id']" position="after">
                     <field name="name"/>
-                    <field name="reference"/>  <!-- ORIG had these attributes    attrs="{'readonly':[('state','!=','draft')]}"/>-->
-                    <field name="x_tracking_ref"/>
+                    <field name="reference"/>  --> 
+					<!-- ORIG had these attributes    attrs="{'readonly':[('state','!=','draft')]}"/>-->
+<!--                     <field name="x_tracking_ref"/>
                     <field name="x_extra_notes"/>
                 </xpath>
             </field>
-        </record>
-        <record id="invoice_supplier_form_view_tsa" model="ir.ui.view">
+        </record> -->
+<!--         <record id="invoice_supplier_form_view_tsa" model="ir.ui.view">
             <field name="name">Vendor Bill Form TSA Extension</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
@@ -683,7 +684,7 @@
                     <field name="x_customer_email"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
         <record id="view_form_jou_entry_inherited" model="ir.ui.view">
             <field name="name">Journal Entry TSA Extension</field>
             <field name="model">account.move</field>
@@ -767,9 +768,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-				<xpath expr="//button[@name='action_unlock']" position="after">
-					<button name="%(tsa_rpt030_x)d" string="Sales Paid Not Delivered" type="action"/>
-				</xpath>
+				<!-- <xpath expr="//button[@name='action_unlock']" position="after"> -->
+					<!-- <button name="%(tsa_rpt030_x)d" string="Sales Paid Not Delivered" type="action"/> -->
+				<!-- </xpath> -->
                 <xpath expr="//field[@name='partner_shipping_id']" position="after">
                     <field name="x_customer_email"/>
                 </xpath>
