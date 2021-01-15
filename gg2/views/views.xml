@@ -362,30 +362,30 @@
 
 
         <!--SALES ORDERS BUTTONS ON PRODUCT FORM-->
-        <record id="tsa_saleorderline_treeview" model="ir.ui.view">
-            <field name="name">tsa_saleorderline_treeview</field>
-            <field name="model">sale.order.line</field>
-            <field name="arch" type="xml">
-                <div name="button_box" position="inside">
-                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
-                        <field string="Purchases" name="x_total_qty_bought"/>
-                        <field name="uom_name"/>
-                    </button>
-                </div>
-            </field>
-        </record>
+        <!-- <record id="tsa_saleorderline_treeview" model="ir.ui.view"> -->
+            <!-- <field name="name">tsa_saleorderline_treeview</field> -->
+            <!-- <field name="model">sale.order.line</field> -->
+            <!-- <field name="arch" type="xml"> -->
+                <!-- <div name="button_box" position="inside"> -->
+                    <!-- <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart"> -->
+                        <!-- <field string="Purchases" name="x_total_qty_bought"/> -->
+                        <!-- <field name="uom_name"/> -->
+                    <!-- </button> -->
+                <!-- </div> -->
+            <!-- </field> -->
+        <!-- </record> -->
       
-        <record id="action_product_sale_list" model="ir.actions.act_window">
-            <field name="name">Sale Order Lines</field>
-            <field name="res_model">sale.order.line</field>
-            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
-            <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
-            <field name="view_mode">tree,form</field>
-            <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/>
-            <field name="limit">150</field>
-            <!--<field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
-        </record>
+        <!-- <record id="action_product_sale_list" model="ir.actions.act_window"> -->
+            <!-- <field name="name">Sale Order Lines</field> -->
+            <!-- <field name="res_model">sale.order.line</field> -->
+            <!-- <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field> -->
+            <!-- <field name="domain">[('state', 'in', ['sale', 'done'])]</field> -->
+            <!-- <field name="view_mode">tree,form</field> -->
+            <!-- <field name="views">[]</field> -->
+            <!-- <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/> -->
+            <!-- <field name="limit">150</field> -->
+            <!-- # <field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
+        <!-- </record> -->
 
         <record model="ir.ui.view" id="product_form_view_sale_order_button">
             <field name="name">product.template.sale.order</field>
