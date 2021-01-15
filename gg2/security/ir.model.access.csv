@@ -3,3 +3,4 @@ gg2.access_TsaRpt050BankJouA,gg2.MyBankJouACL,model_gg2_bankjou,account.group_ac
 gg2.access_TsaRpt080SalesToDeliverD,gg2.TsaRpt080ACL,model_gg2_rpt080,base.group_user,1,0,0,0
 gg2.access_TsaRpt082SalesToDeliverD,gg2.TsaRpt082ACL,model_gg2_rpt082,base.group_user,1,0,0,0
 gg2.access_TsaRpt090BalanceSheetH,gg2.TsaRpt090ACL,model_gg2_rpt090,account.group_account_manager,1,0,0,0
+gg2.access_TsaRpt100FullReconcile,gg2.TsaRpt100ACL,model_gg2_rpt100,account.group_account_manager,1,0,0,0
