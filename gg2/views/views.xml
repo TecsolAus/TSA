@@ -167,6 +167,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='group_general']" position="replace">
                     <group name="group_general">
+                        <field name="active"/>					
                         <field name="categ_id"/>
                         <field name="type"/>
                         <field name="default_code" invisible="True"/>
