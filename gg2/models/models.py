@@ -137,8 +137,8 @@ class tsaextd(models.Model):
                 record['x_payment_type'] = 'Receive'
             if record['payment_type'] == 'transfer':
                 record['x_payment_type'] = 'Transfer'
-			else:
-			    record['x_payment_type'] = 'Unknown'
+            else:
+                record['x_payment_type'] = 'Unknown'
 
     x_amount_signed = fields.Monetary(string='Amount', help='Negative if payment_type=outbound (Send Money) else positive', copy=False, readonly=True, required=False, selectable=False, compute='_get_amount_signed')
     x_payment_method = fields.Char(string='Payment Method', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_payment_method')
