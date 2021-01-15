@@ -1498,9 +1498,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_unlock']" position="after">
-                    <button name="%(tsa_rpt030_action)d" string="Sales Paid Not Delivered" type="action"/>
-                </xpath>
+                <!-- <xpath expr="//button[@name='action_unlock']" position="after"> -->
+                    <!-- <button name="%(tsa_rpt030_action)d" string="Sales Paid Not Delivered" type="action"/> -->
+                <!-- </xpath> -->
                 <xpath expr="//field[@name='partner_shipping_id']" position="after">
                     <field name="x_customer_email"/>
                 </xpath>
