@@ -19,17 +19,14 @@
             sequence="100"
         />
         <menuitem
-            name="TSA Actions"
-            id="tsa_actions_menu"
-            parent="tsa_top_menu"
-            sequence="200"
-        />
-        <menuitem
             name="Live"
             id="tsa_report_live_menu"
             parent="tsa_reports_menu"
             sequence="60"
         />
+
+        <!-- DEFAULT PRODUCT SEARCHES - remove Consumable filter !-->
+
         <!-- PRODUCT FORM Modifications -->
         <record id="view_form_product_template_tsa" model="ir.ui.view">
             <field name="name">Product Template TSA Extension</field>
@@ -55,6 +52,8 @@
                         <field name="sale_ok"/>
                         <label for="purchase_ok" style="padding-left:16px"/>
                         <field name="purchase_ok"/>
+                        <!--<label for="can_be_expensed" style="padding-left:16px"/>-->
+                        <!--<field name="can_be_expensed"/>-->
                     </div>
                 </xpath>
                 <xpath expr="//div[@name='product_title_dots']" position="after">
@@ -266,7 +265,6 @@
             </field>
         </record>
 
-
         <!--MANUFACTURE ORDERS BUTTON ON PRODUCT FORM-->
         <record id="tsa_manufactureorders_treeview" model="ir.ui.view">
             <field name="name">tsa_manufactureorders_treeview</field>
@@ -349,6 +347,7 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+
             <field name="arch" type="xml">
                 <div name="button_box" position="inside">
                     <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
@@ -358,6 +357,52 @@
                 </div>
             </field>
         </record>
+
+
+
+        <!--SALES ORDERS BUTTONS ON PRODUCT FORM-->
+        <record id="tsa_saleorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_saleorderline_treeview</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
+                        <field string="Purchases" name="x_total_qty_bought"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+      
+        <record id="action_product_sale_list" model="ir.actions.act_window">
+            <field name="name">Sale Order Lines</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_saleorderline_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productsalelist_searchview"/>-->
+        </record>
+
+        <record model="ir.ui.view" id="product_form_view_sale_order_button">
+            <field name="name">product.template.sale.order</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_sale_list)d" type="action" string="Sales=" icon="fa-shopping-cart">
+                        <field string="Sales" name="x_total_qty_sold"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+
+        <!--REPORT FULL RECONCILE -->
+      
         <record id="tsa_rpt100_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt100_treeview</field>
             <field name="model">account.full.reconcile</field>
@@ -598,8 +643,6 @@
             <field name="arch" type="xml">
                 <search string="Search Bank Jou XRef">
                     <field name="stmt" filter_domain="[('stmt','ilike',self)]" string="Bank Statement"/>
-                    <field name="statement_id" filter_domain="[('statement_id','=',self)]" string="Bank Statement ID"/>
-                    <field name="stmt_row" filter_domain="[('stmt_row','=',self)]" string="Bank Statement Row"/>
                     <field name="jou_item" filter_domain="[('jou_item','ilike',self)]" string="Journal Item"/>
                     <field name="jou_entry" filter_domain="[('jou_entry','ilike',self)]" string="Journal Entry"/>
                     <field name="jouitem_debit" filter_domain="[('jouitem_debit','ilike',self)]" string="Debit Contains"/>
@@ -609,18 +652,8 @@
                     <field name="amount" filter_domain="[('amount','ilike',self)]" string="Statement Amount Contains"/>
                     <field name="amount" filter_domain="[('amount','=',self)]" string="Statement Amount Equals"/>
                     <field name="jou_line_ref" filter_domain="[('jou_line_ref','ilike',self)]" string="Journal Reference Contains"/>
-                    <field name="joudate" filter_domain="[('joudate','=',self)]" string="Journal Date"/>
                     <field name="joudate" filter_domain="[('joudate','&gt;=',self)]" string="Journals after or equals Date"/>
                     <field name="joudate" filter_domain="[('joudate','&lt;=',self)]" string="Journals prior to or equals Date"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Jou Entry" name="jouentry_gp" context="{'group_by':'jou_entry'}"/>
-                        <separator/>
-                        <filter string="Jou Date" name="joudate_gp" context="{'group_by':'joudate'}"/>
-                        <separator/>
-                        <filter string="Statement" name="stmtid_gp" context="{'group_by':'stmtid'}"/>
-                        <separator/>
-                        <filter string="Statement Row" name="stmtrow_gp" context="{'group_by':'stmt_row'}"/>
-                    </group>
                 </search>
             </field>
         </record>
@@ -631,7 +664,6 @@
                 <tree string="Rpt No50 Bank Jou XRef" default_order="stmtid desc, stmt_row">
                     <button name="showjournalentry" string="Jou" type="object"/>
                     <button name="showbankstatement" string="Stmt" type="object"/>
-                    <button name="showpayment" string="Paymt" type="object"/>
                     <field name="joudate" string="JouDate"/>
                     <field name="jou_item"/>
                     <field name="jou_entry"/>
@@ -651,10 +683,11 @@
             </field>
         </record>
         <record id="tsa_bankjou_action" model="ir.actions.act_window">
-            <field name="name">Bank Journal X-Ref</field>
+            <field name="name">Rpt No50 Bank Journal X-Ref</field>
             <field name="res_model">gg2.bankjou</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <!--<field name="view_type">tree</field>-->
+            <field name="view_mode">tree</field>
+            <!--<field name="views">["gg2.tsa_bankjou", "tree"]</field>--><!-- EXAMPLE -->
             <field name="views">[]</field>
             <field name="view_id" ref="gg2.tsa_rpt050_treeview"/>
             <field name="search_view_id" ref="gg2.tsa_rpt050_searchview"/>
@@ -675,7 +708,7 @@
             <field name="inherit_id" ref="account.view_bank_statement_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='307']" position="after">
-                    <button name="%(tsa_bankjou_action)d" string="Journal Bank XRef" type="action" context="{'search_default_statement_id': [id]}"/>
+                    <button name="%(tsa_bankjou_action)d" string="Journal Bank XRef" type="action"/>
                 </xpath>
                 <xpath expr="//page[@name='statement_line_ids']" position="replace">
                     <page string="Transactions" name="statement_line_ids">
@@ -726,10 +759,7 @@
                         <filter string="Unposted" name="unposted" domain="[('move_id.state','=','draft')]" help="Unposted Journal Items"/>
                         <filter name="posted" string="Posted" domain="[('move_id.state','=','posted')]" help="Posted Journal Items"/>
                         <separator/>
-                        <filter string="No Matching Number" domain="[('full_reconcile_id', '=', False), ('balance','!=', 0), ('account_id.reconcile','=',True)]" help="Journal items without Matching Number" name="unreconciled"/>
-                        <filter string="With Matching Number" domain="[('full_reconcile_id', '!=', False)]" help="Journal items with Matching Number" name="matchingnum"/>
-                        <filter string="Rec'd un-ticked" domain="[('reconciled', '=', False)]" help="Journal items where Rec'd flag is not ticked" name="isnotrecd"/>
-                        <filter string="Rec'd Ticked" domain="[('reconciled', '=', True)]" help="Journal items where Rec'd flag is not ticked" name="isrecd"/>
+                        <filter string="Unreconciled" domain="[('full_reconcile_id', '=', False), ('balance','!=', 0), ('account_id.reconcile','=',True)]" help="Journal items where matching number isn't set" name="unreconciled"/>
                         <separator/>
                         <filter string="No Bank Statement" domain="[('statement_line_id', '=', False)]" help="No associated Bank Statement" name="nobankstmt"/>
                         <filter string="Bank Statement" domain="[('statement_line_id', '!=', False)]" help="Has associated Bank Statement" name="bankstmt"/>
@@ -775,10 +805,10 @@
                         <field name="statement_id" string="BankStmt" invisible="0"/>
                         <field name="statement_line_id" string="StmtLine"/>
                         <field name="partner_id"/>
-                        <field name="account_id" options="{&quot;no_open&quot;:True}" domain="[('company_id', '=', company_id)]" groups="account.group_account_user"/>
+                        <field name="account_id" options="{&quot;no_open&quot;:True}" domain="['|',('company_id', 'in', company_ids)]" groups="account.group_account_user"/>
                         <field name="analytic_account_id" groups="account.group_account_user"/>
                         <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_tags"/>
-                        <field name="reconciled" string="rec'd" invisible="0"/>
+                        <field name="reconciled" invisible="1"/>
                         <field name="full_reconcile_id"/>
                         <field name="debit" sum="Total Debit"/>
                         <field name="credit" sum="Total Credit"/>
@@ -864,21 +894,9 @@
                     <field name="amount_total" string="Total Equals"/>
                     <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Total Contains"/>
                 </xpath>
-                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
-                    <separator/>
-                    <filter string="To Deliver" name="to_deliver" domain="[('order_line.qty_delivered','=', 0),('state','=','sale')]"/>
-                    <filter string="Invoiced" name="invoiced" domain="[('order_line.qty_invoiced','!=', 0),('state','=','sale')]"/>
-                    <filter string="Invoiced not 100% Delivered" name="invoiced_to_deliver" domain="[('order_line.qty_invoiced','!=', 0),('order_line.qty_delivered','=', 0),('state','=','sale')]"/>
-                    <separator/>
-                        <group expand="0" string="Group By">
-                            <filter name="status"              string="Status"       context="{'group_by':'state'}"/>
-                            <filter name="invoicestatus"      string="Invoice Status"  context="{'group_by':'invoice_status'}"/>
-                            <!--<filter name="clientorderref"     string="Desc/Ref"     context="{'group_by':'client_order_ref'}"/>-->
-                            <separator/>
-                        </group>
-                </xpath>
             </field>
         </record>
+
         <record id="action_orders_tsa" model="ir.actions.act_window">
             <field name="name">Sales Orders and Quotations</field>
             <field name="type">ir.actions.act_window</field>
@@ -892,25 +910,24 @@
             action="action_orders_tsa"
             sequence="0"
         />
+
         <record id="view_saleorder_tree_tsa" model="ir.ui.view">
             <field name="name">Sale Order List TSA Extension</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="replace">
-                    <tree string="Sales Orders Only (no Quotations)" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
+                    <tree string="Sales Orders" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
                         <field name="message_needaction" invisible="1"/>
-                        <field name="name" string="OrderNo."/>
-                        <field name="date_order" string="OrderDate"/>
-                        <!--<field name="confirmation_date" string="Confirmation Date"/>-->
-                        <!--<field name="commitment_date" groups="sale.group_sale_order_dates"/>-->
-                        <!--<field name="expected_date" groups="sale.group_sale_order_dates"/>-->
+                        <field name="name" string="Quotation Number"/>
+                        <field name="confirmation_date" string="Confirmation Date"/>
+                        <field name="commitment_date" groups="sale.group_sale_order_dates"/>
+                        <field name="expected_date" groups="sale.group_sale_order_dates"/>
                         <field name="partner_id"/>
-                        <field name="client_order_ref"/>
                         <field name="user_id"/>
                         <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
                         <field name="currency_id" invisible="1"/>
-                        <field name="invoice_status" invisible="0"/>
+                        <field name="invoice_status" invisible="1"/>
                         <field name="state" invisible="0"/>
                         <field name="id" invisible="0"/>
                     </tree>
@@ -923,19 +940,18 @@
             <field name="inherit_id" ref="sale.view_quotation_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="replace">
-                    <tree string="Quotations and Sales Orders" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
+                    <tree string="Quotation" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
                         <field name="message_needaction" invisible="1"/>
-                        <field name="name" string="QuoteNo."/>
-                        <field name="date_order" string="QuoteDate"/>
-                        <field name="commitment_date" groups="sale.group_sale_order_dates" invisible="1"/>
-                        <field name="expected_date" groups="sale.group_sale_order_dates" invisible="1"/>
+                        <field name="id" invisible="1"/>
+                        <field name="name" string="Quotation Number"/>
+                        <field name="date_order" string="Quotation Date"/>
+                        <field name="commitment_date" groups="sale.group_sale_order_dates"/>
+                        <field name="expected_date" groups="sale.group_sale_order_dates"/>
                         <field name="partner_id"/>
-                        <field name="client_order_ref"/>
                         <field name="user_id"/>
                         <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
                         <field name="currency_id" invisible="1"/>
                         <field name="state"/>
-                        <field name="id" invisible="0"/>
                     </tree>
                 </xpath>
             </field>
@@ -958,30 +974,6 @@
                         <field name="property_stock_valuation_account_id"/>
                         <field name="create_uid"/>
                     </tree>
-                </xpath>
-            </field>
-        </record>
-        <record id="view_account_payment_search_tsa" model="ir.ui.view">
-            <field name="name">Customer Payment Search TSA Extension</field>
-            <field name="model">account.payment</field>
-            <field name="inherit_id" ref="account.view_account_payment_search"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="amount" string="Amount contains" filter_domain="[('amount','ilike',self)]"/>
-                </xpath>
-                <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="amount" string="Amount equals" filter_domain="[('amount','=',self)]"/>
-                    <field name="payment_date" string="Payment Date" filter_domain="[('payment_date','=',self)]"/>
-                </xpath>
-                <xpath expr="//filter[@name='paymentmethod']" position="replace">
-                    <filter string="Payment Method TSA" name="paymentmethod2" domain="[]" context="{'group_by': 'journal_id'}"/>
-                </xpath>
-                <xpath expr="//filter[@name='reconciled']" position="after">
-                    <separator/>
-                    <filter string="Payment Date .." name="paymentdate" date="payment_date"/>
-                </xpath>
-                <xpath expr="//filter[@name='state']" position="after">
-                    <filter string="Payment Date .." name="payment_date" domain="[]" context="{'group_by': 'payment_date'}"/>
                 </xpath>
             </field>
         </record>
@@ -1057,10 +1049,8 @@
                         <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
                         <field name="user_id"/>
                         <field name="date_due"/>
-                        <field name="amount_untaxed" string="ExGST" sum="ExGSTTot" invisible="0"/>
-                        <field name="amount_tax" string="GST" sum="GSTTot" invisible="0"/>
                         <field name="amount_total_signed" string="Total" sum="Tot"/>
-                        <field name="residual_signed" string="Amt Due" sum="DueTot" invisible="0"/>
+                        <field name="residual_signed" string="Amt Due" sum="Tot"/>
                         <field name="currency_id" invisible="1"/>
                         <field name="company_currency_id" invisible="1"/>
                         <field name="state"/>
@@ -1070,6 +1060,7 @@
                 </xpath>
             </field>
         </record>
+
         <record id="action_invoices_tsa" model="ir.actions.act_window">
             <field name="name">Customer Invoices and Refunds</field>
             <field name="type">ir.actions.act_window</field>
@@ -1098,6 +1089,7 @@
             action="action_invoices_tsa"
             sequence="0"
         />
+
         <record id="product_template_search2_tsa" model="ir.ui.view">
             <field name="name">Product Search TSA Extension2</field>
             <field name="model">product.template</field>
@@ -1224,13 +1216,6 @@
                         <filter name="late"      string="Overdue"  domain="[('date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
 
                         <separator/>
-                        <filter string="Invoice Date" name="filter_date" date="date"/>
-
-                        <separator/>
-                        <field name="residual" string="AmtDue"/>
-                        <field name="amount_untaxed" string="ExGST"/>
-                        <field name="amount_tax" string="GST"/>
-                        <separator/>
                         <field name="partner_id" operator="child_of"/>
                         <field name="name"           string="Description/Reference"/>
                         <field name="x_tracking_ref" string="Tracking Ref"/>
@@ -1244,10 +1229,9 @@
                         <!--<filter domain="[('user_id','=',uid)]" help="My Invoices"/>-->
                         <group expand="0" string="Group By">
                             <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
-                            <filter name="salesperson"         string="Salesperson"  context="{'group_by':'user_id'}"/>
+                            <filter name="salesperson"        string="Salesperson"  context="{'group_by':'user_id'}"/>
                             <filter name="status"              string="Status"       context="{'group_by':'state'}"/>
                             <filter name="name"                string="Desc/Ref"     context="{'group_by':'name'}"/>
-                            <filter name="type"    string="Type(Bill or Refund)"     context="{'group_by':'type'}"/>
                             <separator/>
                             <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'date_invoice'}"/>
                             <filter name="duedate"            string="Due Date"     context="{'group_by':'date_due'}"/>
@@ -1418,11 +1402,6 @@
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="x_customer_email"/>
                 </xpath>
-                <xpath expr="//field[@name='payment_term_id']" position="replace">
-                </xpath>
-                <xpath expr="//field[@name='reference']" position="after">
-                    <field name="payment_term_id" options="{'no_create': True}"/>
-                </xpath>
             </field>
         </record>
         <record id="view_form_jou_entry_inherited" model="ir.ui.view">
@@ -1433,12 +1412,6 @@
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="x_credit_or_debit_note"/>
                     <field name="x_gst_clearing"/>
-                </xpath>
-                <xpath expr="//field[@name='date_maturity']" position="replace">
-                </xpath>
-                <xpath expr="//field[@name='account_id']" position="before">
-                    <field name="date_maturity" string="Due"/>
-                    <field name="date"/>
                 </xpath>
             </field>
         </record>
@@ -1462,46 +1435,13 @@
                 </xpath>
             </field>
         </record>
-        <record id="view_production_lot_tree_tsa" model="ir.ui.view">
-            <field name="name">Stock Production Lot Tree TSA Extension</field>
-            <field name="model">stock.production.lot</field>
-            <field name="inherit_id" ref="stock.view_production_lot_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="before">
-                    <field name="id"/>
-                </xpath>
-            </field>
-        </record>
-        <record id="view_production_lot_form_tsa" model="ir.ui.view">
-            <field name="name">Stock Production Lot Form TSA Extension</field>
-            <field name="model">stock.production.lot</field>
-            <field name="inherit_id" ref="stock.view_production_lot_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='product_id']" position="before">
-                    <field name="id"/>
-                </xpath>
-            </field>
-        </record>
-
         <record id="view_form_stock_picking_inherited" model="ir.ui.view">
             <field name="name">Stock Picking TSA Extension</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='button_scrap']" position="after">
-                    <button name="quick_do" type="object" string="Do Remainder" groups="base.group_user"/>
-                </xpath>
-                <xpath expr="//button[@name='button_scrap']" position="after">
-                    <button name="fix_unreserved_qty" type="object" string="Fix Unreserved Qty ALL" groups="base.group_system" context="{'dry_run': False}"/>
-                </xpath>
-                <xpath expr="//button[@name='button_scrap']" position="after">
-                    <button name="fix_unreserved_qty" type="object" string="Fix Unreserved Qty ALL (Dry Run)" groups="base.group_system" context="{'dry_run': True}"/>
-                </xpath>
-                 <xpath expr="//button[@name='button_scrap']" position="after">
-                    <button name="fix_unreserved_qty_me_only" type="object" string="Fix Unreserved Qty ME ONLY" groups="base.group_system" context="{'dry_run': False}"/>
-                </xpath>
-                <xpath expr="//button[@name='button_scrap']" position="after">
-                    <button name="fix_unreserved_qty_me_only" type="object" string="Fix Unreserved Qty ME ONLY (Dry Run)" groups="base.group_system" context="{'dry_run': True}"/>
+                    <button name="quick_do" type="object" string="Do Remainder"/>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="x_special_address"/>
@@ -1550,9 +1490,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <!--<xpath expr="//button[@name='action_unlock']" position="after">-->
-                    <!--<button name="%(tsa_rpt030_action)d" string="Sales Paid Not Delivered" type="action"/>-->
-                <!--</xpath>-->
+                <xpath expr="//button[@name='action_unlock']" position="after">
+                    <button name="%(tsa_rpt030_action)d" string="Sales Paid Not Delivered" type="action"/>
+                </xpath>
                 <xpath expr="//field[@name='partner_shipping_id']" position="after">
                     <field name="x_customer_email"/>
                 </xpath>
@@ -1563,12 +1503,6 @@
                 <xpath expr="//field[@name='payment_term_id']" position="after">
                     <field name="client_order_ref"/>
                     <field name="reference" readonly="1" attrs="{'invisible': [('reference', '=', False)]}"/>
-                </xpath>
-                <xpath expr="//field[@name='date_order']" position="replace">
-                </xpath>
-                <xpath expr="//field[@name='validity_date']" position="replace">
-                    <field name="date_order" string="Order Created"/>
-                    <field name="validity_date" string="Quote Valid Until" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                 </xpath>
             </field>
         </record>
@@ -1588,5 +1522,132 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="view_form_product_template_inherited" model="ir.ui.view">
+            <field name="name">Product Template TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_title']" position="replace">
+                    <div class="oe_title">
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                    </div>
+                    <div class="col-12" style="font-size:16px">
+                        <!-- <label class="oe_edit_only" for="name" string="Product Name"/>-->
+                        <b><field name="name" placeholder="Product Description"/></b>
+                    </div>
+                    <div class="col-12" name="options" groups="base.group_user">
+                        <div>
+                            <label for="x_bcause"/>
+                            <field name="x_bcause"/>
+                            <label for="sale_ok"/>
+                            <field name="sale_ok"/>
+                            <label for="purchase_ok"/>
+                            <field name="purchase_ok"/>
+                            <label for="can_be_expensed"/>
+                            <field name="can_be_expensed"/>
+                        </div>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="x_cost_price" string="Cost Price (TSA)"/>
+                    <!--<label for="x_cost_price" string="Cost Price (TSA Copy)"/>-->
+                </xpath>
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="TSA" name="page_tsa">
+                        <group>
+                            <group string="TSA Location Info">
+                                <field name="x_default_location"/>
+                                <field name="x_default_position"/>
+                                <field name="x_default_location2"/>
+                                <field name="x_default_position2"/>
+                                <field name="x_expert"/>
+                                <field name="x_expert2"/>
+                            </group>
+                            <group string="TSA Dimensions" name="group_tsa_dimensions">
+                                <label for="x_item_height" string="H x L x D (cm)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height"> </field><b> x </b>
+                                    <field name="x_item_length"> </field><b> x </b>
+                                    <field name="x_item_depth"> </field><b> = </b>
+                                    <field name="x_volume_cm3"> </field><b> cm 3</b>
+                                </div>
+                                <label for="x_item_height" string="H x L x D (cm) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height_mfr"> </field><b> x </b>
+                                    <field name="x_item_width_mfr"> </field><b> x </b>
+                                    <field name="x_item_depth_mfr"> </field><b> = </b>
+                                    <field name="x_item_volume_mfr_cm3"> </field><b> cm 3 (MFR)</b>
+                                </div>
+                                <label for="volume" string="Volume (m3)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="volume" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="volume"/><b> m 3</b><i> (divide cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="x_item_volume_mfr" string="Volume (m3) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_volume_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_volume_mfr"/><b> m 3</b><i> (divide MFR cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="weight" string="Weight"/><b> kg</b>
+                                </div>
+                                <label for="x_item_weight_mfr" string="Weight MFR (kg)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_weight_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_weight_mfr" string="Weight"/><b> kg (MFR)</b>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="TSA Notes" name="group_tsa_notes">
+                            <field name="x_comment"/>
+                            <!--<field name="x_description"/>-->
+                            <field name="x_shortcut"/>
+                            <field name="x_image_filename"/>
+                            <field name="x_jos_product_id"/>
+                            <field name="x_imported_date"/>
+                        </group>
+                        <group>
+                            <group string="Stocktake" name="group_tsa_stocktake">
+                                <field name="x_counted_date"/>
+                                <field name="x_counted_qty"/>
+                                <field name="x_odoo_qty_b4_stocktake"/>
+                                <field name="x_odoo_qty_capture_date"/>
+                                <field name="x_odoo_qty_last_30Jun"/>
+                            </group>
+                            <group string="TSA SBT Info" name="group_tsa_sbt">
+                                <field name="x_sbt_fields"/>
+                                <field name="x_sbt_item"/>
+                                <field name="x_sbt_last_buy"/>
+                                <field name="x_sbt_last_sold"/>
+                                <field name="x_sbt_product_sku"/>
+                                <field name="x_v8_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <!-- WIP -->
+        <!--<record id="product_moves_tree_tsa" model="ir.ui.view">
+                <field name="name">Product Moves List TSA Extension</field>
+                <field name="model">stock.move.line</field>
+                <field name="inherit_id" ref="stock.view_move_line_tree"/>
+                <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree decoration-muted="state == 'cancel'" decoration-danger="(state not in ('cancel','done'))" string="Move Lines" create="0" default_order="date">
+                        <field name="date"/>
+                        <field name="reference" string="Reference"/>
+                        <field name="product_id"/>
+                        <field name="location_id"/>
+                        <field name="location_dest_id"/>
+                        <field name="qty_done" string="Quantity Done"/>
+                        <field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
+                        <field name="state"/>
+                    </tree>
+                </xpath>
+                </field>
+            </record>-->
     </data>
 </odoo>

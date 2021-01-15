@@ -238,8 +238,8 @@
             <strong>Delivery Slip</strong>
             <!-- <span t-field="o.name"/> -->
         </h2>
-        <!--NOTE: The following table is HIDDEN rather than commented out, so that e-commerce delivery app loads without err-->
-        <table class="table table-sm" name="top_table" style="font-size:14px;display:none">
+
+<!--         <table class="table table-sm" name="top_table" style="font-size:14px;">
             <thead>
                 <tr>
                     <th t-if="o.origin"><strong>Order</strong></th>
@@ -265,6 +265,7 @@
                 </tr>
             </tbody>
         </table>
+-->
 
         <table class="table table-sm" t-if="o.state!='done'" name="bottom_table" style="font-size:14px;">
             <thead>
@@ -1037,14 +1038,12 @@
             </p>
             <p t-if="o.payment_term_id" name="payment_term">
                 <span t-field="o.payment_term_id.note"/>
-            </p>
-            <p t-if="o.type != 'out_refund'">
-                <strong>
-                <p>
+                    <p><strong>
+                    <p>
                     DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
-                            Please quote: "<b t-if="o.number"> <span t-field="o.number"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
-                </p>
-                </strong>
+                            Please quote: " <b t-if="o.number"> <span t-field="o.number"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
+                        </p>
+                    </strong></p>
             </p>
             <p t-if="o.fiscal_position_id.note" name="note">
                 <span t-field="o.fiscal_position_id.note"/>

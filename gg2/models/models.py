@@ -3,14 +3,8 @@ from typing import Any, Union
 
 from odoo import models, fields, api, tools, _
 from odoo.exceptions import UserError
-from odoo.tools.float_utils import float_round, float_compare, float_is_zero
-
-# import pdb
-# from mock.mock import self
-import logging
-
-_logger = logging.getLogger(__name__)
-
+import pdb
+from mock.mock import self
 
 # TO DO: Make database name always appear in the top banner by changing the Java Script
 # /odoo/odoo-server/addons/web/static/src/js/chrome/user_menu.js
@@ -30,72 +24,57 @@ _logger = logging.getLogger(__name__)
 #                //ORIG: topbar_name = _.str.sprintf("%s (%s)", topbar_name, session.db);
 #            }
 
-class TsaMailMessage(models.Model):
-    _inherit = ['mail.message']
-
-    x_v9_id = fields.Integer(string='v9 id', copy=False, readonly=True, required=False, selectable=True)
-    x_v9_parent_id = fields.Integer(string='v9 parent_id', copy=False, readonly=True, required=False, selectable=True)
-    x_v9_message_id = fields.Char(string='v9 message_id', copy=False, readonly=True, required=False, selectable=True)
-
-
-class TsaMailTrackingValue(models.Model):
-    _inherit = ['mail.tracking.value']
-
-    x_v9_id = fields.Integer(string='v9 id', copy=False, readonly=True, required=False, selectable=True)
-    x_v9_mail_message_id = fields.Integer(string='v9 message_id', copy=False, readonly=True, required=False, selectable=True)
-
-
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.invoice']
 
-    @api.multi
+    # @api.multi
     def invoice_validate(self):
         for invoice in self:
-            # refuse to validate a vendor bill/refund if there exists one with the same reference for the same partner,
+            # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
             # because it's probably a double encoding of the same bill/refund
             # VENDOR BILL - DUPE CHECK
             if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
                 mydupe = self.search([('type', '=', invoice.type), ('reference', '=', invoice.reference),
-                                      ('company_id', '=', invoice.company_id.id),
-                                      ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                      ('id', '!=', invoice.id),
-                                      ('state', 'in', ('open', 'in_payment', 'paid'))])
+                                ('company_id', 'in', invoice.company_ids),
+                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                ('id', '!=', invoice.id),
+                                ('state', 'in', ('open', 'in_payment', 'paid'))])
                 if mydupe:
-                    myinvlist = " "
+                    myinvlist = ""
                     for eachdupe in mydupe:
                         myinvlist = myinvlist + ", " + eachdupe.number
                     raise UserError(_(
-                        "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in " + myinvlist))
+                        "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
             # CUSTOMER INVOICE - DUPE CHECK
             if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
                 if invoice.name:
                     mydupe = self.search([('type', '=', invoice.type), ('name', '=', invoice.name),
-                                          ('company_id', '=', invoice.company_id.id),
-                                          ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          ('id', '!=', invoice.id),
-                                          ('state', 'in', ('open', 'in_payment', 'paid'))])
+                                ('company_id', 'in', invoice.company_ids),
+                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                ('id', '!=', invoice.id),
+                                ('state', 'in', ('open', 'in_payment', 'paid'))])
+
                     myref = invoice.name
                 if (not mydupe) and (invoice.x_tracking_ref):
                     # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
                     mydupe = self.search([('type', '=', invoice.type), ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          ('company_id', '=', invoice.company_id.id),
+                                          ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
                                           ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                           ('id', '!=', invoice.id),
                                           ('state', 'in', ('open', 'in_payment', 'paid'))])
                     myref = invoice.x_tracking_ref
                 if mydupe:
-                    myinvlist = " "
+                    myinvlist = ""
                     for eachdupe in mydupe:
                         myinvlist = myinvlist + ", " + eachdupe.number
                     raise UserError(_(
-                        "Duplicate Reference, ( " + myref + " ) detected in " + myinvlist))
+                        "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
         return super(TsaAccountInvoice, self).invoice_validate()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
         for record in self:
             record['x_customer_email'] = record.partner_id.email
-
     @api.depends('name')
     def _get_name_truncated(self):
         for record in self:
@@ -109,43 +88,30 @@ class TsaAccountInvoice(models.Model):
 
     name = fields.Char(readonly=False)
     reference = fields.Char(readonly=False)
-    x_customer_email = fields.Char(string='Email',
-                                   help='Read-only display of Customer or Vendors Email Address (if defined in Contacts)',
-                                   copy=False, readonly=True, required=False, selectable=False,
-                                   compute='_get_customer_email')
-    x_items_for_partner_id = fields.Many2one('res.partner', string='Items For', help='', copy=True, readonly=False,
-                                             required=False, selectable=True)
-    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,
-                                 selectable=True)
-    # x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False)
-    x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False,
-                                   compute='_get_name_truncated')
-    x_extra_notes = fields.Text(string='Additional Notes', help='', copy=False, readonly=False, required=False,
-                                selectable=True)
+    x_customer_email = fields.Char(string='Email', help='Read-only display of Customer or Vendors Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
+    x_items_for_partner_id = fields.Many2one('res.partner', string='Items For', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False, selectable=True)
+    #x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False)
+    x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False, compute='_get_name_truncated')
+    x_extra_notes = fields.Text(string='Additional Notes', help='', copy=False, readonly=False, required=False, selectable=True)
 
-
-class TsaAccountMove(models.Model):
+class tsaextb(models.Model):
     _inherit = ['account.move']
 
-    x_credit_or_debit_note = fields.Boolean(string='Credit/Debit Note', help='Credit Note or Debit Note', copy=True,
-                                            readonly=False, required=False, selectable=True)
-    x_gst_clearing = fields.Boolean(string='GST Clearing', help='Please tick if this journal is for GST Clearing',
-                                    copy=True, readonly=False, required=False, selectable=True)
+    x_credit_or_debit_note = fields.Boolean(string='Credit/Debit Note', help='Credit Note or Debit Note', copy=True, readonly=False, required=False, selectable=True)
+    x_gst_clearing = fields.Boolean(string='GST Clearing', help='Please tick if this journal is for GST Clearing', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaAccountMoveLine(models.Model):
+class tsaextc(models.Model):
     _inherit = ['account.move.line']
 
     @api.depends('credit')
     def _get_credit_rounded(self):
         for record in self:
-            record['x_credit_rounded'] = round(record.credit, 6)
+            record['x_credit_rounded']=round(record.credit,6)
 
-    x_credit_rounded = fields.Monetary(string='Credit Rounded', help='', copy=False, readonly=True, required=False,
-                                       selectable=False, compute='_get_credit_rounded')
+    x_credit_rounded = fields.Monetary(string='Credit Rounded', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_credit_rounded')
 
-
-class TsaAccountPayment(models.Model):
+class tsaextd(models.Model):
     _inherit = ['account.payment']
 
     @api.depends('payment_type', 'amount')
@@ -155,15 +121,13 @@ class TsaAccountPayment(models.Model):
                 record['x_amount_signed'] = - record['amount']
             else:
                 record['x_amount_signed'] = record['amount']
-
     @api.depends('journal_id')
     def _get_payment_method(self):
         for record in self:
             if len(record.journal_id.name) > 17:
                 record['x_payment_method'] = (record.journal_id.name[:15] + '..')
             else:
-                record['x_payment_method'] = (record.journal_id.name)
-
+                record.journal_id
     @api.depends('payment_type')
     def _get_payment_type_trunc(self):
         for record in self:
@@ -173,80 +137,64 @@ class TsaAccountPayment(models.Model):
                 record['x_payment_type'] = 'Receive'
             if record['payment_type'] == 'transfer':
                 record['x_payment_type'] = 'Transfer'
+            else:
+                record['x_payment_type'] = 'Unknown'
 
-    x_amount_signed = fields.Monetary(string='Amount', copy=False, readonly=True, required=False, selectable=False,
-                                      compute='_get_amount_signed',
-                                      help='Negative if payment_type=outbound (Send Money) else positive')
-    x_payment_method = fields.Char(string='Payment Method', help='', copy=False, readonly=True, required=False,
-                                   selectable=False, compute='_get_payment_method')
-    x_payment_type = fields.Char(string='Direction', help='', copy=False, readonly=True, required=False,
-                                 selectable=False, compute='_get_payment_type_trunc')
+    x_amount_signed = fields.Monetary(string='Amount', help='Negative if payment_type=outbound (Send Money) else positive', copy=False, readonly=True, required=False, selectable=False, compute='_get_amount_signed')
+    x_payment_method = fields.Char(string='Payment Method', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_payment_method')
+    x_payment_type = fields.Char(string='Direction', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_payment_type_trunc')
 
-
-class TsaHrAttendance(models.Model):
+class tsaexte(models.Model):
     _inherit = ['hr.attendance']
 
-    x_notes = fields.Text(string='Notes / Comments', help='Add notes and comments as required', copy=True,
-                          readonly=False, required=False, selectable=True)
+    x_notes = fields.Text(string='Notes / Comments', help='Add notes and comments as required', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaMrpBomLine(models.Model):
+class tsaextf(models.Model):
     _inherit = ['mrp.bom.line']
 
     x_designator = fields.Char(string='Designator', help='', copy=True, readonly=False, required=False, selectable=True)
     x_footprint = fields.Char(string='Footprint', help='', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaRepairOrder(models.Model):
+class tsaextg(models.Model):
     _inherit = ['repair.order']
 
-    x_delivery_address_id = fields.Many2one('res.partner', string='Alter Delivery Address', help='', copy=True,
-                                            readonly=False, required=False, selectable=True)
-    x_received_by = fields.Many2one('res.users', string='Received By', help='', copy=False, readonly=False,
-                                    required=False, selectable=True)
-    x_reported_by_customer = fields.Text(string='Reported by Customer', help='', copy=False, readonly=False,
-                                         required=False, selectable=True)
-    x_serial = fields.Char(string='Serial Id', help='', copy=False, readonly=False, required=False, selectable=True)
-    x_technician = fields.Many2one('res.users', string='Technician', help='', copy=True, readonly=False, required=False,
-                                   selectable=True)
-    x_time_spent = fields.Float(string='Time Spent (Hours)', help='', copy=False, readonly=False, required=False,
-                                selectable=True)
+    x_delivery_address_id = fields.Many2one('res.partner', string='Alter Delivery Address', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_received_by = fields.Many2one('res.users', string='Received By', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_reported_by_customer = fields.Text(string='Reported by Customer', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_serial = fields.Char(string='Serial Id', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_technician = fields.Many2one('res.users', string='Technician', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_time_spent = fields.Float(string='Time Spent (Hours)', help='', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaProductCategory(models.Model):
+class tsaexth(models.Model):
     _inherit = ['product.category']
 
-    x_description = fields.Char(string='Description', help='', copy=False, readonly=False, required=False,
-                                selectable=True)
+    x_description = fields.Char(string='Description', help='', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaProductTemplate(models.Model):
+class tsaexti(models.Model):
     _inherit = ['product.template']
 
-    @api.depends('x_item_height_mfr', 'x_item_width_mfr', 'x_item_depth_mfr')
+    @api.depends('x_item_height_mfr','x_item_width_mfr','x_item_depth_mfr')
     def _get_volume_mfr_cm3(self):
         for record in self:
-            record[
-                'x_item_volume_mfr_cm3'] = record.x_item_height_mfr * record.x_item_width_mfr * record.x_item_depth_mfr
-
-    @api.depends('x_item_height', 'x_item_length', 'x_item_depth')
+            record['x_item_volume_mfr_cm3']=record.x_item_height_mfr * record.x_item_width_mfr * record.x_item_depth_mfr
+    @api.depends('x_item_height','x_item_length','x_item_depth')
     def _get_volume_cm3(self):
         for record in self:
-            record['x_volume_cm3'] = record.x_item_height * record.x_item_length * record.x_item_depth
+            record['x_volume_cm3']=record.x_item_height * record.x_item_length * record.x_item_depth
 
-    @api.multi
+    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_sold')
     def _total_qty_sold2(self):
         for product in self:
             product.x_total_qty_sold = sum([p.x_total_qty_sold for p in product.product_variant_ids])
 
-    @api.multi
+    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_bought')
     def _total_qty_bought2(self):
         for product in self:
             product.x_total_qty_bought = sum([p.x_total_qty_bought for p in product.product_variant_ids])
 
-    @api.multi
+    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_made')
     def _total_qty_made2(self):
         for product in self:
@@ -254,219 +202,131 @@ class TsaProductTemplate(models.Model):
 
     x_total_qty_made = fields.Integer(compute='_total_qty_made2', string='Made')
     x_total_qty_bought = fields.Integer(compute='_total_qty_bought2', string='Bought')
-    x_total_qty_sold = fields.Integer(compute='_total_qty_sold2', string='Sold.')
+    x_total_qty_sold = fields.Integer(compute='_total_qty_sold2', string='Sold')
 
-    x_bcause = fields.Boolean(string='BCause Item', help='Tick if item is to be published on the BCause Website',
-                              copy=True, readonly=False, required=False, selectable=True)
-    x_comment = fields.Text(string='Comment / Notes', help='Add whatever notes you want to this field', copy=False,
-                            readonly=False, required=False, selectable=True)
-    x_cost_price = fields.Float(string='Cost Price', help='Cost Price - TSA copy of standard_price field', copy=False,
-                                readonly=False, required=False, selectable=True)
-    x_counted_date = fields.Datetime(string='Date and time Counted', help='', copy=False, readonly=False,
-                                     required=False, selectable=True)
-    x_counted_qty = fields.Float(string='Counted Qty',
-                                 help='Quantity Counted at last Stocktake (Please complete the Date field too)',
-                                 copy=False, readonly=False, required=False, selectable=True)
-    x_default_location = fields.Char(string='Default Location',
-                                     help='The location where we normally store this product within our warehouse.',
-                                     copy=True, readonly=False, required=False, selectable=True)
-    x_default_location2 = fields.Char(string='Alternative Location',
-                                      help='Excess stock will be placed in this location', copy=True, readonly=False,
-                                      required=False, selectable=True)
+
+    x_bcause = fields.Boolean(string='BCause Item', help='Tick if item is to be published on the BCause Website', copy=True, readonly=False, required=False, selectable=True)
+    x_comment = fields.Text(string='Comment / Notes', help='Add whatever notes you want to this field', copy=True, readonly=False, required=False, selectable=True)
+    x_cost_price = fields.Float(string='Cost Price', help='Cost Price - TSA copy of standard_price field', copy=True, readonly=False, required=False, selectable=True)
+    x_counted_date = fields.Datetime(string='Date and time Counted', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_counted_qty = fields.Float(string='Counted Qty', help='Quantity Counted at last Stocktake (Please complete the Date field too)', copy=True, readonly=False, required=False, selectable=True)
+    x_default_location = fields.Char(string='Default Location', help='The location where we normally store this product within our warehouse.', copy=True, readonly=False, required=False, selectable=True)
+    x_default_location2 = fields.Char(string='Alternative Location', help='Excess stock will be placed in this location', copy=True, readonly=False, required=False, selectable=True)
     ## ORIG GG Lookup location
-    # x_default_location = fields.Many2one('stock.location', string='Default Location', help='The location where we normally store this product within our warehouse.', copy=True, readonly=False, required=False, selectable=True)
-    # x_default_location2 = fields.Many2one('stock.location', string='Alternative Location', help='Excess stock will be placed in this location', copy=True, readonly=False, required=False, selectable=True)
-    x_default_position = fields.Char(string='Position (Rack, Shelf)',
-                                     help='Position of the item(s) - e.g. the last time anyone checked.  Rack: numbered from the left when faceing.  Shelf: numbered from the floor upwards  F,1,2,..,T where F=Floor, 1=1st Shelf, 2=2nd Shelf, .. , T=Top Shelf',
-                                     copy=False, readonly=False, required=False, selectable=True)
-    x_default_position2 = fields.Char(string='Alternative Position',
-                                      help='Position of excess stock:  Rack: numbered from the left when faceing.  Shelf: numbered from the floor upwards  F,1,2,..,T where F=Floor, 1=1st Shelf, 2=2nd Shelf, .. , T=Top Shelf',
-                                      copy=False, readonly=False, required=False, selectable=True)
-    # x_description = fields.Many2one('product.category', string='Category Description', help='', copy=False, readonly=False, required=True, selectable=True)
-    x_expert = fields.Many2one('res.users', string='Who to ask',
-                               help='The person to ask about this product - who knows most about it', copy=True,
-                               readonly=False, required=False, selectable=True)
-    x_expert2 = fields.Many2one('res.users', string='Who to ask (alt)',
-                                help='Alternative source of knowledge about this item', copy=True, readonly=False,
-                                required=False, selectable=True)
-    x_image_filename = fields.Char(string='Image Filename', help='', copy=False, readonly=False, required=False,
-                                   selectable=True)
-    x_imported_date = fields.Datetime(string='Date Imported', help='Datetime this product was imported', copy=False,
-                                      readonly=False, required=False, selectable=True)
-    x_item_depth = fields.Float(string='Depth (cm)', help='', copy=False, readonly=False, required=False,
-                                selectable=True)
-    x_item_depth_mfr = fields.Float(string='Depth from Mfr (cm)',
-                                    help='Depth as supplied by the manufacturer or vendor of the item', copy=False,
-                                    readonly=False, required=False, selectable=True)
-    x_item_height = fields.Float(string='Height (cm)', help='', copy=False, readonly=False, required=False,
-                                 selectable=True)
-    x_item_height_mfr = fields.Float(string='Height from mfr (cm)',
-                                     help='Height as supplied by the manufacturer or vendor of the item', copy=False,
-                                     readonly=False, required=False, selectable=True)
-    x_item_length = fields.Float(string='Length (cm)', help='', copy=False, readonly=False, required=False,
-                                 selectable=True)
-    x_item_volume_mfr = fields.Float(string='Volume from Mfr (cm3)',
-                                     help='Volume as supplied by the manufacturer or vendor of the item', copy=False,
-                                     readonly=False, required=False, selectable=True)
-    x_item_volume_mfr_cm3 = fields.Float(string='Manufacturer / Supplier Volume in cm3', help='', copy=False,
-                                         readonly=True, required=False, selectable=False, compute='_get_volume_mfr_cm3')
-    x_item_weight_mfr = fields.Float(string='Item weight as provided by the Manufacturer or the Supplier', help='',
-                                     copy=False, readonly=False, required=False, selectable=True)
-    x_item_width_mfr = fields.Float(string='Width from Mfr (cm)',
-                                    help='Width as supplied by the manufacturer or vendor of the item', copy=False,
-                                    readonly=False, required=False, selectable=True)
-    x_jos_product_id = fields.Char(string='Jos Product Id', help='', copy=False, readonly=False, required=False,
-                                   selectable=True)
-    x_odoo_qty_b4_stocktake = fields.Float(string='Odoo Quantity Before Last Stocktake',
-                                           help='We use this field to store the previous Stock-On-Hand quantity of the item prior to it being zeroed and re-populated with the Stocktake value.  The field is NOT automatically populated but must be filled in manually - probably as part of a csv export --> import operation.',
-                                           copy=False, readonly=False, required=False, selectable=True)
-    x_odoo_qty_capture_date = fields.Datetime(string='Odoo Quantity Capture Date',
-                                              help='Date to which the field x_odoo_qty_b4_stocktake (Odoo Quanity Before Last Stocktake) reflects what Odoo said was the Stock-On-Hand quantity',
-                                              copy=False, readonly=False, required=False, selectable=True)
-    x_odoo_qty_last_30Jun = fields.Float(string='Odoo Qty 30 Jun',
-                                         help='The qty Odoo thought we had last 30 Jun.  This field is NOT automatically populated.  It should be populated for all products at close-of-business 30 June by exporting Quantity-On-Hand and re-importing the value to this field.  Note:  To export you need to select all fields.',
-                                         copy=False, readonly=True, required=False, selectable=True)
-    x_sbt_fields = fields.Text(string='SBT Fields', help='', copy=False, readonly=False, required=False,
-                               selectable=True)
-    x_sbt_item = fields.Char(string='SBT Item', help='', copy=False, readonly=False, required=False, selectable=True)
-    x_sbt_last_buy = fields.Date(string='SBT Last Buy Date',
-                                 help='The last date that this item was received or ordered in SBT', copy=False,
-                                 readonly=False, required=False, selectable=True)
-    x_sbt_last_sold = fields.Date(string='SBT Last Sold Date',
-                                  help='The last date recorded in SBT for a sale of this item', copy=False,
-                                  readonly=False, required=False, selectable=True)
-    x_sbt_product_sku = fields.Char(string='SBT Product SKU', help='', copy=False, readonly=False, required=False,
-                                    selectable=True)
-    x_shortcut = fields.Char(string='Our Shortcut(s)', help='', copy=False, readonly=False, required=False,
-                             selectable=True)
-    x_v8_id = fields.Char(string='v8 id', help='', copy=False, readonly=False, required=False, selectable=True)
-    x_volume_cm3 = fields.Float(string='Volume (cm3)', help='', copy=False, readonly=True, required=False,
-                                selectable=False, compute='_get_volume_cm3')
+    #x_default_location = fields.Many2one('stock.location', string='Default Location', help='The location where we normally store this product within our warehouse.', copy=True, readonly=False, required=False, selectable=True)
+    #x_default_location2 = fields.Many2one('stock.location', string='Alternative Location', help='Excess stock will be placed in this location', copy=True, readonly=False, required=False, selectable=True)
+    x_default_position = fields.Char(string='Position (Rack, Shelf)', help='Position of the item(s) - e.g. the last time anyone checked.  Rack: numbered from the left when faceing.  Shelf: numbered from the floor upwards  F,1,2,..,T where F=Floor, 1=1st Shelf, 2=2nd Shelf, .. , T=Top Shelf', copy=False, readonly=False, required=False, selectable=True)
+    x_default_position2 = fields.Char(string='Alternative Position', help='Position of excess stock:  Rack: numbered from the left when faceing.  Shelf: numbered from the floor upwards  F,1,2,..,T where F=Floor, 1=1st Shelf, 2=2nd Shelf, .. , T=Top Shelf', copy=True, readonly=False, required=False, selectable=True)
+    #x_description = fields.Many2one('product.category', string='Category Description', help='', copy=True, readonly=False, required=True, selectable=True)
+    x_expert = fields.Many2one('res.users', string='Who to ask', help='The person to ask about this product - who knows most about it', copy=True, readonly=False, required=False, selectable=True)
+    x_expert2 = fields.Many2one('res.users', string='Who to ask (alt)', help='Alternative source of knowledge about this item', copy=True, readonly=False, required=False, selectable=True)
+    x_image_filename = fields.Char(string='Image Filename', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_imported_date = fields.Datetime(string='Date Imported', help='Datetime this product was imported', copy=True, readonly=False, required=False, selectable=True)
+    x_item_depth = fields.Float(string='Depth (cm)', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_item_depth_mfr = fields.Float(string='Depth from Mfr (cm)', help='Depth as supplied by the manufacturer or vendor of the item', copy=True, readonly=False, required=False, selectable=True)
+    x_item_height = fields.Float(string='Height (cm)', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_item_height_mfr = fields.Float(string='Height from mfr (cm)', help='Height as supplied by the manufacturer or vendor of the item', copy=True, readonly=False, required=False, selectable=True)
+    x_item_length = fields.Float(string='Length (cm)', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_item_volume_mfr = fields.Float(string='Volume from Mfr (cm3)', help='Volume as supplied by the manufacturer or vendor of the item', copy=True, readonly=False, required=False, selectable=True)
+    x_item_volume_mfr_cm3 = fields.Float(string='Manufacturer / Supplier Volume in cm3', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_volume_mfr_cm3')
+    x_item_weight_mfr = fields.Float(string='Item weight as provided by the Manufacturer or the Supplier', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_item_width_mfr = fields.Float(string='Width from Mfr (cm)', help='Width as supplied by the manufacturer or vendor of the item', copy=True, readonly=False, required=False, selectable=True)
+    x_jos_product_id = fields.Char(string='Jos Product Id', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_odoo_qty_b4_stocktake = fields.Float(string='Odoo Quantity Before Last Stocktake', help='We use this field to store the previous Stock-On-Hand quantity of the item prior to it being zeroed and re-populated with the Stocktake value.  The field is NOT automatically populated but must be filled in manually - probably as part of a csv export --> import operation.', copy=True, readonly=False, required=False, selectable=True)
+    x_odoo_qty_capture_date = fields.Datetime(string='Odoo Quantity Capture Date', help='Date to which the field x_odoo_qty_b4_stocktake (Odoo Quanity Before Last Stocktake) reflects what Odoo said was the Stock-On-Hand quantity', copy=True, readonly=False, required=False, selectable=True)
+    x_odoo_qty_last_30Jun = fields.Float(string='Odoo Qty 30 Jun', help='The qty Odoo thought we had last 30 Jun.  This field is NOT automatically populated.  It should be populated for all products at close-of-business 30 June by exporting Quantity-On-Hand and re-importing the value to this field.  Note:  To export you need to select all fields.', copy=True, readonly=True, required=False, selectable=True)
+    x_sbt_fields = fields.Text(string='SBT Fields', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_item = fields.Char(string='SBT Item', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_last_buy = fields.Date(string='SBT Last Buy Date', help='The last date that this item was received or ordered in SBT', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_last_sold = fields.Date(string='SBT Last Sold Date', help='The last date recorded in SBT for a sale of this item', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_product_sku = fields.Char(string='SBT Product SKU', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_shortcut = fields.Char(string='Our Shortcut(s)', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_v8_id = fields.Char(string='v8 id', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_volume_cm3 = fields.Float(string='Volume (cm3)', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_volume_cm3')
 
-
-# class TsaProjectIssue(models.Model):
+#class tsaextj(models.Model):
 #    _inherit = ['project.issue']
 #
-#    x_fixed_by = fields.Many2one(string='Fixed By', help='Who fixed the issue', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-#    x_investigated_by = fields.Many2one(string='Investigated By', help='Who investigated the issue', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-#    x_logged_by = fields.Many2one(string='Logged By', help='Who logged the issue.', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-#    x_reported_by = fields.Many2one(string='Reported By', help='Who reported the issue.', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-
-
-class TsaProjectTask(models.Model):
+#    x_fixed_by = fields.Many2one(string='Fixed By', help='Who fixed the issue', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#    x_investigated_by = fields.Many2one(string='Investigated By', help='Who investigated the issue', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#    x_logged_by = fields.Many2one(string='Logged By', help='Who logged the issue.', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#    x_reported_by = fields.Many2one(string='Reported By', help='Who reported the issue.', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#
+class tsaextk(models.Model):
     _inherit = ['project.task']
-    #
-    x_external_document_a = fields.Html(string='External Document A',
-                                        help='Use this field to add a hyperlink to a document or folder on your computer',
-                                        copy=False, readonly=False, required=False, selectable=True)
-    x_external_document_b = fields.Html(string='External Document B', help='', copy=False, readonly=False,
-                                        required=False, selectable=True)
+#
+    x_external_document_a = fields.Html(string='External Document A', help='Use this field to add a hyperlink to a document or folder on your computer', copy=True, readonly=False, required=False, selectable=True)
+    x_external_document_b = fields.Html(string='External Document B', help='', copy=True, readonly=False, required=False, selectable=True)
+#    x_fixed_by = fields.Many2one(string='Fixed By', help='The person who fixed the issue or who performed the task', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#    x_investigated_by = fields.Many2one(string='Investigated By', help='The person who investigated the issue.', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#    x_logged_by = fields.Many2one(string='Logged By', help='The person who logged the issue or task', copy=True, readonly=False, required=False, selectable=True, related='res.users')
+#    x_reported_by = fields.Many2one(string='Reported By', help='The name of the person who reported the issue or need for the task', copy=True, readonly=False, required=False, selectable=True, related='res.users')
 
-#    x_fixed_by = fields.Many2one(string='Fixed By', help='The person who fixed the issue or who performed the task', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-#    x_investigated_by = fields.Many2one(string='Investigated By', help='The person who investigated the issue.', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-#    x_logged_by = fields.Many2one(string='Logged By', help='The person who logged the issue or task', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-#    x_reported_by = fields.Many2one(string='Reported By', help='The name of the person who reported the issue or need for the task', copy=False, readonly=False, required=False, selectable=True, related='res.users')
-
-
-class TsaPurchaseOrder(models.Model):
+class tsaextl(models.Model):
     _inherit = ['purchase.order']
 
     @api.depends('partner_id')
     def _get_customer_email(self):
         for record in self:
-            record['x_customer_email'] = record.partner_id.email
+            record['x_customer_email']=record.partner_id.email
 
-    x_back_count = fields.Integer(string='No. of <Back> button hits',
-                                  help='The number of times the Back button has been used', copy=False, readonly=False,
-                                  required=False, selectable=True)
-    x_customer_email = fields.Char(string='Customer Email',
-                                   help='Read-only display of Customer Email Address (if defined in Contacts)',
-                                   copy=False, readonly=True, required=False, selectable=False,
-                                   compute='_get_customer_email')
-    # x_customer_email = fields.Char(string='Customer Email', help='Read-only display of Customer Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False)
-    x_ordered_by = fields.Char(string='Ordered By', help='Who Placed this order / Our Ref', copy=True, readonly=False,
-                               required=False, selectable=True)
+    x_back_count = fields.Integer(string='No. of <Back> button hits', help='The number of times the Back button has been used', copy=True, readonly=False, required=False, selectable=True)
+    x_customer_email = fields.Char(string='Customer Email', help='Read-only display of Customer Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
+#    x_customer_email = fields.Char(string='Customer Email', help='Read-only display of Customer Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False)
+    x_ordered_by = fields.Char(string='Ordered By', help='Who Placed this order / Our Ref', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaPurchaseOrderLine(models.Model):
+class tsaextm(models.Model):
     _inherit = ['purchase.order.line']
 
-    x_sequence = fields.Integer(string='Sequence.', help='Sequence No. (e.g. use to assist with cross-checking orders)',
-                                copy=True, readonly=False, required=False, selectable=True)
+    x_sequence = fields.Integer(string='Sequence', help='Sequence No. (e.g. use to assist with cross-checking orders)', copy=True, readonly=False, required=False, selectable=True)
 
-
-# class TsaResCompany(models.Model):
+#class tsaextn(models.Model):
 #    _inherit = ['res.company']
 #
-#    x_lock_date = fields.Date(string='(NOT-IN-USE) Accounts Lock Date', help='(NOT-IN-USE) The accounts are locked for all transactions prior or equal to this date', copy=False, readonly=False, required=False, selectable=True)
+#    x_lock_date = fields.Date(string='(NOT-IN-USE) Accounts Lock Date', help='(NOT-IN-USE) The accounts are locked for all transactions prior or equal to this date', copy=True, readonly=False, required=False, selectable=True)
 
-class TsaResPartner(models.Model):
+class tsaexto(models.Model):
     _inherit = ['res.partner']
-
-    x_balance_owing = fields.Float(string='Balance Owing', help='', copy=False, readonly=False, required=False,
-                                   selectable=True)
-    x_import_ref = fields.Char(string='TS Import Ref', help='', copy=False, readonly=False, required=False,
-                               selectable=True)
-    x_sbt_custno = fields.Char(string='SBT Custno', help='', copy=False, readonly=False, required=False,
-                               selectable=True)
-    x_sbt_disc = fields.Float(string='SBT Discount',
-                              help='Discount from SBT - taken from the DISC field in the arcust table', copy=False,
-                              readonly=False, required=False, selectable=True)
-    x_sbt_fields = fields.Text(string='SBT Fields',
-                               help='A collection of some of the more important fields from SBT (the previous accounting system used by Technical Solutions)',
-                               copy=False, readonly=False, required=False, selectable=True)
-    x_sbt_ref = fields.Char(string='SBT Ref', help='', copy=False, readonly=False, required=False, selectable=True)
-    x_sbt_vendno = fields.Char(string='SBT vendno', help='', copy=False, readonly=False, required=False,
-                               selectable=True)
-    x_shortcut = fields.Char(string='Our Shortcut(s)', help='', copy=False, readonly=False, required=False,
-                             selectable=True)
-    x_v8_id = fields.Char(string='V8 Id', help='', copy=False, readonly=False, required=False, selectable=True)
-
+#
+    x_balance_owing = fields.Float(string='Balance Owing', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_import_ref = fields.Char(string='TS Import Ref', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_custno = fields.Char(string='SBT Custno', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_disc = fields.Float(string='SBT Discount', help='Discount from SBT - taken from the DISC field in the arcust table', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_fields = fields.Text(string='SBT Fields', help='A collection of some of the more important fields from SBT (the previous accounting system used by Technical Solutions)', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_ref = fields.Char(string='SBT Ref', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_sbt_vendno = fields.Char(string='SBT vendno', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_shortcut = fields.Char(string='Our Shortcut(s)', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_v8_id = fields.Char(string='V8 Id', help='', copy=True, readonly=False, required=False, selectable=True)
 
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
 
-    # def so_qty_to_deliver(self):
-
-    @api.multi
+    # @api.multi
     def action_confirm(self):
         for order in self:
             # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
             if order.client_order_ref:
-                dupe_order = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref),
-                                         ('company_id', '=', order.company_id.id),
-                                         ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-                if dupe_order:
-                    dupe_order_list = " "
-                    for dupe in dupe_order:
-                        dupe_order_list += dupe.name + " "
-                    raise UserError(_(
-                        "Duplicate Customer Reference, " + order.client_order_ref + " found in order: " +
-                        dupe_order_list))
+                DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', 'in', order.company_ids), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+                if DupeOrder:
+                    raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
         return super(TsaSaleOrder, self).action_confirm()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
         for record in self:
-            record['x_customer_email'] = record.partner_id.email
+            record['x_customer_email']=record.partner_id.email
 
     x_customer_email = fields.Char(string='Customer Email',
                                    help='Read-only display of Customer Email Address (if defined in Contacts)',
                                    copy=False, readonly=True, required=False, selectable=False,
                                    compute='_get_customer_email')
-    x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer',
-                                   copy=False, readonly=False, required=False, selectable=True)
-    x_promised_by_date = fields.Date(string='Promised by Date',
-                                     help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!',
-                                     copy=False, readonly=False, required=False, selectable=True)
-    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,
-                                 selectable=True)
-    x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',
-                                      copy=False, readonly=False, required=False, selectable=True)
+    # x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer', copy=False, readonly=False, required=False, selectable=True)
+    # x_promised_by_date = fields.Date(string='Promised by Date', help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!', copy=False, readonly=False, required=False, selectable=True)
+    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,                               selectable=True)
+    # x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',                                      copy=False, readonly=False, required=False, selectable=True)
     # x_items_for_partner_id = fields.Integer()
 
-
-class TsaSaleOrderLine(models.Model):
+class tsaextq(models.Model):
     _inherit = ['sale.order.line']
 
     @api.depends('product_uom_qty', 'qty_delivered')
@@ -474,337 +334,56 @@ class TsaSaleOrderLine(models.Model):
         for record in self:
             record['x_qty_backorder'] = record['product_uom_qty'] - record['qty_delivered']
 
-    x_qty_backorder = fields.Float(string='Quantity on Backorder',
-                                   help='The quantity that is on back-order (i.e. to be delivered at a later date)',
-                                   copy=False, readonly=True, required=False, selectable=False,
-                                   compute='_get_qty_backorder')
+    x_qty_backorder = fields.Float(string='Quantity on Backorder', help='The quantity that is on back-order (i.e. to be delivered at a later date)', copy=False, readonly=True, required=False, selectable=False, compute='_get_qty_backorder')
 
+#class tsaextr(models.Model):
+#    _inherit = ['stock.inventory.line']
+#
+#    x_new_location_id = fields.Many2one('stock.location', string='NewLocation', help='A note of what you need to MANUALLY change the default_location to become.  IMPORTANT: As yet this will NOT update the default_location on the item itself - that would be nice if it did - PFE !!!', copy=False, readonly=False, required=False, selectable=True)
 
-class TsaStockInventoryLine(models.Model):
-    _inherit = ['stock.inventory.line']
-
-    x_new_location_id = fields.Many2one('stock.location', string='NewLocation',
-                                        help='A note of what you need to MANUALLY change the default_location to become.  IMPORTANT: As yet this will NOT update the default_location on the item itself - that would be nice if it did - PFE !!!',
-                                        copy=False, readonly=False, required=False, selectable=True)
-
-
-# NOTE: stock.pack.operation does not exist in v12 ###
-# class tsaexts(models.Model):
+## NOTE: stock.pack.operation does not exist in v12 ###
+#class tsaexts(models.Model):
 #    _inherit = ['stock.pack.operation']
 #
-#    x_my_loc_select = fields.Boolean(string='Tick to include in My-Location operation', help='', copy=False, readonly=False, required=False, selectable=True)
+#    x_my_loc_select = fields.Boolean(string='Tick to include in My-Location operation', help='', copy=True, readonly=False, required=False, selectable=True)
 #    x_product_tmpl_id = fields.Integer(string='x_product_tmpl_id', help='', copy=False, readonly=True, required=False, selectable=False)
 
-class TsaStockPicking(models.Model):
+class tsaextt(models.Model):
     _inherit = ['stock.picking']
 
-    # def fix_unreserved_qty_me_only(self):
-    #     Available variables:
-    #      - env: Odoo Environment on which the action is triggered
-    #      - model: Odoo Model of the record on which the action is triggered; is a void recordset
-    #      - record: record on which the action is triggered; may be void
-    #      - records: recordset of all records on which the action is triggered in multi-mode; may be void
-    #      - time, datetime, dateutil, timezone: useful Python libraries
-    #      - log: log(message, level='info'): logging function to record debug information in ir.logging table
-    #      - Warning: Warning Exception to use with raise
-    #     To return an action, assign: action = {...}
-    #     dry_run = self.env.context.get('dry_run')
-    #     fix_me = not dry_run
-    #     print("Dry Run:", dry_run, ",  Transfer:", self.name, "Origin:", self.origin)
-    #     if fix_me:
-    #         stat = "FIXING .."
-    #     else:
-    #         stat = "DRY RUN ONLY! .. no changes made"
-    #     # quants = []
-    #     for line in self.move_line_ids:
-    #         print("LOOKING AT LINE:", line.id, ",  product:", line.product_id, ":", line.display_name)
-    #         if line.lot_id.id == False:
-    #             quants = self.env['stock.quant'].search([('product_id', '=', line.product_id.id), ('reserved_quantity', '!=', 0), ('location_id', '=', line.location_id.id)])
-    #             if not quants:
-    #                 # We must have at least one line from stock.quant
-    #                 quants = self.env['stock.quant'].search([('product_id', '=', line.product_id.id), ('location_id', '=', line.location_id.id)])[0]
-    #         else:
-    #             quants = self.env['stock.quant'].search([('product_id', '=', line.product_id.id), ('lot_id', '=', line.lot_id.id), ('reserved_quantity', '!=', 0), ('location_id', '=', line.location_id.id)])
-    #             if not quants:
-    #                 # We must have at least one line from stock.quant
-    #                 quants = self.env['stock.quant'].search([('product_id', '=', line.product_id.id), ('lot_id', '=', line.lot_id.id), ('location_id', '=', line.location_id.id)])[0]
-    #         rounding = line.product_id.uom_id.rounding
-    #         if float_compare(line.product_qty, 0, precision_rounding=rounding) > 0:
-    #             # if we want to unreserve
-    #             available_quantity = sum(quants.mapped('reserved_quantity'))
-    #             if float_compare(abs(line.product_qty), available_quantity, precision_rounding=rounding) > 0:
-    #                 # raise UserError(_('It is not possible to unreserve more products of %s than you have in stock.') % product_id.display_name)
-    #                 msg = "FIXING Cannot Unreserve more than in stock: " + "product id:" + str(line.product_id.id) + \
-    #                       ", " + line.display_name + \
-    #                       ", lot_id:" + str(line.lot_id.id) + \
-    #                       ", reserved_quantity:" + str(available_quantity) + ", line_qty:" + str(line.product_qty)
-    #                 _logger.info(msg)
-    #                 print(_('ERROR TO FIX: It is not possible to unreserve more products of %s than you have in stock.') % line.display_name)
-    #                 print("    product id:", line.product_id.id, ", lot_id:", line.lot_id.id, ", reserved_quantity:", available_quantity, ", line_qty:", line.product_qty)
-    #                 move_line_ids = []
-    #                 # warning = ''
-    #                 for quant in quants:
-    #                     move_lines = self.env["stock.move.line"].search([
-    #                         ('product_id', '=', quant.product_id.id),
-    #                         ('location_id', '=', quant.location_id.id),
-    #                         ('lot_id', '=', quant.lot_id.id),
-    #                         ('package_id', '=', quant.package_id.id),
-    #                         ('owner_id', '=', quant.owner_id.id),
-    #                         ('product_qty', '!=', 0)
-    #                     ])
-    #                     # move_lines = line
-    #                     move_line_ids += move_lines.ids
-    #                     reserved_on_move_lines = sum(move_lines.mapped('product_qty'))
-    #                     # move_line_str = str.join(', ', [str(move_line_id) for move_line_id in move_lines.ids])
-    #                     # print(move_line_str)
-    #                     if quant.location_id.should_bypass_reservation():
-    #                         # If a quant is in a location that should bypass the reservation, its `reserved_quantity` field
-    #                         # should be 0.
-    #                         if quant.reserved_quantity != 0:
-    #                             print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, "product_id=",
-    #                                   quant.product_id.id, "reserved_quantity:", quant.reserved_quantity, "<--0", stat)
-    #                             if fix_me:
-    #                                 quant.sudo().write({'reserved_quantity': 0})
-    #                     else:
-    #                         # If a quant is in a reservable location, its `reserved_quantity` should be exactly the sum
-    #                         # of the `product_qty` of all the partially_available / assigned move lines with the same
-    #                         # characteristics.
-    #                         if quant.reserved_quantity == 0:
-    #                             if move_lines:
-    #                                 for line2 in move_lines:
-    #                                     if line2.product_uom_qty != 0 and line2.display_name != "":
-    #                                         print("move_line_id=", line2.id, line2.display_name, "picking_id=",
-    #                                               line2.picking_id, "move_id", line2.move_id, "product_uom_qy=",
-    #                                               line2.product_uom_qty, "<--0", line2.state, stat)
-    #                                 if fix_me:
-    #                                     move_lines.with_context(bypass_reservation_update=True).sudo().write({'product_uom_qty': 0})
-    #                         elif quant.reserved_quantity < 0:
-    #                             print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, "product_id=",
-    #                                   quant.product_id.id, "reserved_quantity:", quant.reserved_quantity, "<--0", stat)
-    #                             if fix_me:
-    #                                 quant.sudo().write({'reserved_quantity': 0})
-    #                             if move_lines:
-    #                                 for line3 in move_lines:
-    #                                     if line3.product_uom_qty != 0 and line3.display_name != "":
-    #                                         print("move_line_id=", line3.id, line3.display_name, "picking_id=",
-    #                                               line3.picking_id, "move_id", line3.move_id, "product_uom_qy=",
-    #                                               line3.product_uom_qty, "<--0", line3.state, stat)
-    #                                 if fix_me:
-    #                                     move_lines.with_context(bypass_reservation_update=True).sudo().write({'product_uom_qty': 0})
-    #                         else:
-    #                             if reserved_on_move_lines != quant.reserved_quantity:
-    #                                 for line4 in move_lines:
-    #                                     if line4.product_uom_qty != 0 and line4.display_name != "":
-    #                                         print("move_line_id=", line4.id, line4.display_name,
-    #                                               "picking_id=", line4.picking_id, "move_id", line4.move_id,
-    #                                               "product_uom_qy=", line4.product_uom_qty, "<--0", line4.state, stat)
-    #                                 print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, "product_id=",
-    #                                       quant.product_id.id, "reserved_quantity:", quant.reserved_quantity, "<--0", stat)
-    #                                 if fix_me:
-    #                                     move_lines.with_context(bypass_reservation_update=True).sudo().write({'product_uom_qty': 0})
-    #                                     quant.sudo().write({'reserved_quantity': 0})
-    #                             else:
-    #                                 if any(move_line.product_qty < 0 for move_line in move_lines):
-    #                                     for line5 in move_lines:
-    #                                         if line5.display_name != "":
-    #                                             print("move_line_id=", line5.id, line5.display_name,
-    #                                                   "picking_id=", line5.picking_id, "move_id",
-    #                                                   line5.move_id, "product_uom_qy=", line5.product_uom_qty, "<--0",
-    #                                                   line5.state, stat)
-    #                                     print("quant_id=", quant.id, "lot_id=", quant.lot_id.id,
-    #                                           "product_id=", quant.product_id.id, "reserved_quantity:",
-    #                                           quant.reserved_quantity, "<--0", stat)
-    #                                     if fix_me:
-    #                                         move_lines.with_context(bypass_reservation_update=True).sudo().write({'product_uom_qty': 0})
-    #                                         quant.sudo().write({'reserved_quantity': 0})
-    #
-    #                 # move_lines = self.env['stock.move.line'].search([
-    #                 #     ('picking_id', '=', self.id),
-    #                 #     ('product_id.type', '=', 'product'),
-    #                 #     ('product_qty', '!=', 0),
-    #                 #     ('id', 'not in', move_line_ids),
-    #                 # ])
-    #                 #
-    #                 # move_lines_to_unreserve = []
-    #                 #
-    #                 # for move_line in move_lines:
-    #                 #     if not move_line.location_id.should_bypass_reservation():
-    #                 #         print("stock_move_line to UNRESERVE: ", "move_line_id=", move_line.id, "picking_id=", move_line.picking_id,
-    #                 #                       "move_id", move_line.move_id, "product_uom_qy<--0", move_line.state)
-    #                 #         move_lines_to_unreserve.append(move_line.id)
-    #                 #
-    #                 # if len(move_lines_to_unreserve) > 1:
-    #                 #     print("LINES TO UN-RESERVE: ", tuple(move_lines_to_unreserve), stat)
-    #                 #     if fix_me:
-    #                 #         self.env.cr.execute(""" UPDATE stock_move_line SET product_uom_qty = 0, product_qty = 0 WHERE id in %s ;""" % (tuple(move_lines_to_unreserve),))
-    #                 # elif len(move_lines_to_unreserve) == 1:
-    #                 #     print("LINES TO UN-RESERVE: ", move_lines_to_unreserve[0], stat)
-    #                 #     if fix_me:
-    #                 #         self.env.cr.execute(""" UPDATE stock_move_line SET product_uom_qty = 0, product_qty = 0 WHERE id = %s ;""" % (move_lines_to_unreserve[0]))
-    #     print("DONE!")
-    #
-    # def fix_unreserved_qty(self):
-    #     Available variables:
-    #      - env: Odoo Environment on which the action is triggered
-    #      - model: Odoo Model of the record on which the action is triggered; is a void recordset
-    #      - record: record on which the action is triggered; may be void
-    #      - records: recordset of all records on which the action is triggered in multi-mode; may be void
-    #      - time, datetime, dateutil, timezone: useful Python libraries
-    #      - log: log(message, level='info'): logging function to record debug information in ir.logging table
-    #      - Warning: Warning Exception to use with raise
-    #     To return an action, assign: action = {...}
-    #     self.sudo()
-    #     dry_run = self.env.context.get('dry_run')
-    #     fix_me = not dry_run
-    #     print("Dry Run:", dry_run)
-    #     if fix_me:
-    #         stat = "FIXED!"
-    #     else:
-    #         stat = "DRY RUN ONLY (No Changes were made)!"
-    #
-    #     quants = self.env['stock.quant'].search([('reserved_quantity', '!=', 0)])
-    #     if not quants:
-    #         quants = self.env['stock.quant'].search([('reserved_quantity', '!=', 0)])[0]
-    #     move_line_ids = []
-    #     warning = ''
-    #     for quant in quants:
-    #         move_lines = self.env["stock.move.line"].search([
-    #             ('product_id', '=', quant.product_id.id),
-    #             ('location_id', '=', quant.location_id.id),
-    #             ('lot_id', '=', quant.lot_id.id),
-    #             ('package_id', '=', quant.package_id.id),
-    #             ('owner_id', '=', quant.owner_id.id),
-    #             ('product_qty', '!=', 0)
-    #         ])
-    #         move_line_ids += move_lines.ids
-    #         reserved_on_move_lines = sum(move_lines.mapped('product_qty'))
-    #         move_line_str = str.join(', ', [str(move_line_id) for move_line_id in move_lines.ids])
-    #         # print(move_line_str)
-    #         if quant.location_id.should_bypass_reservation():
-    #             # If a quant is in a location that should bypass the reservation, its `reserved_quantity` field
-    #             # should be 0.
-    #             if quant.reserved_quantity != 0:
-    #                 print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, stat)
-    #                 if fix_me:
-    #                     quant.write({'reserved_quantity': 0})
-    #         else:
-    #             # If a quant is in a reservable location, its `reserved_quantity` should be exactly the sum
-    #             # of the `product_qty` of all the partially_available / assigned move lines with the same
-    #             # characteristics.
-    #             if quant.reserved_quantity == 0:
-    #                 if move_lines:
-    #                     for line1 in move_lines:
-    #                         if line1.product_uom_qty != 0 and line1.display_name != "":
-    #                             print("move_line_id=", line1.id, line1.display_name, "picking_id=",
-    #                                   line1.picking_id, "move_id", line1.move_id, "product_uom_qy=",
-    #                                   line1.product_uom_qty, "<--0", line1.state, stat)
-    #                     if fix_me:
-    #                         move_lines.with_context(bypass_reservation_update=True).write({'product_uom_qty': 0})
-    #             elif quant.reserved_quantity < 0:
-    #                 print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, "reserved_quantity=", quant.reserved_quantity, "<--0", stat)
-    #                 if fix_me:
-    #                     quant.write({'reserved_quantity': 0})
-    #                 if move_lines:
-    #                     for line2 in move_lines:
-    #                         if line2.product_uom_qty != 0 and line2.display_name != "":
-    #                             print("move_line_id=", line2.id, line2.display_name, "picking_id=",
-    #                                   line2.picking_id, "move_id", line2.move_id, "product_uom_qy=",
-    #                                   line2.product_uom_qty, "<--0", line2.state, stat)
-    #                     if fix_me:
-    #                         move_lines.with_context(bypass_reservation_update=True).write({'product_uom_qty': 0})
-    #             else:
-    #                 if reserved_on_move_lines != quant.reserved_quantity:
-    #                     for line3 in move_lines:
-    #                         if line3.product_uom_qty != 0 and line3.display_name != "":
-    #                             print("move_line_id=", line3.id, line3.display_name, "picking_id=", line3.picking_id,
-    #                                   "move_id", line3.move_id, "product_uom_qy=", line3.product_uom_qty,
-    #                                   "<--0", line3.state, stat)
-    #                     print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, "reserved_quantity=", quant.reserved_quantity, "<--0", stat)
-    #                     if fix_me:
-    #                         move_lines.with_context(bypass_reservation_update=True).write({'product_uom_qty': 0})
-    #                         quant.write({'reserved_quantity': 0})
-    #                 else:
-    #                     if any(move_line.product_qty < 0 for move_line in move_lines):
-    #                         for line4 in move_lines:
-    #                             if line4.display_name != "":
-    #                                 print("move_line_id=", line4.id, line4.display_name, "picking_id=",
-    #                                       line4.picking_id, "move_id", line4.move_id, "product_uom_qy=",
-    #                                       line4.product_uom_qty, "<--0", line4.state, stat)
-    #                         print("quant_id=", quant.id, "lot_id=", quant.lot_id.id, "reserved_quantity=", quant.reserved_quantity, "<--0", stat)
-    #                         if fix_me:
-    #                             move_lines.with_context(bypass_reservation_update=True).write({'product_uom_qty': 0})
-    #                             quant.write({'reserved_quantity': 0})
-    #
-    #     move_lines = self.env['stock.move.line'].search([
-    #         ('product_id.type', '=', 'product'),
-    #         ('product_qty', '!=', 0),
-    #         ('id', 'not in', move_line_ids),
-    #     ])
-    #
-    #     move_lines_to_unreserve = []
-    #
-    #     for move_line in move_lines:
-    #         if not move_line.location_id.should_bypass_reservation():
-    #             print("APPEND LINE to stock_move_line: ", "move_line_id=", move_line.id, move_line.display_name, "picking_id=", move_line.picking_id,
-    #                           "move_id", move_line.move_id, "product_uom_qy<--0", move_line.state, stat)
-    #             move_lines_to_unreserve.append(move_line.id)
-    #
-    #     if len(move_lines_to_unreserve) > 1:
-    #         print("LINES TO UN-RESERVE: ", tuple(move_lines_to_unreserve), stat)
-    #         if fix_me:
-    #             self.env.cr.execute(""" UPDATE stock_move_line SET product_uom_qty = 0, product_qty = 0 WHERE id in %s ;""" % (tuple(move_lines_to_unreserve),))
-    #     elif len(move_lines_to_unreserve) == 1:
-    #         print("LINE TO UN-RESERVE: ", move_lines_to_unreserve[0], stat)
-    #         if fix_me:
-    #             self.env.cr.execute(""" UPDATE stock_move_line SET product_uom_qty = 0, product_qty = 0 WHERE id = %s ;""" % (move_lines_to_unreserve[0]))
-    #
-    #     print("DONE !")
-
-    def quick_do(self):
-        # pdb.set_trace()
+    def quick_do (self):
+        #pdb.set_trace()
         self.ensure_one()
         if not self.move_lines and not self.move_line_ids:
             raise UserError(_('Please add some items to move.'))
         i = 0
+        
+        # for pick in self.move_line_ids:
+            # if (pick.qty_done == 0) or (pick.qty_done > pick.product_uom_qty):
+                # pick.qty_done = pick.product_uom_qty
+                # i = i + 1
+                # # SYNTAX ERROR raise UserError(_('Number of items processed: %d line_id= %d') % i, % pick.id)
+        raise UserError(_('STILL UNDER CONSTRUCTION: Number of items processed: %d') % i)
 
-        for line in self.move_line_ids:
-            if not line.lot_id and ((line.qty_done == 0) or (line.qty_done > line.product_uom_qty)):
-                line.qty_done = line.product_uom_qty
-                print("stock_move_line.id:", line.id, ", product:", line.display_name, ", picking_id:", line.picking_id,
-                      "qty_done:", line.qty_done)
-                i = i + 1
-        print('Number of rows set to done: ', i)
-        # raise UserError(_('DONE  Number of rows set to done: %d') % i)
-
-    # BELOW: FROM Odoo v9 TSA customization
     # def quick_do (self, cr, uid, ids, context=None):
-    # pack_op_obj = self.pool['stock.pack.operation']
-    # data_obj = self.pool['ir.model.data']
-    # for pick in self.browse(cr, uid, ids, context=context):
-    # for operation in pick.pack_operation_ids:
-    # if (operation.qty_done == 0) or (operation.qty_done > operation.product_qty):
-    # operation.qty_done = operation.product_qty
+        # pack_op_obj = self.pool['stock.pack.operation']
+        # data_obj = self.pool['ir.model.data']
+        # for pick in self.browse(cr, uid, ids, context=context):
+            # for operation in pick.pack_operation_ids:
+                # if (operation.qty_done == 0) or (operation.qty_done > operation.product_qty):
+                    # operation.qty_done = operation.product_qty
 
-    #    x_carrier_id = fields.Many2one(string='Carrier:', help='Carrier company - who delivers the items', copy=False, readonly=False, required=False, selectable=True, related='delivery.carrier')
-    x_extra_notes = fields.Text(string='Notes / References',
-                                help='Use this field to add extra notes and references (e.g. to appear on packing slips ..)',
-                                copy=True, readonly=False, required=False, selectable=True)
-    x_extra_notes_ext = fields.Text(string='Notes for TSA Staff', help='Will *not appear on delivery docket', copy=True,
-                                    readonly=False, required=False, selectable=True)
-    x_my_location = fields.Many2one('stock.location', string='My Location',
-                                    help='Use with the To My Location button to change the To location', copy=False,
-                                    readonly=False, required=False, selectable=True)
-    x_ship_in_out_date = fields.Date(string='Date Goods Sent / Received', help='', copy=False, readonly=False,
-                                     required=False, selectable=True)
-    x_special_address = fields.Many2one('res.partner', string='New Delivery Address',
-                                        help='Fill in this field if a different delivery address is required to that originally provided on the order',
-                                        copy=True, readonly=False, required=False, selectable=True)
+#    x_carrier_id = fields.Many2one(string='Carrier:', help='Carrier company - who delivers the items', copy=False, readonly=False, required=False, selectable=True, related='delivery.carrier')
+    x_extra_notes = fields.Text(string='Notes / References', help='Use this field to add extra notes and references (e.g. to appear on packing slips ..)', copy=True, readonly=False, required=False, selectable=True)
+    x_extra_notes_ext = fields.Text(string='Notes for TSA Staff', help='Will *not appear on delivery docket', copy=True, readonly=False, required=False, selectable=True)
+    x_my_location = fields.Many2one('stock.location', string='My Location', help='Use with the To My Location button to change the To location', copy=True, readonly=False, required=False, selectable=True)
+    x_ship_in_out_date = fields.Date(string='Date Goods Sent / Received', help='', copy=False, readonly=False, required=False, selectable=True)
+    x_special_address = fields.Many2one('res.partner', string='New Delivery Address', help='Fill in this field if a different delivery address is required to that originally provided on the order', copy=True, readonly=False, required=False, selectable=True)
 
-
-class TsaProductProduct(models.Model):
+class tsaextu(models.Model):
     _inherit = ['product.product']
 
-    @api.multi
+    # @api.multi
     def _total_qty_sold(self):
         r = {}
         domain = [
@@ -817,7 +396,7 @@ class TsaProductProduct(models.Model):
             product.x_total_qty_sold = r.get(product.id, 0)
         return r
 
-    @api.multi
+    # @api.multi
     def _total_qty_bought(self):
         r = {}
         domain = [
@@ -830,7 +409,7 @@ class TsaProductProduct(models.Model):
             product.x_total_qty_bought = r.get(product.id, 0)
         return r
 
-    @api.multi
+    # @api.multi
     def _total_qty_made(self):
         r = {}
         domain = [
@@ -843,10 +422,9 @@ class TsaProductProduct(models.Model):
             product.x_total_qty_made = r.get(product.id, 0)
         return r
 
-    x_total_qty_made = fields.Integer(compute='_total_qty_made', string='Made.')
+    x_total_qty_made = fields.Integer(compute='_total_qty_made', string='Sold')
     x_total_qty_bought = fields.Integer(compute='_total_qty_bought', string='Bought')
-    x_total_qty_sold = fields.Integer(compute='_total_qty_sold', string='Sold.')
-
+    x_total_qty_sold = fields.Integer(compute='_total_qty_sold', string='Sold')
 
 class TsaRpt050BankJouA(models.Model):
     _name = "gg2.bankjou"
@@ -861,10 +439,10 @@ class TsaRpt050BankJouA(models.Model):
     jouitem_debit = fields.Float(string='ItemDebit', readonly=True)
     jouitem_credit = fields.Float(string='ItemCredit', readonly=True)
     jouentryid = fields.Many2one('account.move', string='JouEntry', readonly=True)
-    jou_entry = fields.Char(string='JouEntry.', readonly=True)
-    stmtid = fields.Many2one('account.bank.statement', string='StmtId.', readonly=True)
+    jou_entry = fields.Char(string='JouEntry', readonly=True)
+    stmtid = fields.Many2one('account.bank.statement', string='StmtId', readonly=True)
     stmt = fields.Char(string='StmtName', readonly=True)
-    stmtlineid = fields.Many2one('account.bank.statement.line', string='StmtLineId.', readonly=True)
+    stmtlineid = fields.Many2one('account.bank.statement.line', string='StmtLineId', readonly=True)
     stmt_row = fields.Integer(string='StmtRow', readonly=True)
     stmt_line_desc = fields.Char(string='StmtLineDesc', readonly=True)
     amount = fields.Float(string='Amount', readonly=True)
@@ -897,47 +475,6 @@ class TsaRpt050BankJouA(models.Model):
             INNER JOIN account_bank_statement_line ON account_move_line.statement_line_id = account_bank_statement_line.id)
             INNER JOIN account_bank_statement ON account_move_line.statement_id = account_bank_statement.id
         )""")
-
-    def showpayment(self):
-        my_view_id = self.env.ref('account.view_account_payment_form').id
-        my_jou_ref = self.jou_item
-        my_jou_ref_split = my_jou_ref.partition(":")
-        # print(my_jou_ref_split)
-        my_row_id = ''
-        for payment_ref in my_jou_ref_split:
-            if not my_row_id:
-                my_payment_name = payment_ref.lstrip().rstrip()
-                my_row_id = self.env['account.payment'].search([('name', '=', my_payment_name)]).id
-        if not my_row_id:
-            my_jou_entry_id = self.jou_entry_id
-            # print("My Jou Entry ID: %d" % my_jou_entry_id)
-            my_jou_lines = self.env['account.move.line'].search([('move_id', '=', my_jou_entry_id)])
-            # print("My Jou Line Labels: %s" % my_jou_lines)
-            for my_jou_line in my_jou_lines:
-                if not my_row_id:
-                    my_jou_line_label = my_jou_line.name
-                    # print("Journal Line Label (full): %s" % my_jou_line_label)
-                    my_jou_line_label_split = my_jou_line_label.partition(":")
-                    for my_label in my_jou_line_label_split:
-                        if not my_row_id:
-                            my_label = my_label.lstrip().rstrip()
-                            # print("Journal Line Label (part): %s" % my_label)
-                            my_row_id = self.env['account.payment'].search([('name', '=', my_label)]).id
-        if not my_row_id:
-            raise UserError(
-                _('Payment could not be found for this line within: %s') % my_jou_ref + ', ' + my_jou_line_label)
-
-        return {
-            'name': _('Journal Entry'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'account.payment',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': my_view_id,
-            'res_id': my_row_id,
-            'context': {},
-            'target': 'current',
-        }
 
     def showjournalentry(self, values):
         self.ensure_one()
@@ -975,7 +512,6 @@ class TsaRpt050BankJouA(models.Model):
             'target': 'current',
         }
 
-
 # BELOW MODEL IS NOT WORKING 100% !!!
 # Postgres view gets created ok BUT odoo model only displays a sub-set of the full number of records (no matter what I do)
 class TsaRpt030PaidNotDeliveredA(models.Model):
@@ -983,24 +519,24 @@ class TsaRpt030PaidNotDeliveredA(models.Model):
     _description = "Sales Orders that have been PAID but NOT Delivered!"
     _auto = False
 
-    # id = fields.Many2one('sale.order', string='SOId', readonly=True)
+    #id = fields.Many2one('sale.order', string='SOId', readonly=True)
     state = fields.Char(string='SOState', readonly=True)
     salesorder = fields.Char(string='SO', readonly=True)
-    # create_date = fields.Date(string='SOCreated', readonly=True) # Created Type error .. said it wanted type of Date or String not Datetime!
+    #create_date = fields.Date(string='SOCreated', readonly=True) # Created Type error .. said it wanted type of Date or String not Datetime!
     partner_invoice_id = fields.Integer(string='ClientY', readonly=True)
-    partnerid = fields.Many2one('res.partner', string='Client', readonly=True)  # ? One2many ? Many2many
+    partnerid = fields.Many2one('res.partner', string='Client', readonly=True) # ? One2many ? Many2many
     whotoinvoice = fields.Char(string='WhoToInvoice', readonly=True)
-    invid = fields.Many2one('account.invoice', string='InvId', readonly=True)  # ? One2many ? Many2many
+    invid = fields.Many2one('account.invoice', string='InvId', readonly=True) # ? One2many ? Many2many
     origin = fields.Char(string='InvOrigin', readonly=True)
     inv_status = fields.Char(string='InvState', readonly=True)
-    solineid = fields.One2many('sale.order.line', string='SoLineId', readonly=True)  # ? One2many ? Many2many
+    solineid = fields.One2many('sale.order.line', string='SoLineId', readonly=True) # ? One2many ? Many2many
     qtynotdelivered = fields.Float(string='QtyNotDelivered', readonly=True)
     item = fields.Char(string='item', readonly=True)
     ordered = fields.Float(string='OrderQty', readonly=True)
     qtyinvoiced = fields.Float(string='InvQty', readonly=True)
     qtydelivered = fields.Float(string='DeliveredQty', readonly=True)
     price_total = fields.Float(string='Total', readonly=True)
-    productid = fields.Many2one('product.product', string='ProdId', readonly=True)  # ? One2many ? Many2many
+    productid = fields.Many2one('product.product', string='ProdId', readonly=True) # ? One2many ? Many2many
     itemcode = fields.Char(string='ItemCode', readonly=True)
     producttmplid = fields.Many2one('product.template', string='ProdTmplId', readonly=True)
 
@@ -1060,11 +596,10 @@ class TsaRpt030PaidNotDeliveredA(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, orderby_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
-
 
 class TsaRpt070PaidInvoices(models.Model):
     _name = "gg2.rpt070"
@@ -1075,9 +610,9 @@ class TsaRpt070PaidInvoices(models.Model):
     state = fields.Char(readonly=True)
     number = fields.Char(readonly=True)
     origin = fields.Char(readonly=True)
-    amt = fields.Float(readonly=True)
-    topay = fields.Float(readonly=True)
-    who = fields.Char(readonly=True)
+    amt =  fields.Float(readonly=True)
+    topay =  fields.Float(readonly=True)
+    who =  fields.Char(readonly=True)
 
     def _query(self, with_clause='', fields={}, groupby='', from_clause=''):
         with_ = ("WITH %s" % with_clause) if with_clause else ""
@@ -1101,14 +636,14 @@ class TsaRpt070PaidInvoices(models.Model):
             INNER JOIN account_invoice ON account_invoice_line.invoice_id = account_invoice.id
             %s
         """ % from_clause
-
+        
         where_ = """
             state = 'paid'
         """
 
         return '%s (SELECT %s FROM %s WHERE %s)' % (with_, select_, from_, where_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -1123,21 +658,21 @@ class TsaRpt080SalesToDeliverD(models.Model):
     invqty = fields.Float(readonly=True)
     qty_delivered = fields.Float(readonly=True)
     qty_delivered_manual = fields.Float(readonly=True)
-    orderqty = fields.Float(readonly=True)
-    item = fields.Char(readonly=True)
-    soid = fields.Many2one('sale.order', string='SO Id', readonly=True)
-    sostate = fields.Char(readonly=True)
-    soname = fields.Char(readonly=True)
-    orderdate = fields.Datetime(readonly=True)
-    customer = fields.Integer(readonly=True)
-    invto = fields.Integer(readonly=True)
+    orderqty =  fields.Float(readonly=True)
+    item =  fields.Char(readonly=True)
+    soid =  fields.Many2one('sale.order', string='SO Id', readonly=True)
+    sostate =  fields.Char(readonly=True)
+    soname =  fields.Char(readonly=True)
+    orderdate =  fields.Datetime(readonly=True)
+    customer =  fields.Integer(readonly=True)
+    invto =  fields.Integer(readonly=True)
     whotoinvoice = fields.Char(readonly=True)
-    shipto = fields.Integer(readonly=True)
-    partnerid = fields.Many2one('res.partner', string='Client', readonly=True)  # ? One2many ? Many2many
-    productid = fields.Many2one('product.product', string='ProdId', readonly=True)  # ? One2many ? Many2many
+    shipto =  fields.Integer(readonly=True)
+    partnerid = fields.Many2one('res.partner', string='Client', readonly=True) # ? One2many ? Many2many
+    productid = fields.Many2one('product.product', string='ProdId', readonly=True) # ? One2many ? Many2many
     itemcode = fields.Char(string='ItemCode', readonly=True)
     producttmplid = fields.Many2one('product.template', string='ProdTmplId', readonly=True)
-    itemtype = fields.Char(string='ItemType', readonly=True)
+    itemtype = fields.Char(string='ItemCode', readonly=True)
 
     def _query(self, with_clause='', fields={}, groupby='', from_clause=''):
         with_ = ("WITH %s" % with_clause) if with_clause else ""
@@ -1176,7 +711,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
             INNER JOIN product_template ON product_product.product_tmpl_id = product_template.id
             %s
         """ % from_clause
-
+        
         where_ = """
             (sale_order_line.qty_delivered::numeric < sale_order_line.qty_invoiced::numeric)
             AND (sale_order_line.invoice_status::text = 'invoiced'::text)
@@ -1202,7 +737,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
             AND (product_product.default_code::text <> 'SHIPPING'::text)
             AND (product_product.default_code::text NOT ILIKE 'POST%'::text)
         """
-
+        
         order_ = """
             sale_order.id DESC, 
             sale_order_line.name ASC
@@ -1210,7 +745,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, order_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
@@ -1219,7 +754,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
         self.ensure_one()
         sale_order_view_id = self.env.ref('gg2.view_form_sale_order_tsa').id
         mysaleorderlineid = self.ids[0]
-        mysaleorderline = self.env['sale.order.line'].search([('id', '=', mysaleorderlineid)])
+        mysaleorderline = self.env['sale.order.line'].search([('id','=',mysaleorderlineid)])
         mysaleorderid = mysaleorderline.order_id.id  # type: Union[int, Any]
         print("My Sale Order ID=%d" % mysaleorderid)
         # raise UserError(_('view id is: %d   sale order id is: %d') % sale_order_view_id, % mysaleorderid)
@@ -1231,7 +766,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
             'view_mode': 'form',
             'view_id': sale_order_view_id,
             'res_id': mysaleorderid,
-            'context': {'id': mysaleorderid},
+            'context': {'id': mysaleorderid },
             'target': 'current',
         }
 
@@ -1280,7 +815,7 @@ class TsaRpt082SalesToDeliverD(models.Model):
 
         return '%s (SELECT %s FROM %s GROUP BY %s ORDER BY %s)' % (with_, select_, from_, groupby_, order_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -1303,7 +838,6 @@ class TsaRpt082SalesToDeliverD(models.Model):
             'context': {},
             'target': 'current',
         }
-
 
 class TsaRpt090BalanceSheetH(models.Model):
     _name = "gg2.rpt090"
@@ -1364,7 +898,7 @@ class TsaRpt090BalanceSheetH(models.Model):
 
         return '%s (SELECT %s FROM %s WHERE %s ORDER BY %s)' % (with_, select_, from_, where_, order_)
 
-    @api.model_cr
+    # @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
