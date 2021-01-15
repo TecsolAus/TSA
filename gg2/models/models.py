@@ -601,10 +601,10 @@ class TsaRpt050BankJouA(models.Model):
         # tools.drop_view_if_exists(self.env.cr, self._table)
         # self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
 
-class TsaRpt070PaidInvoices(models.Model):
-    _name = "gg2.rpt070"
-    _description = "Paid Invoices"
-    _auto = False
+# class TsaRpt070PaidInvoices(models.Model):
+    # _name = "gg2.rpt070"
+    # _description = "Paid Invoices"
+    # _auto = False
 
     # invid = fields.Many2one('account.invoice.line', string='InvLineId', readonly=True)
     # state = fields.Char(readonly=True)
