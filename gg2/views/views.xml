@@ -590,24 +590,24 @@
                 <!-- sequence="70" -->
         <!-- /> -->
 
-        <record id="tsa_rpt030_treeview" model="ir.ui.view">
-            <field name="name">tsa_rpt030</field>
-            <field name="model">gg2.rpt030</field>
-            <field name="arch" type="xml">
-                <tree string="Rpt No30 Sales Orders PAID but not yet DELIVERED" default_order="origin desc">
-                    <field name="invid"/>
-                    <field name="state"/>
-                    <field name="salesorder"/>
-                    <field name="partner_invoice_id"/>
-                    <field name="inv_status"/>
-                    <field name="qtynotdelivered"/>
-                    <field name="itemcode"/>
-                    <field name="item"/>
-                    <field name="ordered"/>
-                    <field name="qtyinvoiced"/>
-                    <field name="qtydelivered"/>
-                    <field name="price_total"/>
-                    <field name="id" invisible="0"/>
+        <!-- <record id="tsa_rpt030_treeview" model="ir.ui.view"> -->
+            <!-- <field name="name">tsa_rpt030</field> -->
+            <!-- <field name="model">gg2.rpt030</field> -->
+            <!-- <field name="arch" type="xml"> -->
+                <!-- <tree string="Rpt No30 Sales Orders PAID but not yet DELIVERED" default_order="origin desc"> -->
+                    <!-- <field name="invid"/> -->
+                    <!-- <field name="state"/> -->
+                    <!-- <field name="salesorder"/> -->
+                    <!-- <field name="partner_invoice_id"/> -->
+                    <!-- <field name="inv_status"/> -->
+                    <!-- <field name="qtynotdelivered"/> -->
+                    <!-- <field name="itemcode"/> -->
+                    <!-- <field name="item"/> -->
+                    <!-- <field name="ordered"/> -->
+                    <!-- <field name="qtyinvoiced"/> -->
+                    <!-- <field name="qtydelivered"/> -->
+                    <!-- <field name="price_total"/> -->
+                    <!-- <field name="id" invisible="0"/> -->
                     <!-- <field name="create_date"/> -->
                     <!-- <field name="inv"/> -->
                     <!-- <field name="so"/> -->
@@ -617,27 +617,27 @@
                     <!-- <field name="soid"/> -->
                     <!--<field name="origin"/>-->
                     <!--<field name="solineid"/>--><!-- Error when trying to display this field "if comodel._fields(inverse].type == 'many2one' else int-->
-                </tree>
-            </field>
-        </record>
-        <record id="tsa_rpt030_action" model="ir.actions.act_window">
-            <field name="name">Rpt No30 Sales Orders Paid but Not yet fully Delivered</field>
-            <field name="res_model">gg2.rpt030</field>
-            <field name="view_mode">tree</field>
+                <!-- </tree> -->
+            <!-- </field> -->
+        <!-- </record> -->
+        <!-- <record id="tsa_rpt030_action" model="ir.actions.act_window"> -->
+            <!-- <field name="name">Rpt No30 Sales Orders Paid but Not yet fully Delivered</field> -->
+            <!-- <field name="res_model">gg2.rpt030</field> -->
+            <!-- <field name="view_mode">tree</field> -->
             <!--<field name="views">["gg2.tsa_rpt030", "tree"]</field>--><!-- EXAMPLE -->
-            <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt030_treeview"/>
-            <field name="target">current</field>
-            <field name="context">{}</field>
-            <field name="domain">[]</field>
-        </record>
-        <menuitem
-                name="30 Sales Orders Paid but not delivered (Under Construction!)"
-                id="tsa_report_030_menu"
-                parent="tsa_report_tests_menu"
-                action="tsa_rpt030_action"
-                sequence="60"
-        />
+            <!-- <field name="views">[]</field> -->
+            <!-- <field name="view_id" ref="gg2.tsa_rpt030_treeview"/> -->
+            <!-- <field name="target">current</field> -->
+            <!-- <field name="context">{}</field> -->
+            <!-- <field name="domain">[]</field> -->
+        <!-- </record> -->
+        <!-- <menuitem -->
+                <!-- name="30 Sales Orders Paid but not delivered (Under Construction!)" -->
+                <!-- id="tsa_report_030_menu" -->
+                <!-- parent="tsa_report_tests_menu" -->
+                <!-- action="tsa_rpt030_action" -->
+                <!-- sequence="60" -->
+        <!-- /> -->
         <record id="tsa_rpt050_searchview" model="ir.ui.view">
             <field name="name">tsa_rpt_050_searchview</field>
             <field name="model">gg2.bankjou</field>
