@@ -708,7 +708,7 @@
             <field name="model">account.bank.statement</field>
             <field name="inherit_id" ref="account.view_bank_statement_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='307']" position="after">
+                <xpath expr="//form/header" position="after">
                     <button name="%(tsa_bankjou_action)d" string="Journal Bank XRef" type="action"/>
                 </xpath>
                 <xpath expr="//page[@name='statement_line_ids']" position="replace">
