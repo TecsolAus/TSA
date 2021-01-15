@@ -842,7 +842,7 @@
                         <field name="default_credit_account_id"/>
                         <field name="restrict_mode_hash_table" string="Lock Posted"/>
                         <field name="type"/>
-                        <field name="belongs_to_company" invisible="1"/>
+                        <!-- <field name="belongs_to_company" invisible="1"/> -->
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="id"/>
                     </tree>
