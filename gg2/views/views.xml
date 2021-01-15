@@ -1477,7 +1477,7 @@
                 <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='user_id']" position="before">
                     <field name="credit"/>
                 </xpath>
-                <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='supplier']" position="before">
+                <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='misc']/field[@name='company_id']" position="before">
                     <field name="debit"/>
                 </xpath>
                 <xpath expr="//page[@name='sales_purchases']" position="after">
