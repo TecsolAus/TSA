@@ -738,8 +738,12 @@
             <field name="inherit_id" ref="account.view_account_move_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='date']" position="after">
-                    <field name="amount"/>
-                    <field name="amount" filter_domain="[('amount','ilike',self)]" string="Amount Contains"/>
+                    <field name="amount_total"/>
+                    <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Amount Contains"/>
+					<field name="amount_tax"/>
+                    <field name="amount_tax" filter_domain="[('amount_tax','ilike',self)]" string="Tax Contains"/>
+					<field name="amount_residual"/>
+                    <field name="amount_residual" filter_domain="[('amount_residual','ilike',self)]" string="Residual Amt Contains"/>					
                 </xpath>
             </field>
         </record>
