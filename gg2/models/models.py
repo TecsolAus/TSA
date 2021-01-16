@@ -24,8 +24,8 @@ from mock.mock import self
 #                //ORIG: topbar_name = _.str.sprintf("%s (%s)", topbar_name, session.db);
 #            }
 
-# class TsaAccountInvoice(models.Model):
-    # _inherit = ['account.invoice']
+class TsaAccountInvoice(models.Model):
+    _inherit = ['account.move']
 
     # # @api.multi
     # def invoice_validate(self):
@@ -71,29 +71,28 @@ from mock.mock import self
                         # "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
         # return super(TsaAccountInvoice, self).invoice_validate()
 
-    # @api.depends('partner_id')
-    # def _get_customer_email(self):
-        # for record in self:
-            # record['x_customer_email'] = record.partner_id.email
-    # @api.depends('name')
-    # def _get_name_truncated(self):
-        # for record in self:
-            # if (record.name):
-                # if (len(record.name) > 32):
-                    # record['x_name_truncated'] = (record.name[:30] + '..')
-                # else:
-                    # record.name
-            # else:
-                # record.name
+    @api.depends('partner_id')
+    def _get_customer_email(self):
+        for record in self:
+            record['x_customer_email'] = record.partner_id.email
+    @api.depends('name')
+    def _get_name_truncated(self):
+        for record in self:
+            if (record.name):
+                if (len(record.name) > 32):
+                    record['x_name_truncated'] = (record.name[:30] + '..')
+                else:
+                    record.name
+            else:
+                record.name
 
-    # name = fields.Char(readonly=False)
-    # reference = fields.Char(readonly=False)
-    # x_customer_email = fields.Char(string='Email', help='Read-only display of Customer or Vendors Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
-    # x_items_for_partner_id = fields.Many2one('res.partner', string='Items For', help='', copy=True, readonly=False, required=False, selectable=True)
-    # x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False, selectable=True)
-    # #x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False)
-    # x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False, compute='_get_name_truncated')
-    # x_extra_notes = fields.Text(string='Additional Notes', help='', copy=False, readonly=False, required=False, selectable=True)
+    name = fields.Char(readonly=False)
+    reference = fields.Char(readonly=False)
+    x_customer_email = fields.Char(string='Email', help='Read-only display of Customer or Vendors Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
+    x_items_for_partner_id = fields.Many2one('res.partner', string='Items For', help='', copy=True, readonly=False, required=False, selectable=True)
+    x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False, selectable=True)
+    x_name_truncated = fields.Char(string='Ref / Desc', copy=False, readonly=True, required=False, selectable=False, compute='_get_name_truncated')
+    x_extra_notes = fields.Text(string='Additional Notes', help='', copy=False, readonly=False, required=False, selectable=True)
 
 class tsaextb(models.Model):
     _inherit = ['account.move']
