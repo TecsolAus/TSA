@@ -1467,8 +1467,10 @@
                             <field name="sale_ok"/>
                             <label for="purchase_ok"/>
                             <field name="purchase_ok"/>
-                            <label for="can_be_expensed"/>
-                            <field name="can_be_expensed"/>
+                            <label for="visible_expense_policy"/>
+                            <field name="visible_expense_policy"/>
+                            <label for="expense_policy"/>
+                            <field name="expense_policy"/>							
                         </div>
                     </div>
                 </xpath>
