@@ -616,7 +616,8 @@ class TsaRpt080SalesToDeliverD(models.Model):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
 
-    def showsalesorder(self, values):
+    # OLD CODE (v12) was     def showsalesorder(self, values):
+    def showsalesorder(self):
         self.ensure_one()
         sale_order_view_id = self.env.ref('gg2.view_form_sale_order_tsa').id
         mysaleorderlineid = self.ids[0]
