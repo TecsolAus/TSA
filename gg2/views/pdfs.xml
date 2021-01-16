@@ -835,10 +835,10 @@
                     <span t-elif="o.type in ('in_invoice', 'out_refund')">
 						<strong>INVOICE FROM</strong>
 					</span>
-                    <span t-elif="o.type = 'in_receipt')">
+                    <span t-elif="o.type = 'in_receipt'">
 						<strong>RECEIPT FROM</strong>
 					</span>
-                    <span t-elif="o.type = 'out_receipt')">
+                    <span t-elif="o.type = 'out_receipt'">
 						<strong>RECEIPT TO</strong>
 					</span>						
 					<span t-if="o.partner_id">
