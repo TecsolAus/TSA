@@ -814,7 +814,7 @@
             </div>
 
             <div t-if="report_type != ''" style="font-size:14px;">
-                Page: <span class="page"/> to <span class="topage"/>
+                Page: <span class="page"/> of <span class="topage"/>
             </div>
         </div>
     </div>
@@ -1048,7 +1048,7 @@
                 Please quote the following with your payment : <b><span t-field="o.name"/></b>
             </p>
             <p t-else="o.type not in ('out_invoice', 'in_refund') or o.amount_residual == 0">
-                Please quote the following on any correspondence : <b><span t-field="o.name"/></b>
+                Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email to accounts@tecsol.com.au
             </p>			
             <!-- <p t-if="o.comment" name="comment"> -->
                 <!-- <span t-field="o.comment"/> -->
