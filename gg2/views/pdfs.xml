@@ -843,10 +843,10 @@
                 <!-- <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span> -->
                 <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice</span>
                 <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice</span>
-                <span t-if="o.type == 'out_refund'">Refund</span>
-                <span t-if="o.type == 'in_refund'">Vendor Refund</span>
+                <span t-if="o.type == 'out_refund'">Refund / Credit Note </span>
+                <span t-if="o.type == 'in_refund'">Vendor Refund / Credit Note</span>
                 <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
-                <span t-field="o.name"/>
+                <span t-if="o.name != '/'" t-field="o.name"/>
             </h2>
             <div name="refs" style="padding-bottom:15px; font-size:16px">
             <div class="row mt-1 mb-0">
