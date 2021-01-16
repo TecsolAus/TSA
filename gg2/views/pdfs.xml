@@ -852,13 +852,13 @@
                 </div>
             </div>
             <h2 name="invheading" style="padding-bottom:15px; padding-top:20px;">
-                <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.invoice_payment_state == 'paid')">Tax Invoice</span>
+                <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.invoice_payment_state == 'paid')">Tax Invoice :</span>
                 <!-- <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span> -->
-                <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice</span>
-                <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice</span>
-                <span t-if="o.type == 'out_refund'">Refund / Credit Note </span>
-                <span t-if="o.type == 'in_refund'">Vendor Refund / Credit Note</span>
-                <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
+                <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice :</span>
+                <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice :</span>
+                <span t-if="o.type == 'out_refund'">Refund / Credit Note :</span>
+                <span t-if="o.type == 'in_refund'">Vendor Refund / Credit Note :</span>
+                <span t-if="o.type == 'in_invoice'">Vendor Bill :</span>
                 <span t-if="o.name != '/'" t-field="o.name"/>
             </h2>
             <div name="refs" style="padding-bottom:15px; font-size:16px">
