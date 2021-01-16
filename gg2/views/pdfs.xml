@@ -845,11 +845,14 @@
 						<div t-field="o.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
 					</span>
                 </div>
-                <div class="col-6" style="">
-                    <span t-if="((o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id)) or (o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)))"><strong>ITEMS FOR</strong></span>
-                    <div t-field="o.x_items_for_partner_id" t-if="(o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id))" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
-                    <div t-field="o.partner_shipping_id" t-elif="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
-                </div>
+				<!-- Add a 2nd address in Customer Invoices where there is a different delivery address or the custom field 'items_for' has been completed  -->
+				<p t-if="o.type in ('out_invoice', 'in_refund')">
+					<div class="col-6" style="">
+						<span t-if="((o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id)) or (o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)))"><strong>ITEMS FOR</strong></span>
+						<div t-field="o.x_items_for_partner_id" t-if="(o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id))" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+						<div t-field="o.partner_shipping_id" t-elif="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+					</div>
+				</p>
             </div>
             <h2 name="invheading" style="padding-bottom:15px; padding-top:20px;">
                 <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.invoice_payment_state == 'paid')">Tax Invoice :</span>
@@ -1059,11 +1062,11 @@
 				
             </p>
             <p t-elif="o.amount_residual == 0">
-                Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email to accounts@tecsol.com.au
+                No payment is due.  Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email to accounts@tecsol.com.au
             </p>			
-            <!-- <p t-if="o.comment" name="comment"> -->
-                <!-- <span t-field="o.comment"/> -->
-            <!-- </p> -->
+            <p t-if="o.narration" name="comment">
+                <span t-field="o.narration"/>
+            </p>
             <p t-if="o.fiscal_position_id.note" name="note">
                 <span t-field="o.fiscal_position_id.note"/>
             </p>
