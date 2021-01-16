@@ -1031,20 +1031,21 @@
                 Please use the following communication for your payment : <b><span t-field="o.reference"/></b>
             </p>
 -->
-            <p>
+            <p t-if="o.type in ('out_invoice', 'in_refund')">
                 Please use the following communication for your payment : <b><span t-field="o.name"/></b>
             </p>
             <!-- <p t-if="o.comment" name="comment"> -->
                 <!-- <span t-field="o.comment"/> -->
             <!-- </p> -->
             <p t-if="o.invoice_payment_term_id" name="payment_term">
+				TERMS:
                 <span t-field="o.invoice_payment_term_id.note"/>
-                    <p><strong>
-                    <p>
-                    DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
-                            Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
-                        </p>
-                    </strong></p>
+				<p><strong>
+                    <p t-if="o.type in ('out_invoice', 'in_refund')">
+						DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
+                        Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
+					</p>
+				</strong></p>
             </p>
             <p t-if="o.fiscal_position_id.note" name="note">
                 <span t-field="o.fiscal_position_id.note"/>
