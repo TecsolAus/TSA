@@ -476,7 +476,8 @@ class TsaRpt050BankJouA(models.Model):
             INNER JOIN account_bank_statement ON account_move_line.statement_id = account_bank_statement.id
         )""")
 
-    def showjournalentry(self, values):
+    # OLD CODE - v12 was    def showjournalentry(self, values):
+    def showjournalentry(self):
         self.ensure_one()
         my_view_id = self.env.ref('account.view_move_form').id
         my_row_id = self.jou_entry_id
