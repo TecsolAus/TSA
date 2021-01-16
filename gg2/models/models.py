@@ -495,7 +495,8 @@ class TsaRpt050BankJouA(models.Model):
             'target': 'current',
         }
 
-    def showbankstatement(self, values):
+    # OLD CODE (at v12) was     def showbankstatement(self, values):
+    def showbankstatement(self):
         self.ensure_one()
         my_view_id = self.env.ref('account.view_bank_statement_form').id
         my_row_id = self.statement_id
