@@ -856,7 +856,7 @@
                 </div>
             </div>
            <div class="row mt-0 mb-0">
-                <div name="our_ref" class="col-12"  t-if="o.origin">
+                <div name="our_ref" class="col-12"  t-if="o.invoice_origin">
                     <strong>Our Ref: </strong>
                     <span t-field="o.invoice_origin"/>
                 </div>
