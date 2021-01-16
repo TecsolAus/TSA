@@ -839,26 +839,26 @@
                 </div>
             </div>
             <h2 name="invheading" style="padding-bottom:15px; padding-top:20px;">
-                <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Tax Invoice</span>
-                <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span>
+                <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.invoice_payment_state == 'paid')">Tax Invoice</span>
+                <!-- <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span> -->
                 <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice</span>
                 <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice</span>
                 <span t-if="o.type == 'out_refund'">Refund</span>
                 <span t-if="o.type == 'in_refund'">Vendor Refund</span>
                 <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
-                <span t-field="o.number"/>
+                <span t-field="o.name"/>
             </h2>
             <div name="refs" style="padding-bottom:15px; font-size:16px">
             <div class="row mt-1 mb-0">
-                <div name="your_ref" class="col-12" t-if="o.name">
+                <div name="your_ref" class="col-12" t-if="o.ref">
                     <strong>Your Ref: </strong>
-                    <span t-field="o.name"/>
+                    <span t-field="o.ref"/>
                 </div>
             </div>
-            <div class="row mt-0 mb-0">
+           <div class="row mt-0 mb-0">
                 <div name="our_ref" class="col-12"  t-if="o.origin">
                     <strong>Our Ref: </strong>
-                    <span t-field="o.origin"/>
+                    <span t-field="o.invoice_origin"/>
                 </div>
             </div>
             <div class="row mt-0 mb-0">
@@ -880,13 +880,13 @@
                 </div>
             </div>
             <div class="row mt-1 mb-2" style="font-size:16px">
-                <div name="inv_date" class="col-4" t-if="o.date_invoice">
+                <div name="inv_date" class="col-4" t-if="o.invoice_date">
                     <strong>Invoice Date: </strong>
-                    <span t-field="o.date_invoice"/>
+                    <span t-field="o.invoice_date"/>
                 </div>
-                <div name="due_date" class="col-4" t-if="o.date_due and o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">
+                <div name="due_date" class="col-4" t-if="o.invoice_date_due and o.type == 'out_invoice' and (o.invoice_payment_state == 'not_paid' or o.invoice_payment_state == 'paid' or o.invoice_payment_state == 'in_payment')">
                     <strong>Due Date: </strong>
-                    <span t-field="o.date_due"/>
+                    <span t-field="o.invoice_date_due"/>
                 </div>
                 <div name="o_reference" class="col-4" t-if="o.reference">
                     <strong>Payment Ref: </strong>
@@ -1031,17 +1031,17 @@
             </p>
 -->
             <p>
-                Please use the following communication for your payment : <b><span t-field="o.number"/></b>
+                Please use the following communication for your payment : <b><span t-field="o.name"/></b>
             </p>
-            <p t-if="o.comment" name="comment">
-                <span t-field="o.comment"/>
-            </p>
-            <p t-if="o.payment_term_id" name="payment_term">
+            <!-- <p t-if="o.comment" name="comment"> -->
+                <!-- <span t-field="o.comment"/> -->
+            <!-- </p> -->
+            <p t-if="o.invoice_payment_term_id" name="payment_term">
                 <span t-field="o.payment_term_id.note"/>
                     <p><strong>
                     <p>
                     DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
-                            Please quote: " <b t-if="o.number"> <span t-field="o.number"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
+                            Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
                         </p>
                     </strong></p>
             </p>
