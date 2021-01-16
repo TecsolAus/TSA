@@ -829,8 +829,21 @@
         <div class="page">
             <div class="row mt-0 mb-0" style="font-size:19px;">
                 <div class="col-6" style="">            
-                    <span t-if="o.partner_id"><strong>INVOICE TO</strong></span>
-                    <div t-field="o.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                    <span t-if="o.type in ('out_invoice', 'in_refund')">
+						<strong>INVOICE TO</strong>
+					</span>
+                    <span t-elif="o.type in ('in_invoice', 'out_refund')">
+						<strong>INVOICE FROM</strong>
+					</span>
+                    <span t-elif="o.type = 'in_receipt')">
+						<strong>RECEIPT FROM</strong>
+					</span>
+                    <span t-elif="o.type = 'out_receipt')">
+						<strong>RECEIPT TO</strong>
+					</span>						
+					<span t-if="o.partner_id">
+						<div t-field="o.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+					</span>
                 </div>
                 <div class="col-6" style="">
                     <span t-if="((o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id)) or (o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)))"><strong>ITEMS FOR</strong></span>
