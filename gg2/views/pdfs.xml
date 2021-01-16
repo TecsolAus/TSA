@@ -1047,23 +1047,25 @@
                 Please use the following communication for your payment : <b><span t-field="o.reference"/></b>
             </p>
 -->
+			<p t-if="o.invoice_payment_term_id" name="payment_term">
+				TERMS:
+				<span t-field="o.invoice_payment_term_id.note"/>
+			</p>
+
             <p t-if="o.type in ('out_invoice', 'in_refund') and o.amount_residual != 0">
                 Please quote the following with your payment : <b><span t-field="o.name"/></b>
-				<p t-if="o.invoice_payment_term_id" name="payment_term">
-					TERMS:
-					<span t-field="o.invoice_payment_term_id.note"/>
-					<p><strong>
-						<p>
-							DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
-							Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
-						</p>
-					</strong></p>
-				</p>
-				
+				<p><strong>
+					<p>
+						DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
+						Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
+					</p>
+				</strong></p>
+			</p>
+
+            <p t-if="o.amount_residual == 0">
+                No payment is due.  Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email: accounts@tecsol.com.au
             </p>
-            <p t-elif="o.amount_residual == 0">
-                No payment is due.  Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email to accounts@tecsol.com.au
-            </p>			
+			
             <p t-if="o.narration" name="comment">
                 <span t-field="o.narration"/>
             </p>
