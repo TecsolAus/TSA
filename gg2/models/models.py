@@ -27,49 +27,50 @@ from mock.mock import self
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.move']
 
-    # # @api.multi
-    # def invoice_validate(self):
-        # for invoice in self:
-            # # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
-            # # because it's probably a double encoding of the same bill/refund
-            # # VENDOR BILL - DUPE CHECK
-            # if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
-                # mydupe = self.search([('type', '=', invoice.type), ('reference', '=', invoice.reference),
-                                # ('company_id', 'in', invoice.company_ids),
-                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                # ('id', '!=', invoice.id),
-                                # ('state', 'in', ('open', 'in_payment', 'paid'))])
-                # if mydupe:
-                    # myinvlist = ""
-                    # for eachdupe in mydupe:
-                        # myinvlist = myinvlist + ", " + eachdupe.number
-                    # raise UserError(_(
-                        # "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
-            # # CUSTOMER INVOICE - DUPE CHECK
-            # if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
-                # if invoice.name:
-                    # mydupe = self.search([('type', '=', invoice.type), ('name', '=', invoice.name),
-                                # ('company_id', 'in', invoice.company_ids),
-                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                # ('id', '!=', invoice.id),
-                                # ('state', 'in', ('open', 'in_payment', 'paid'))])
-
-                    # myref = invoice.name
-                # if (not mydupe) and (invoice.x_tracking_ref):
-                    # # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
-                    # mydupe = self.search([('type', '=', invoice.type), ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          # ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
-                                          # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          # ('id', '!=', invoice.id),
-                                          # ('state', 'in', ('open', 'in_payment', 'paid'))])
-                    # myref = invoice.x_tracking_ref
-                # if mydupe:
-                    # myinvlist = ""
-                    # for eachdupe in mydupe:
-                        # myinvlist = myinvlist + ", " + eachdupe.number
-                    # raise UserError(_(
-                        # "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
-        # return super(TsaAccountInvoice, self).invoice_validate()
+    def invoice_validate(self):
+        for invoice in self:
+            # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
+            # because it's probably a double encoding of the same bill/refund
+            # VENDOR BILL - DUPE CHECK
+            if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
+                mydupe = self.search([('type', '=', invoice.type), 
+				                ('reference', '=', invoice.reference),
+                                ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
+                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                ('id', '!=', invoice.id),
+                                ])
+                if mydupe:
+                    myinvlist = ""
+                    for eachdupe in mydupe:
+                        myinvlist = myinvlist + ", " + eachdupe.number
+                    raise UserError(_(
+                        "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
+            # CUSTOMER INVOICE - DUPE CHECK
+            if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
+                if invoice.name:
+                    mydupe = self.search([('type', '=', invoice.type),
+					            ('name', '=', invoice.name),
+                                ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
+                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                ('id', '!=', invoice.id),
+                                ])
+                    myref = invoice.name
+                if (not mydupe) and (invoice.x_tracking_ref):
+                    # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
+                    mydupe = self.search([('type', '=', invoice.type),
+					                      ('x_tracking_ref', '=', invoice.x_tracking_ref),
+                                          ['|',('company_id', '=', False),('company_id', 'in', invoice.company_ids)],
+                                          ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                          ('id', '!=', invoice.id),
+                                          ])
+                    myref = invoice.x_tracking_ref
+                if mydupe:
+                    myinvlist = ""
+                    for eachdupe in mydupe:
+                        myinvlist = myinvlist + ", " + eachdupe.number
+                    raise UserError(_(
+                        "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
+        return super(TsaAccountInvoice, self).invoice_validate()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
@@ -181,19 +182,16 @@ class tsaexti(models.Model):
         for record in self:
             record['x_volume_cm3']=record.x_item_height * record.x_item_length * record.x_item_depth
 
-    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_sold')
     def _total_qty_sold2(self):
         for product in self:
             product.x_total_qty_sold = sum([p.x_total_qty_sold for p in product.product_variant_ids])
 
-    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_bought')
     def _total_qty_bought2(self):
         for product in self:
             product.x_total_qty_bought = sum([p.x_total_qty_bought for p in product.product_variant_ids])
 
-    # @api.multi
     @api.depends('product_variant_ids.x_total_qty_made')
     def _total_qty_made2(self):
         for product in self:
@@ -300,7 +298,6 @@ class tsaexto(models.Model):
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
 
-    # @api.multi
     def action_confirm(self):
         for order in self:
             # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
@@ -382,7 +379,6 @@ class tsaextt(models.Model):
 class tsaextu(models.Model):
     _inherit = ['product.product']
 
-    # @api.multi
     def _total_qty_sold(self):
         r = {}
         domain = [
@@ -395,7 +391,6 @@ class tsaextu(models.Model):
             product.x_total_qty_sold = r.get(product.id, 0)
         return r
 
-    # @api.multi
     def _total_qty_bought(self):
         r = {}
         domain = [
@@ -408,7 +403,6 @@ class tsaextu(models.Model):
             product.x_total_qty_bought = r.get(product.id, 0)
         return r
 
-    # @api.multi
     def _total_qty_made(self):
         r = {}
         domain = [
