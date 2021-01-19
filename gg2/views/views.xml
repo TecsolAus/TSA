@@ -1167,10 +1167,9 @@
                             <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
                             <filter name="salesperson"        string="Salesperson"  context="{'group_by':'invoice_user_id'}"/>
                             <filter name="status"              string="Status"       context="{'group_by':'state'}"/>
-                            <filter name="name"                string="Desc/Ref"     context="{'group_by':'name'}"/>
                             <separator/>
-                            <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'date_invoice'}"/>
-                            <filter name="duedate"            string="Due Date"     context="{'group_by':'date_due'}"/>
+                            <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'invoice_date'}"/>
+                            <filter name="duedate"            string="Due Date"     context="{'group_by':'invoice_date_due'}"/>
                         </group>
                     </search>
                 </xpath>
