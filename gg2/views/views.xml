@@ -1155,10 +1155,10 @@
                         <filter name="due_date"      string="Due Date" date="invoice_date_due"/>
 
                         <separator/>						
-                        <field name="date"           string="Period"/>
-                        <field name="move_id"        string="Journal Entry Transaction Ref"/>
-                        <field name="origin"         string="Source Doc"/>
-                        <field name="user_id"        string="Salesperson"/>
+                        <field name="date"                   string="Period"/>
+                        <field name="transaction_ids.id"     string="Journal Entry Transaction Ref"/>
+                        <field name="invoice_origin"         string="Source Doc"/>
+                        <field name="invoice_user_id"        string="Salesperson"/>
 
                         <separator/>
                         <filter domain="[('invoice_user_id','=',uid)]" help="My Invoices"/>-->
