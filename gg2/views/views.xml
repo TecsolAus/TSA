@@ -1127,28 +1127,28 @@
                 <xpath expr="//search" position="replace">
                     <search string="Search Invoice">
                         <field name="name" string="Invoice" filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('invoice_payment_ref', 'ilike',self), ('partner_id', 'child_of', self)]"/>
-                        <!-- <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/> -->
-                        <!-- <field name="journal_id" string="Journal"/> -->
+                        <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/>
+                        <field name="journal_id" string="Journal"/>
 
-                        <!-- <separator/>	 -->
-                        <!-- <filter name="draft" string="Draft" domain="[('state','=','draft')]"/> -->
-                        <!-- <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/> -->
-                        <!-- <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/> -->
+                        <separator/>	
+                        <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                        <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                        <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
  
-                        <!-- <separator/> -->
-                        <!-- <filter name="invoices"  string="Invoices" domain="[('state', '=', 'posted'),('type','in',('out_invoice','in_invoice'))]"/> -->
-                        <!-- <filter name="refunds"   string="Refunds/CreditNotes"  domain="[('state', '=', 'posted'),('type','in',('out_refund','in_refund'))]"/> -->
-                        <!-- <filter name="receipts"   string="Sales/Purchase Receipts"  domain="[('state', '=', 'posted'),('type','in',('out_receipt','in_receipt'))]"/> -->
+                        <separator/>
+                        <filter name="invoices"  string="Invoices" domain="[('state', '=', 'posted'),('type','in',('out_invoice','in_invoice'))]"/>
+                        <filter name="refunds"   string="Refunds/CreditNotes"  domain="[('state', '=', 'posted'),('type','in',('out_refund','in_refund'))]"/>
+                        <filter name="receipts"   string="Sales/Purchase Receipts"  domain="[('state', '=', 'posted'),('type','in',('out_receipt','in_receipt'))]"/>
 
-                        <!-- <separator/> -->
-                        <!-- <filter name="in_payment" string="In Payment" domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/> -->
-                        <!-- <filter name="paid" string="Paid" domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/> -->
-                        <!-- <filter name="unpaid" string="Not Paid" domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/> -->
-                        <!-- <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]" help="Overdue invoices, maturity date passed"/> -->
+                        <separator/>
+                        <filter name="in_payment" string="In Payment" domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
+                        <filter name="paid" string="Paid" domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
+                        <filter name="unpaid" string="Not Paid" domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
+                        <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]" help="Overdue invoices, maturity date passed"/>
 
-                        <!-- <separator/> -->
-                        <!-- <field name="partner_id"     operator="child_of"/> -->
-                        <!-- <field name="x_tracking_ref" string="Tracking Ref"/> -->
+                        <separator/>
+                        <field name="partner_id"     operator="child_of"/>
+                        <field name="x_tracking_ref" string="Tracking Ref"/>
 						
                         <!-- <separator/> -->
                         <!-- <filter name="invoice_date"  string="Invoice Date" date="invoice_date"/> -->
