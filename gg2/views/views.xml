@@ -1161,7 +1161,7 @@
                         <field name="invoice_user_id"        string="Salesperson"/>
 
                         <separator/>
-                        <filter domain="[('invoice_user_id','=',uid)]" help="My Invoices"/>-->
+                        <filter domain="[('invoice_user_id','=',uid)]" help="My Invoices"/>
 						
                         <group expand="0" string="Group By">
                             <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
