@@ -973,8 +973,8 @@
         </record>
 		
         <!-- JOURNAL LIST  -->
-		<record id="tsa_invoice_list_ext" model="ir.ui.view">
-            <field name="name">Invoice List TSA Extension</field>
+		<record id="tsa_journal_list_ext" model="ir.ui.view">
+            <field name="name">Journal List TSA Extension</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.action_move_journal_line"/>
             <field name="arch" type="xml">
@@ -1326,7 +1326,7 @@
             </field>
         </record>
 		
-		<!-- ATTENDANCE EXTENSIONS -->
+		<!-- ATTENDANCE EXTENSION -->
         <record id="view_form_attendance_inherited" model="ir.ui.view">
             <field name="name">Attendance TSA Extension</field>
             <field name="model">hr.attendance</field>
@@ -1337,6 +1337,8 @@
                 </xpath>
             </field>
         </record>
+		
+        <!-- PRODUCT CATEGORY -->
         <record id="view_form_product_category_inherited" model="ir.ui.view">
             <field name="name">Product Category TSA Extension</field>
             <field name="model">product.category</field>
@@ -1347,6 +1349,8 @@
                 </xpath>
             </field>
         </record>
+		
+        <!-- STOCK PICKING -->
         <record id="view_form_stock_picking_inherited" model="ir.ui.view">
             <field name="name">Stock Picking TSA Extension</field>
             <field name="model">stock.picking</field>
