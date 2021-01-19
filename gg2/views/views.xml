@@ -1156,7 +1156,7 @@
 
                         <separator/>						
                         <field name="date"                   string="Period"/>
-                        <field name="transaction_ids.id"     string="Journal Entry Transaction Ref"/>
+                        <field name="transaction_ids"        string="Journal Entry Transaction Ref"/>
                         <field name="invoice_origin"         string="Source Doc"/>
                         <field name="invoice_user_id"        string="Salesperson"/>
 
