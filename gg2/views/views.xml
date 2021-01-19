@@ -1162,15 +1162,16 @@
 
                         <separator/>
                         <filter domain="[('invoice_user_id', '=', uid)]" name="myinvoices" help="My Invoices"/>
-						
-                        <!-- <group expand="0" string="Group By"> -->
-                            <!-- <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/> -->
-                            <!-- <filter name="salesperson"        string="Salesperson"  context="{'group_by':'invoice_user_id'}"/> -->
-                            <!-- <filter name="status"              string="Status"       context="{'group_by':'state'}"/> -->
-                            <!-- <separator/> -->
-                            <!-- <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'invoice_date'}"/> -->
-                            <!-- <filter name="duedate"            string="Due Date"     context="{'group_by':'invoice_date_due'}"/> -->
-                        <!-- </group> -->
+
+                        <group expand="0" string="Group By">
+                            <filter name="salesperson"         string="Salesperson" context="{'group_by':'invoice_user_id'}"/>
+                            <filter name="status"              string="Status"      context="{'group_by':'state'}"/>
+							<filter name="group_by_partner_id" string="Partner"     context="{'group_by':'commercial_partner_id'}"/>
+							
+                            <separator/>
+                            <filter name="invoicedate" string="Invoice Date" context="{'group_by': 'invoice_date'}"/>
+                            <filter name="duedate"     string="Due Date"     context="{'group_by': 'invoice_date_due'}"/>
+                        </group>						                           
                     </search>
                 </xpath>
             </field>
