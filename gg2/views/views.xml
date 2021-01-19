@@ -973,7 +973,7 @@
         </record>
 		
         <!-- JOURNAL LIST  -->
-		<record id="tsa_journal_list_ext" model="ir.ui.view">
+        <record id="tsa_journal_list_ext" model="ir.ui.view">
             <field name="name">Journal List TSA Extension</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.action_move_journal_line"/>
