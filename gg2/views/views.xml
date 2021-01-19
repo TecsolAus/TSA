@@ -1119,64 +1119,77 @@
                 </xpath>
             </field>
         </record>
-        <!-- <record id="view_account_invoice_filter_tsa" model="ir.ui.view"> -->
-            <!-- <field name="name">Invoice Search TSA Extension</field> -->
-            <!-- <field name="model">account.invoice</field> -->
-            <!-- <field name="inherit_id" ref="account.view_account_invoice_filter"/> -->
-            <!-- <field name="arch" type="xml"> -->
-                <!-- <xpath expr="//search" position="replace"> -->
-                    <!-- <search string="Search Invoice"> -->
-                        <!-- <field name="number"     string="Invoice" filter_domain="['|','|','|', ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/> -->
-                        <!-- <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/> -->
-                        <!-- <field name="journal_id" string="Journal"/> -->
-                        <!-- <filter name="draft"     string="Draft"    domain="[('state','in',('draft', 'proforma'))]"/> -->
-                        <!-- <filter name="proforma"  string="Proforma" domain="[('state','=','proforma2')]" groups="account.group_account_user"/> -->
-                        <!-- <filter name="invoices"  string="Invoices" domain="[('state','in',['open','paid']),('type','in',('out_invoice','in_invoice'))]"/> -->
-                        <!-- <filter name="refunds"   string="Refunds"  domain="[('state','in',['open','paid']),('type','in',('out_refund','in_refund'))]"/> -->
+        <record id="view_account_invoice_filter_tsa" model="ir.ui.view">
+            <field name="name">Invoice Search TSA Extension</field>
+            <field name="model">account.move</field>			
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Search Invoice">
+                        <field name="name" string="Invoice" filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('invoice_payment_ref', 'ilike',self), ('partner_id', 'child_of', self)]"/>
+                        <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/>
+                        <field name="journal_id" string="Journal"/>
 
-                        <!-- <separator/> -->
-                        <!-- <filter name="unpaid"    string="Not Paid" domain="[('state','=','open')]"/> -->
-                        <!-- <filter name="late"      string="Overdue"  domain="[('date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/> -->
+                        <separator/>	
+                        <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                        <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                        <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+ 
+                        <separator/>
+                        <filter name="invoices"  string="Invoices" domain="[('state', '=', 'posted'),('type','in',('out_invoice','in_invoice'))]"/>
+                        <filter name="refunds"   string="Refunds/CreditNotes"  domain="[('state', '=', 'posted'),('type','in',('out_refund','in_refund'))]"/>
+                        <filter name="receipts"   string="Sales/Purchase Receipts"  domain="[('state', '=', 'posted'),('type','in',('out_receipt','in_receipt'))]"/>
 
-                        <!-- <separator/> -->
-                        <!-- <field name="partner_id" operator="child_of"/> -->
-                        <!-- <field name="name"           string="Description/Reference"/> -->
-                        <!-- <field name="x_tracking_ref" string="Tracking Ref"/> -->
-                        <!-- <field name="date_invoice"   string="Invoice Date"/> -->
-                        <!-- <field name="date_due"       string="Due Date"/> -->
-                        <!-- <field name="date"           string="Period"/> -->
-                        <!-- <field name="move_id"        string="Journal Entry Transaction Ref"/> -->
-                        <!-- <field name="origin"         string="Source Doc"/> -->
-                        <!-- <field name="user_id"        string="Salesperson"/> -->
-                        <!-- <separator/> -->
-                        <!-- # <filter domain="[('user_id','=',uid)]" help="My Invoices"/>-->
-                        <!-- <group expand="0" string="Group By"> -->
-                            <!-- <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/> -->
-                            <!-- <filter name="salesperson"        string="Salesperson"  context="{'group_by':'user_id'}"/> -->
-                            <!-- <filter name="status"              string="Status"       context="{'group_by':'state'}"/> -->
-                            <!-- <filter name="name"                string="Desc/Ref"     context="{'group_by':'name'}"/> -->
-                            <!-- <separator/> -->
-                            <!-- <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'date_invoice'}"/> -->
-                            <!-- <filter name="duedate"            string="Due Date"     context="{'group_by':'date_due'}"/> -->
-                        <!-- </group> -->
-                    <!-- </search> -->
-                <!-- </xpath> -->
-            <!-- </field> -->
-        <!-- </record> -->
-        <!-- <record id="action_bills_tsa" model="ir.actions.act_window"> -->
-            <!-- <field name="name">Vendor Bills and Refunds</field> -->
-            <!-- <field name="res_model">account.invoice</field> -->
-            <!-- <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field> -->
-            <!-- <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field> -->
-            <!-- <field name="search_view_id" ref="view_account_invoice_filter_tsa"/> -->
-        <!-- </record> -->
-        <!-- <menuitem id="bills_and_refunds" -->
-            <!-- name="Vendor Bills and Refunds" -->
-            <!-- parent="account.menu_finance_payables" -->
-            <!-- groups="account.group_account_user" -->
-            <!-- action="action_bills_tsa" -->
-            <!-- sequence="0" -->
-        <!-- /> -->
+                        <separator/>
+                        <filter name="in_payment" string="In Payment" domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
+                        <filter name="paid" string="Paid" domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
+                        <filter name="unpaid" string="Not Paid" domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
+                        <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]" help="Overdue invoices, maturity date passed"/>
+
+                        <separator/>
+                        <field name="partner_id"     operator="child_of"/>
+                        <field name="x_tracking_ref" string="Tracking Ref"/>
+						
+                        <separator/>
+                        <filter name="invoice_date"  string="Invoice Date" date="invoice_date"/>
+                        <filter name="due_date"      string="Due Date" date="invoice_date_due"/>
+
+                        <separator/>						
+                        <field name="date"           string="Period"/>
+                        <field name="move_id"        string="Journal Entry Transaction Ref"/>
+                        <field name="origin"         string="Source Doc"/>
+                        <field name="user_id"        string="Salesperson"/>
+
+                        <separator/>
+                        <filter domain="[('invoice_user_id','=',uid)]" help="My Invoices"/>-->
+						
+                        <group expand="0" string="Group By">
+                            <filter name="group_by_partner_id" string="Partner"      context="{'group_by':'commercial_partner_id'}"/>
+                            <filter name="salesperson"        string="Salesperson"  context="{'group_by':'invoice_user_id'}"/>
+                            <filter name="status"              string="Status"       context="{'group_by':'state'}"/>
+                            <filter name="name"                string="Desc/Ref"     context="{'group_by':'name'}"/>
+                            <separator/>
+                            <filter name="invoicedate"        string="Invoice Date" context="{'group_by':'date_invoice'}"/>
+                            <filter name="duedate"            string="Due Date"     context="{'group_by':'date_due'}"/>
+                        </group>
+                    </search>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_bills_tsa" model="ir.actions.act_window">
+            <field name="name">Vendor Bills and Refunds</field>
+            <field name="res_model">account.move</field>
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+        <menuitem id="bills_and_refunds"
+            name="Vendor Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_bills_tsa"
+            sequence="0"
+        />
         <record id="view_res_partner_filter_tsa" model="ir.ui.view">
             <field name="name">Contact Search TSA Extension</field>
             <field name="model">res.partner</field>
@@ -1296,47 +1309,22 @@
                 </xpath>
             </field>
         </record>
-        <!-- <record id="view_form_invoice_inherited" model="ir.ui.view"> -->
-            <!-- <field name="name">Invoice TSA Extension</field> -->
-            <!-- <field name="model">account.invoice</field> -->
-            <!-- <field name="inherit_id" ref="account.invoice_form"/> -->
-            <!-- <field name="arch" type="xml"> -->
-                <!-- <xpath expr="//field[@name='partner_id']" position="after"> -->
-                    <!-- <field name="x_items_for_partner_id"/> -->
-                    <!-- <field name="x_customer_email"/> -->
-                <!-- </xpath> -->
-                <!-- <xpath expr="//field[@name='reference']" position="replace"> -->
-                <!-- </xpath> -->
-                <!-- <xpath expr="//page[@name='other_info']//field[@name='name']" position="replace"> -->
-                <!-- </xpath> -->
-                <!-- <xpath expr="//field[@name='team_id']" position="after"> -->
-                    <!-- <field name="name"/> -->
-                    <!-- <field name="reference"/>   -->
-					<!-- ORIG field name="reference" had these attributes    attrs="{'readonly':[('state','!=','draft')]}"/>-->
-                    <!-- <field name="x_tracking_ref"/> -->
-                    <!--<field name="x_extra_notes"/>-->
-                <!-- </xpath> -->
-            <!-- </field> -->
-        <!-- </record> -->
-        <!-- <record id="invoice_supplier_form_view_tsa" model="ir.ui.view"> -->
-            <!-- <field name="name">Vendor Bill Form TSA Extension</field> -->
-            <!-- <field name="model">account.invoice</field> -->
-            <!-- <field name="inherit_id" ref="account.invoice_supplier_form"/> -->
-            <!-- <field name="arch" type="xml"> -->
-                <!-- <xpath expr="//field[@name='partner_id']" position="after"> -->
-                    <!-- <field name="x_customer_email"/> -->
-                <!-- </xpath> -->
-            <!-- </field> -->
-        <!-- </record> -->
-        <record id="view_form_jou_entry_inherited" model="ir.ui.view">
-            <field name="name">Journal Entry TSA Extension</field>
+		<!-- Invoice extensions -->
+        <record id="view_form_invoice_inherited" model="ir.ui.view">
+            <field name="name">Invoice TSA Extension</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_items_for_partner_id"/>
+                    <field name="x_customer_email"/>
+                    <field name="x_tracking_ref"/>
+                    <field name="x_extra_notes"/>					
+                </xpath>
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="x_credit_or_debit_note"/>
                     <field name="x_gst_clearing"/>
-                </xpath>
+                </xpath>				
             </field>
         </record>
         <record id="view_form_attendance_inherited" model="ir.ui.view">

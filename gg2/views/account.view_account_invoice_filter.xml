@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<search string="Search Invoice">
+                    <field name="name" string="Invoice" filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('invoice_payment_ref', 'ilike',self), ('partner_id', 'child_of', self)]"/>
+                    <field name="journal_id"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="invoice_user_id" string="Salesperson" domain="[('share', '=', False)]"/>
+                    <field name="date" string="Period"/>
+                    <filter domain="[('invoice_user_id', '=', uid)]" name="myinvoices" help="My Invoices"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                    <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                    <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+                    <separator/>
+                    <filter name="in_payment" string="In Payment" domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
+                    <filter name="paid" string="Paid" domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
+                    <filter name="unpaid" string="Not Paid" domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
+                    <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]" help="Overdue invoices, maturity date passed"/>
+                    <separator/>
+                    <filter name="invoice_date" string="Invoice Date" date="invoice_date"/>
+                    <filter name="due_date" string="Due Date" date="invoice_date_due"/>
+                    <separator/>
+                    <filter invisible="1" string="Late Activities" name="activities_overdue" domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]" help="Show all records which has next action date is before today"/>
+                    <filter invisible="1" string="Today Activities" name="activities_today" domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter invisible="1" string="Future Activities" name="activities_upcoming_all" domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" name="salesperson" context="{'group_by':'invoice_user_id'}"/>
+                        <filter name="status" string="Status" context="{'group_by':'state'}"/>
+                        <separator/>
+                        <filter string="Invoice Date" name="invoicedate" context="{'group_by': 'invoice_date'}"/>
+                        <filter string="Due Date" name="duedate" context="{'group_by': 'invoice_date_due'}"/>
+                    </group>
+               </search>
+            
