@@ -998,7 +998,7 @@
             </field>
         </record>
 
-        <!-- <!-- INVOICE LIST (to include both invoices and refunds) --> -->
+        <!-- INVOICE LIST (to include both invoices and refunds) -->
         <!-- <record id="action_invoices_tsa" model="ir.actions.act_window"> -->
             <!-- <field name="name">Customer Invoices and Refunds</field> -->
             <!-- <field name="type">ir.actions.act_window</field> -->
