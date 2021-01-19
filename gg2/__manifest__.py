@@ -17,7 +17,7 @@
     # for the full list
     'category': 'Uncategorized',
     # Developed under the following version of Odoo
-    'version': '13.0.0.5',
+    'version': '13.0.1.0.4',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'sale', 'account', 'hr', 'hr_attendance', 'mrp', 'purchase', 'stock', 'repair', 'product', 
