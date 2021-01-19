@@ -1122,7 +1122,7 @@
         <record id="view_account_invoice_filter_tsa" model="ir.ui.view">
             <field name="name">Invoice Search TSA Extension</field>
             <field name="model">account.move</field>			
-            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="inherit_id" ref="account.invoice.select"/>
             <field name="arch" type="xml">
                 <xpath expr="//search" position="replace">
                     <search string="Search Invoice">
