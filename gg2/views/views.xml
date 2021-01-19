@@ -988,7 +988,7 @@
         <!-- INVOICE LIST -->
         <record id="invoice_tree_tsa" model="ir.ui.view">
             <field name="name">Invoice List TSA Extension</field>
-            <field name="model">account.invoice</field>
+            <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_origin']" position="after">
