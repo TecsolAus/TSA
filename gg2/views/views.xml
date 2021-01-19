@@ -998,36 +998,36 @@
             </field>
         </record>
 
-        <!-- INVOICE LIST (to include both invoices and refunds) -->
-        <!-- <record id="action_invoices_tsa" model="ir.actions.act_window"> -->
-            <!-- <field name="name">Customer Invoices and Refunds</field> -->
-            <!-- <field name="type">ir.actions.act_window</field> -->
-            <!-- <field name="view_type">form</field> -->
-            <!-- <field name="view_mode">tree,form</field> -->
-            <!-- <field name="view_id" ref="	account.invoice.tree"/> -->
-            <!-- <field name="res_model">account.move</field> -->
-            <!-- <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field> -->
-        <!-- </record> -->
+        INVOICE LIST (to include both invoices and refunds)
+        <record id="action_invoices_tsa" model="ir.actions.act_window">
+            <field name="name">Customer Invoices and Refunds</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="res_model">account.move</field>
+            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
+        </record>
 		
-        <!-- <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view"> -->
-            <!-- <field eval="1" name="sequence"/> -->
-            <!-- <field name="view_mode">tree</field> -->
-            <!-- <field name="view_id" ref="	account.invoice.tree"/> -->
-            <!-- <field name="act_window_id" ref="action_invoices_tsa"/> -->
-        <!-- </record> -->
-        <!-- <record id="action_invoices_form_tsa" model="ir.actions.act_window.view"> -->
-            <!-- <field eval="2" name="sequence"/> -->
-            <!-- <field name="view_mode">form</field> -->
-            <!-- <field name="view_id" ref="account.move.form"/> -->
-            <!-- <field name="act_window_id" ref="action_invoices_tsa"/> -->
-        <!-- </record> -->
-        <!-- <menuitem id="invoices_and_refunds" -->
-            <!-- name="Customer Invoices and Refunds" -->
-            <!-- parent="account.menu_finance_receivables" -->
-            <!-- groups="account.group_account_user" -->
-            <!-- action="action_invoices_tsa" -->
-            <!-- sequence="0" -->
-        <!-- /> -->
+        <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="action_invoices_tsa"/>
+        </record>
+        <record id="action_invoices_form_tsa" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="action_invoices_tsa"/>
+        </record>
+        <menuitem id="invoices_and_refunds"
+            name="Customer Invoices and Refunds"
+            parent="account.menu_finance_receivables"
+            groups="account.group_account_user"
+            action="action_invoices_tsa"
+            sequence="0"
+        />
 
         <record id="product_template_search2_tsa" model="ir.ui.view">
             <field name="name">Product Search TSA Extension2</field>
