@@ -16,5 +16,4 @@ from odoo import http
 #     @http.route('/gg2/gg2/objects/<model("gg2.gg2"):obj>/', auth='public')
 #     def object(self, obj, **kw):
 #         return http.request.render('gg2.object', {
-#             'object': obj
-#         })
+#             
