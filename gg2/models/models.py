@@ -35,7 +35,6 @@ class TsaAccountInvoice(models.Model):
             if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
                 mydupe = self.search([('type', '=', invoice.type), 
 				                ('reference', '=', invoice.reference),
-                                ['|',('company_id', '=', False),('company_id', '=', invoice.company_id)],
                                 ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                 ('id', '!=', invoice.id),
                                 ])
@@ -50,7 +49,6 @@ class TsaAccountInvoice(models.Model):
                 if invoice.name:
                     mydupe = self.search([('type', '=', invoice.type),
 					            ('name', '=', invoice.name),
-                                ['|',('company_id', '=', False),('company_id', '=', invoice.company_id)],
                                 ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                 ('id', '!=', invoice.id),
                                 ])
@@ -59,7 +57,6 @@ class TsaAccountInvoice(models.Model):
                     # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
                     mydupe = self.search([('type', '=', invoice.type),
 					                      ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          ['|',('company_id', '=', False),('company_id', '=', invoice.company_id)],
                                           ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                           ('id', '!=', invoice.id),
                                           ])
