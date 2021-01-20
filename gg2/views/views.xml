@@ -626,7 +626,6 @@
         <!-- MENU for Rpt050 -->
         <menuitem id="rpt050_bank_stmt_to_jou_xref"
                 name="50 Bank Statement to Journals X-Ref"
-                id="tsa_report_050_menu"
                 parent="tsa_report_live_menu"
                 action="tsa_bankjou_action"
                 sequence="50"/>
