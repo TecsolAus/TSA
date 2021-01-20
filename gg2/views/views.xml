@@ -519,8 +519,7 @@
                 name="80 Invoiced Items not yet delivered"
                 parent="tsa_report_tests_menu"
                 action="tsa_rpt080_action"
-                sequence="71">
-        </menuitem>
+                sequence="71"/>
 
         <!-- Rpt082 LIST VIEW -->
         <record id="tsa_rpt082_treeview" model="ir.ui.view">
@@ -553,8 +552,8 @@
                 name="82 Sales Orders Invoiced not yet delivered"
                 parent="tsa_report_live_menu"
                 action="tsa_rpt082_action"
-                sequence="82">
-        </menuitem>
+                sequence="82"/>
+
 
 		<!-- =============================================================== -->
 		<!--          Rpt050 BANK STATEMENT to JOURNAL X-Ref                 -->
@@ -630,8 +629,8 @@
                 id="tsa_report_050_menu"
                 parent="tsa_report_live_menu"
                 action="tsa_bankjou_action"
-                sequence="50">
-        </menuitem>
+                sequence="50"/>
+
 
 	
 		<!-- =============================================================== -->
@@ -788,8 +787,8 @@
             parent="sale.sale_order_menu"
             groups="base.group_user"
             action="action_orders_tsa"
-            sequence="0">
-        </menuitem>
+            sequence="0"/>
+
 
         <!-- SALES ORDER LIST VIEW -->
         <record id="view_saleorder_tree_tsa" model="ir.ui.view">
@@ -1030,8 +1029,8 @@
             parent="account.menu_finance_receivables"
             groups="account.group_account_user"
             action="action_invoices_tsa"
-            sequence="0">
-        </menuitem>
+            sequence="0"/>
+
 		
         <!-- VENDOR BILLS LIST VIEW -->
         <record id="vendor_bill_tree_tsa" model="ir.ui.view">
@@ -1085,8 +1084,7 @@
             parent="account.menu_finance_payables"
             groups="account.group_account_user"
             action="action_bills_tsa"
-            sequence="0">
-        </menuitem>
+            sequence="0"/>
 		
 
 		<!-- =============================================================== -->
