@@ -27,48 +27,48 @@ from mock.mock import self
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.move']
 
-    @api.depends('reference', 'commercial_partner_id', 'x_tracking_ref')
-    def invoice_validate(self):
-        for invoice in self:
-            # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
-            # because it's probably a double encoding of the same bill/refund
-            # VENDOR BILL - DUPE CHECK
-            if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
-                mydupe = self.search([('type', '=', invoice.type), 
-				                ('reference', '=', invoice.reference),
-                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                ('id', '!=', invoice.id)
-                                ])
-                if mydupe:
-                    myinvlist = ""
-                    for eachdupe in mydupe:
-                        myinvlist = myinvlist + ", " + eachdupe.number
-                    raise UserError(_(
-                        "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
-            # CUSTOMER INVOICE - DUPE CHECK
-            if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
-                if invoice.name:
-                    mydupe = self.search([('type', '=', invoice.type),
-					            ('name', '=', invoice.name),
-                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                ('id', '!=', invoice.id)
-                                ])
-                    myref = invoice.name
-                if (not mydupe) and (invoice.x_tracking_ref):
-                    # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
-                    mydupe = self.search([('type', '=', invoice.type),
-					                      ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          ('id', '!=', invoice.id)
-                                          ])
-                    myref = invoice.x_tracking_ref
-                if mydupe:
-                    myinvlist = ""
-                    for eachdupe in mydupe:
-                        myinvlist = myinvlist + ", " + eachdupe.number
-                    raise UserError(_(
-                        "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
-        return super(TsaAccountInvoice, self).invoice_validate()
+    # @api.depends('reference', 'commercial_partner_id', 'x_tracking_ref')
+    # def invoice_validate(self):
+        # for invoice in self:
+            # # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
+            # # because it's probably a double encoding of the same bill/refund
+            # # VENDOR BILL - DUPE CHECK
+            # if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
+                # mydupe = self.search([('type', '=', invoice.type), 
+				                # ('reference', '=', invoice.reference),
+                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                # ('id', '!=', invoice.id)
+                                # ])
+                # if mydupe:
+                    # myinvlist = ""
+                    # for eachdupe in mydupe:
+                        # myinvlist = myinvlist + ", " + eachdupe.number
+                    # raise UserError(_(
+                        # "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
+            # # CUSTOMER INVOICE - DUPE CHECK
+            # if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
+                # if invoice.name:
+                    # mydupe = self.search([('type', '=', invoice.type),
+					            # ('name', '=', invoice.name),
+                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                # ('id', '!=', invoice.id)
+                                # ])
+                    # myref = invoice.name
+                # if (not mydupe) and (invoice.x_tracking_ref):
+                    # # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
+                    # mydupe = self.search([('type', '=', invoice.type),
+					                      # ('x_tracking_ref', '=', invoice.x_tracking_ref),
+                                          # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                          # ('id', '!=', invoice.id)
+                                          # ])
+                    # myref = invoice.x_tracking_ref
+                # if mydupe:
+                    # myinvlist = ""
+                    # for eachdupe in mydupe:
+                        # myinvlist = myinvlist + ", " + eachdupe.number
+                    # raise UserError(_(
+                        # "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
+        # return super(TsaAccountInvoice, self).invoice_validate()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
@@ -296,16 +296,16 @@ class tsaexto(models.Model):
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
 
-    @api.depends('partner_id', ' client_order_ref', 'name')
-    def action_confirm(self):
-        for order in self:
-            # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
-            if order.client_order_ref:
-                # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-				DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-                if DupeOrder:
-                    raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
-        return super(TsaSaleOrder, self).action_confirm()
+    # @api.depends('partner_id', ' client_order_ref', 'name')
+    # def action_confirm(self):
+        # for order in self:
+            # # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
+            # if order.client_order_ref:
+                # # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+				# DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+                # if DupeOrder:
+                    # raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
+        # return super(TsaSaleOrder, self).action_confirm()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
