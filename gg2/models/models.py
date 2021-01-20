@@ -36,7 +36,7 @@ class TsaAccountInvoice(models.Model):
                 mydupe = self.search([('type', '=', invoice.type), 
 				                ('reference', '=', invoice.reference),
                                 ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                ('id', '!=', invoice.id),
+                                ('id', '!=', invoice.id)
                                 ])
                 if mydupe:
                     myinvlist = ""
@@ -50,7 +50,7 @@ class TsaAccountInvoice(models.Model):
                     mydupe = self.search([('type', '=', invoice.type),
 					            ('name', '=', invoice.name),
                                 ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                ('id', '!=', invoice.id),
+                                ('id', '!=', invoice.id)
                                 ])
                     myref = invoice.name
                 if (not mydupe) and (invoice.x_tracking_ref):
@@ -58,7 +58,7 @@ class TsaAccountInvoice(models.Model):
                     mydupe = self.search([('type', '=', invoice.type),
 					                      ('x_tracking_ref', '=', invoice.x_tracking_ref),
                                           ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          ('id', '!=', invoice.id),
+                                          ('id', '!=', invoice.id)
                                           ])
                     myref = invoice.x_tracking_ref
                 if mydupe:
