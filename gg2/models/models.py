@@ -27,6 +27,7 @@ from mock.mock import self
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.move']
 
+    @api.depends('reference', 'commercial_partner_id', 'x_tracking_ref')
     def invoice_validate(self):
         for invoice in self:
             # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
@@ -295,6 +296,7 @@ class tsaexto(models.Model):
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
 
+    @api.depends('partner_id', ' client_order_ref', 'name')
     def action_confirm(self):
         for order in self:
             # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
