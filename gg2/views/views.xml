@@ -969,6 +969,7 @@
         <record id="view_form_invoice_tsa" model="ir.ui.view">
             <field name="name">Invoice TSA Extension</field>
             <field name="model">account.move</field>
+            <field name="type">form</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="after">
@@ -984,107 +985,117 @@
         <record id="invoice_tree_tsa" model="ir.ui.view">
             <field name="name">Invoice List TSA Extension</field>
             <field name="model">account.move</field>
+            <field name="type">tree</field>
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_date']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="invoice_date" optional="show" invisible="context.get('default_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_origin']" position="before">
+                    <field name="x_items_for_partner_id" string="Items For"/>
+                </xpath>
                 <xpath expr="//field[@name='invoice_origin']" position="after">
-                        <!-- <field name="x_name_truncated"/> -->
-                        <!-- <field name="x_tracking_ref"/> -->
-                        <field name="partner_id"/>
-                        <field name="invoice_date"/>
+                    <field name="x_tracking_ref" string="Tracking Ref" invisible="1"/>
                 </xpath>
             </field>
         </record>
 
-        <!-- INVOICE ACTION DEFINITION (all views) -->
-        <record id="action_invoices_tsa" model="ir.actions.act_window">
+
+        <!-- CUSTOMER INVOICES and REFUNDS view:  LIST (to include both invoices and refunds) -->
+        <record id="invoice_refund_tree_tsa" model="ir.ui.view">
+            <field name="name">Invoice Refund List TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_date']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="invoice_date" string="Invoice Date"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- CUSTOMER INVOICES and REFUNDS:   ACTION DEFINITION:  both LIST and FORM -->
+        <record id="action_invoice_refund_tsa" model="ir.actions.act_window">
             <field name="name">Customer Invoices and Refunds</field>
             <field name="res_model">account.move</field>
-            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
+            <field name="views">[["gg2.invoice_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>
+            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund', 'out_receipt'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="gg2.invoice_tree_tsa"/>
-            <!-- <field name="type">ir.actions.act_window</field> -->
         </record>
 
-        <!-- INVOICE ACTION - LIST VIEW -->
-        <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="account.view_invoice_tree"/>
-            <field name="act_window_id" ref="action_invoices_tsa"/>
-        </record>
-
-        <!-- INVOICE ACTION - FORM VIEW -->
-        <record id="action_invoices_form_tsa" model="ir.actions.act_window.view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="account.view_move_form"/>
-            <field name="act_window_id" ref="action_invoices_tsa"/>
-        </record>
-
-        <!-- MENU for CUSTOMER INVOICES AND REFUNDS -->
+        <!-- CUSTOMER INVOICES and REFUNDS:  MENU -->
         <menuitem id="invoices_and_refunds"
             name="Customer Invoices and Refunds"
             parent="account.menu_finance_receivables"
             groups="account.group_account_user"
-            action="action_invoices_tsa"
+            action="action_invoice_refund_tsa"
             sequence="0"/>
 
+		<!-- ============================= -->
+		<!--        VENDOR BILLS           -->
+		<!-- ============================= -->
 		
-        <!-- VENDOR BILLS LIST VIEW -->
-        <record id="vendor_bill_tree_tsa" model="ir.ui.view">
-            <field name="name">Invoice List TSA Extension</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_invoice_tree"/>
-            <field name="arch" type="xml">
-                <!-- <xpath expr="//field[@name='x_tracking_ref']" position="replace"> -->
-                <!-- </xpath> -->
-                <!-- <xpath expr="//field[@name='partner_id']" position="replace"> -->
-                <!-- </xpath>                         -->
-                <!-- <field name="x_name_truncated"/> -->
-				<xpath expr="//field[@name='invoice_origin']" position="after">
-                    <field name="x_tracking_ref" invisible="1"/>
-                    <field name="partner_id" invisible="1"/>
-				</xpath>
-                <!-- <field name="invoice_date"/> -->				
-            </field>
-        </record>		
-
         <!-- VENDOR BILLS ACTION DEFINITION (form and list views) -->
-        <record id="action_bills_tsa" model="ir.actions.act_window">
+        <record id="action_bill_refund_tsa" model="ir.actions.act_window">
             <field name="name">Vendor Bills and Refunds</field>
             <field name="res_model">account.move</field>
-            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
+            <field name="views">[["gg2.invoice_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/>			
             <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
         </record>
-
-        <!-- VENDOR BILLS ACTION DEF - LIST VIEW -->
-        <record id="action_bills_tree_tsa" model="ir.actions.act_window.view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/>
-            <field name="act_window_id" ref="action_bills_tsa"/>
-        </record>
-
-        <!-- VENDOR BILLS ACTION DEF - FORM VIEW -->
-        <record id="action_bills_form_tsa" model="ir.actions.act_window.view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="account.view_move_form"/>
-            <field name="act_window_id" ref="action_bills_tsa"/>
-        </record>        
+ 
 
         <!-- MENU for VENDOR BILLS AND REFUNDS -->
         <menuitem id="bills_and_refunds"
             name="Vendor Bills and Refunds"
             parent="account.menu_finance_payables"
             groups="account.group_account_user"
-            action="action_bills_tsa"
+            action="action_bill_refund_tsa"
             sequence="0"/>
+
+		<!-- ========================================== -->
+		<!-- CUST INVOICES and VENDOR BILLS combined    -->
+		<!-- ========================================== -->
 		
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS view:  LIST (to include invoices, bills and refunds) -->
+        <record id="invoice_bill_refund_tree_tsa" model="ir.ui.view">
+            <field name="name">Invoice Refund List TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="after">
+                    <field name="invoice_partner_display_name" string="Customer/Vendor"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   ACTION DEFINITION (form and list views) -->
+        <record id="action_invoice_and_bill_and_refund_tsa" model="ir.actions.act_window">
+            <field name="name">Invoices and Bills and Refunds</field>
+            <field name="res_model">account.move</field>
+            <field name="views">[["gg2.invoice_bill_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>		
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt', 'out_invoice', 'out_refund', 'out_receipt'])]</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   MENU -->
+        <menuitem id="invoices_and_bills_and_refunds"
+            name="Invoices and Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_invoice_and_bill_and_refund_tsa"
+            sequence="200"/>
+
+
 
 		<!-- =============================================================== -->
 		<!--                            JOURNALS                             -->
