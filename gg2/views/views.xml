@@ -1073,7 +1073,7 @@
                 <xpath expr="//field[@name='invoice_partner_display_name']" position="replace">
                 </xpath>
                 <xpath expr="//field[@name='invoice_date']" position="after">
-                    <field name="invoice_partner_display_name" invisible="context.get('default_type') not in ('out_invoice', 'out_refund','out_receipt','in_invoice','in_refund','in_receipt')" groups="base.group_user" string="Customer/Vendor"/>
+                    <field name="invoice_partner_display_name" string="Customer/Vendor"/>
                 </xpath>
             </field>
         </record>
