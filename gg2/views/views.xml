@@ -993,10 +993,10 @@
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="invoice_date" optional="show" invisible="context.get('default_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
                 </xpath>
-                <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
+                <xpath expr="//field[@name='invoice_origin']" position="before">
                     <field name="x_items_for_partner_id" string="Items For"/>
                 </xpath>
-                <xpath expr="//field[@name='name']" position="after">
+                <xpath expr="//field[@name='invoice_origin']" position="after">
                     <field name="x_tracking_ref" string="Tracking Ref" invisible="1"/>
                 </xpath>
             </field>
