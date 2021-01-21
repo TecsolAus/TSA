@@ -1035,7 +1035,7 @@
             name="Customer Invoices and Refunds"
             parent="account.menu_finance_receivables"
             groups="account.group_account_user"
-            action="action_invoices_tree_tsa"
+            action="action_invoices_tsa"
             sequence="0"/>
 
 		<!-- ============================= -->
@@ -1086,7 +1086,7 @@
             name="Vendor Bills and Refunds"
             parent="account.menu_finance_payables"
             groups="account.group_account_user"
-            action="action_bills_tree_tsa"
+            action="action_bills_tsa"
             sequence="0"/>
 
 		<!-- ========================================== -->
