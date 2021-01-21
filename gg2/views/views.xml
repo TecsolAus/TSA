@@ -1101,7 +1101,7 @@
         <record id="action_invoice_and_bill_tree_tsa" model="ir.actions.act_window.view">
             <field name="sequence" eval="1"/>
             <field name="view_mode">tree</field>
-            <!-- <field name="view_id" ref="account.view_invoice_tree"/> -->
+            <field name="view_id" ref="account.view_invoice_tree"/>
             <!-- <field name="act_window_id" ref="action_bills_tsa"/> -->
         </record>
 
@@ -1119,7 +1119,7 @@
             parent="account.menu_finance_payables"
             groups="account.group_account_user"
             action="action_invoice_and_bill_tsa"
-            sequence="0"/>
+            sequence="10"/>
 
 
 
