@@ -1006,7 +1006,7 @@
         <record id="action_invoices_tsa" model="ir.actions.act_window">
             <field name="name">Customer Invoices and Refunds</field>
             <field name="res_model">account.move</field>
-            <field name="views">[["account.invoice.tree","tree"]]</field>
+            <field name="views">[["account.view_invoice_tree","tree"],["account.view_move_form","form"]]</field>
             <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
             <!-- <field name="view_mode">tree</field> -->
