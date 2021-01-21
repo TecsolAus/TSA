@@ -1093,7 +1093,7 @@
             parent="account.menu_finance_payables"
             groups="account.group_account_user"
             action="action_invoice_and_bill_and_refund_tsa"
-            sequence="100"/>
+            sequence="200"/>
 
 
 
