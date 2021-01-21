@@ -987,7 +987,7 @@
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_origin']" position="after">
-                        <field name="x_name_truncated"/>
+                        <field name="x_items_for_partner_id"/>
                         <field name="x_tracking_ref"/>
                         <!-- <field name="partner_id"/> -->
                         <!-- <field name="invoice_date"/> -->
