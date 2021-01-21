@@ -1034,7 +1034,7 @@
             <field name="name">Customer Invoices and Refunds</field>
             <field name="res_model">account.move</field>
             <field name="views">[["gg2.invoice_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>
-            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
+            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund', 'out_receipt'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
         </record>
 
@@ -1044,7 +1044,7 @@
             name="Customer Invoices and Refunds"
             parent="account.menu_finance_receivables"
             groups="account.group_account_user"
-            action="gg2.action_invoice_refund_tsa"
+            action="action_invoice_refund_tsa"
             sequence="0"/>
 
 		<!-- ============================= -->
