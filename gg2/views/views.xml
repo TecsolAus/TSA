@@ -987,10 +987,10 @@
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_origin']" position="after">
-                        <!-- <field name="x_name_truncated"/> -->
-                        <!-- <field name="x_tracking_ref"/> -->
-                        <field name="partner_id"/>
-                        <field name="invoice_date"/>
+                        <field name="x_name_truncated"/>
+                        <field name="x_tracking_ref"/>
+                        <!-- <field name="partner_id"/> -->
+                        <!-- <field name="invoice_date"/> -->
                 </xpath>
             </field>
         </record>
@@ -1010,16 +1010,16 @@
         <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="account.view_invoice_tree"/>
-            <field name="act_window_id" ref="action_invoices_tsa"/>
+            <!-- <field name="view_id" ref="account.view_invoice_tree"/> -->
+            <!-- <field name="act_window_id" ref="action_invoices_tsa"/> -->
         </record>
 
         <!-- INVOICE ACTION - FORM VIEW -->
         <record id="action_invoices_form_tsa" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="account.view_move_form"/>
-            <field name="act_window_id" ref="action_invoices_tsa"/>
+            <!-- <field name="view_id" ref="account.view_move_form"/> -->
+            <!-- <field name="act_window_id" ref="action_invoices_tsa"/> -->
         </record>
 
         <!-- MENU for CUSTOMER INVOICES AND REFUNDS -->
@@ -1062,16 +1062,16 @@
         <record id="action_bills_tree_tsa" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/>
-            <field name="act_window_id" ref="action_bills_tsa"/>
+            <!-- <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/> -->
+            <!-- <field name="act_window_id" ref="action_bills_tsa"/> -->
         </record>
 
         <!-- VENDOR BILLS ACTION DEF - FORM VIEW -->
         <record id="action_bills_form_tsa" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="account.view_move_form"/>
-            <field name="act_window_id" ref="action_bills_tsa"/>
+            <!-- <field name="view_id" ref="account.view_move_form"/> -->
+            <!-- <field name="act_window_id" ref="action_bills_tsa"/> -->
         </record>        
 
         <!-- MENU for VENDOR BILLS AND REFUNDS -->
@@ -1101,7 +1101,7 @@
         <record id="action_invoice_and_bill_tree_tsa" model="ir.actions.act_window.view">
             <field name="sequence" eval="1"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="account.view_invoice_tree"/>
+            <!-- <field name="view_id" ref="account.view_invoice_tree"/> -->
             <!-- <field name="act_window_id" ref="action_bills_tsa"/> -->
         </record>
 
