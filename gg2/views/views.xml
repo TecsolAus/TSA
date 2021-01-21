@@ -1009,7 +1009,7 @@
             <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="gg2.invoice_tree_tsa"/>
+            <field name="view_id" ref="account.view_invoice_tree"/>
         </record>
 
         <!-- <!-- INVOICE ACTION - LIST VIEW --> -->
@@ -1053,25 +1053,25 @@
             <field name="res_model">account.move</field>
             <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/>			
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>			
             <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
         </record>
 
-        <!-- VENDOR BILLS ACTION DEF - LIST VIEW -->
-        <record id="action_bills_tree_tsa" model="ir.actions.act_window.view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <!-- <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/> -->
-            <!-- <field name="act_window_id" ref="action_bills_tsa"/> -->
-        </record>
+        <!-- <!-- VENDOR BILLS ACTION DEF - LIST VIEW --> -->
+        <!-- <record id="action_bills_tree_tsa" model="ir.actions.act_window.view"> -->
+            <!-- <field eval="1" name="sequence"/> -->
+            <!-- <field name="view_mode">tree</field> -->
+            <!-- <!-- <field name="view_id" ref="gg2.vendor_bill_tree_tsa"/> --> -->
+            <!-- <!-- <field name="act_window_id" ref="action_bills_tsa"/> --> -->
+        <!-- </record> -->
 
-        <!-- VENDOR BILLS ACTION DEF - FORM VIEW -->
-        <record id="action_bills_form_tsa" model="ir.actions.act_window.view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <!-- <field name="view_id" ref="account.view_move_form"/> -->
-            <!-- <field name="act_window_id" ref="action_bills_tsa"/> -->
+        <!-- <!-- VENDOR BILLS ACTION DEF - FORM VIEW --> -->
+        <!-- <record id="action_bills_form_tsa" model="ir.actions.act_window.view"> -->
+            <!-- <field eval="2" name="sequence"/> -->
+            <!-- <field name="view_mode">form</field> -->
+            <!-- <!-- <field name="view_id" ref="account.view_move_form"/> --> -->
+            <!-- <!-- <field name="act_window_id" ref="action_bills_tsa"/> --> -->
         </record>        
 
         <!-- MENU for VENDOR BILLS AND REFUNDS -->
