@@ -1045,7 +1045,7 @@
         <record id="vendor_bill_tree_tsa" model="ir.ui.view">
             <field name="name">Vendor Bill List TSA Extension</field>
             <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="inherit_id" ref="gg2.view_form_invoice_tsa"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='x_items_for_partner_id']" position="replace">
                         <field name="x_items_for_partner_id" invisible="1"/>
