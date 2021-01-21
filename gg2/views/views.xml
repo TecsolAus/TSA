@@ -1051,10 +1051,11 @@
         <record id="action_bills_tsa" model="ir.actions.act_window">
             <field name="name">Vendor Bills and Refunds</field>
             <field name="res_model">account.move</field>
+            <field name="views" view_id="False" view_type="tree"</field>		
             <field name="domain">[('type', 'in', ['in_invoice', 'in_refund'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="account.view_invoice_tree"/>			
+            <!-- <field name="view_mode">tree</field> -->
+            <!-- <field name="view_id" ref="account.view_invoice_tree"/>			 -->
             <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
         </record>
 
@@ -1072,7 +1073,7 @@
             <!-- <field name="view_mode">form</field> -->
             <!-- <!-- <field name="view_id" ref="account.view_move_form"/> --> -->
             <!-- <!-- <field name="act_window_id" ref="action_bills_tsa"/> --> -->
-        </record>        
+        <!-- </record>         -->
 
         <!-- MENU for VENDOR BILLS AND REFUNDS -->
         <menuitem id="bills_and_refunds"
