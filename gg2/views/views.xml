@@ -988,9 +988,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_date']" position="replace">
                 </xpath>
-                <xpath expr="//field[@name='name']" position="after">
-                        <field name="invoice_date"/>
-                </xpath>
+                <!-- <xpath expr="//field[@name='name']" position="after"> -->
+                        <!-- <field name="invoice_date"/> -->
+                <!-- </xpath> -->
                 <xpath expr="//field[@name='name']" position="after">
                         <field name="partner_id" invisible="1"/>
                 </xpath>
@@ -1035,7 +1035,7 @@
             name="Customer Invoices and Refunds"
             parent="account.menu_finance_receivables"
             groups="account.group_account_user"
-            action="action_invoices_tsa"
+            action="action_invoices_tree_tsa"
             sequence="0"/>
 
 		<!-- ============================= -->
@@ -1050,7 +1050,6 @@
             <field name="inherit_id" ref="gg2.view_form_invoice_tsa"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='x_items_for_partner_id']" position="replace">
-                        <field name="x_items_for_partner_id" invisible="1"/>
                 </xpath>
              </field>
         </record>		
@@ -1087,7 +1086,7 @@
             name="Vendor Bills and Refunds"
             parent="account.menu_finance_payables"
             groups="account.group_account_user"
-            action="action_bills_tsa"
+            action="action_bills_tree_tsa"
             sequence="0"/>
 
 		<!-- ========================================== -->
