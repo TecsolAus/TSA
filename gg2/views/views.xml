@@ -986,10 +986,15 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_date']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                        <field name="invoice_date"/>
+                </xpath>
                 <xpath expr="//field[@name='name']" position="after">
                         <field name="partner_id" invisible="1"/>
                 </xpath>
-                <xpath expr="//field[@name='partner_id']" position="after">
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
                         <field name="x_items_for_partner_id" string="Items For"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="after">
