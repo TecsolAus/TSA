@@ -996,7 +996,7 @@
                         <field name="x_items_for_partner_id"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_origin']" position="before">
-                        <field name="x_tracking_ref"/>
+                        <field name="x_tracking_ref" invisible="1"/>
                 </xpath>
             </field>
         </record>
