@@ -1029,7 +1029,7 @@
 
         <!-- CUSTOMER INVOICES and REFUNDS:   ACTION DEFINITION:  both LIST and FORM -->
         <record id="action_invoice_refund_tsa" model="ir.actions.act_window">
-            <field name="name">Invoice n Refund TSA Action</field>
+            <field name="name">Invoices and Refunds</field>
             <field name="res_model">account.move</field>
             <field name="views">[["gg2.invoice_tree_tsa","tree"],["account.view_move_form","form"]]</field>
             <field name="domain">[('type', 'in', ['out_invoice', 'out_refund', 'out_receipt'])]</field>
@@ -1050,7 +1050,7 @@
 		
         <!-- VENDOR BILLS ACTION DEFINITION (form and list views) -->
         <record id="action_bill_refund_tsa" model="ir.actions.act_window">
-            <field name="name">Bills n Refunds Action</field>
+            <field name="name">Bills and Refunds</field>
             <field name="res_model">account.move</field>
             <field name="views">[["gg2.invoice_tree_tsa","tree"],["account.view_move_form","form"]]</field>
             <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt'])]</field>
@@ -1089,7 +1089,7 @@
 
         <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   ACTION DEFINITION (form and list views) -->
         <record id="action_invoice_and_bill_and_refund_tsa" model="ir.actions.act_window">
-            <field name="name">Invoice n Bill n Refund TSA Action</field>
+            <field name="name">Invoices Bills and Refunds</field>
             <field name="res_model">account.move</field>
             <field name="views">[["gg2.invoice_bill_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>		
             <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt', 'out_invoice', 'out_refund', 'out_receipt'])]</field>
