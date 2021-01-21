@@ -990,7 +990,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_date']" position="replace">
                 </xpath>
-                <xpath expr="//field[@name='invoice_date']" position="replace">
+                <xpath expr="//field[@name='name']" position="after">
                     <field name="invoice_date" optional="show" invisible="context.get('default_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
