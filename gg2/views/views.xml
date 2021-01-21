@@ -1062,12 +1062,28 @@
 		<!-- CUST INVOICES and VENDOR BILLS combined    -->
 		<!-- ========================================== -->
 		
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS view:  LIST (to include invoices, bills and refunds) -->
+        <record id="invoice_bill_refund_tree_tsa" model="ir.ui.view">
+            <field name="name">Invoice Refund List TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="after">
+                    <field name="invoice_partner_display_name" invisible="context.get('default_type') not in ('out_invoice', 'out_refund','out_receipt','in_invoice','in_refund','in_receipt')" groups="base.group_user" string="Customer/Vendor"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   ACTION DEFINITION (form and list views) -->
         <record id="action_invoice_and_bill_and_refund_tsa" model="ir.actions.act_window">
             <field name="name">Invoices and Bills and Refunds</field>
             <field name="res_model">account.move</field>
-            <field name="views">[["gg2.invoice_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>		
-            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'out_invoice', 'out_refund', 'in_receipt', 'out_receipt'])]</field>
+            <field name="views">[["gg2.invoice_bill_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>		
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt', 'out_invoice', 'out_refund', 'out_receipt'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
         </record>
 
