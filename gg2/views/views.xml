@@ -995,7 +995,7 @@
                 <xpath expr="//field[@name='invoice_date_due']" position="before">
                         <field name="x_items_for_partner_id"/>
                 </xpath>
-                <xpath expr="//field[@name='x_tracking_ref']" position="replace">
+                <xpath expr="//field[@name='name']" position="after">
                         <field name="x_tracking_ref" invisible="1"/>
                 </xpath>
             </field>
@@ -1049,9 +1049,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='x_items_for_partner_id']" position="replace">
                         <field name="x_items_for_partner_id" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='x_tracking_ref']" position="replace">
-                        <field name="x_tracking_ref" invisible="1"/>
                 </xpath>
              </field>
         </record>		
