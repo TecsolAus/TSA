@@ -1008,26 +1008,15 @@
             <field name="res_model">account.move</field>
             <field name="domain">[('type', 'in', ['out_invoice', 'out_refund'])]</field>
             <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="gg2.invoice_tree_tsa"/>
-            <!-- <field name="type">ir.actions.act_window</field> -->
-        </record>
-
-        <!-- INVOICE ACTION - LIST VIEW -->
-        <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view">
-            <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
-            <!-- <field name="view_id" ref="account.view_invoice_tree"/> -->
-            <!-- <field name="act_window_id" ref="action_invoices_tsa"/> -->
+            <field name="view_id" ref="gg2.invoice_tree_tsa"/>
         </record>
 
-        <!-- INVOICE ACTION - FORM VIEW -->
-        <record id="action_invoices_form_tsa" model="ir.actions.act_window.view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <!-- <field name="view_id" ref="account.view_move_form"/> -->
-            <!-- <field name="act_window_id" ref="action_invoices_tsa"/> -->
-        </record>
+        <!-- <!-- INVOICE ACTION - LIST VIEW --> -->
+        <!-- <record id="action_invoices_tree_tsa" model="ir.actions.act_window.view"> -->
+            <!-- <field eval="1" name="sequence"/> -->
+            <!-- <field name="view_mode">tree</field> -->
+        <!-- </record> -->
 
         <!-- MENU for CUSTOMER INVOICES AND REFUNDS -->
         <menuitem id="invoices_and_refunds"
