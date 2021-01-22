@@ -802,8 +802,8 @@
                     <span t-field="company.zip"/>
                     <br />email: <span t-field="company.email"/>
                     <br />phone: <span t-field="company.phone"/>
-                    <br />ABN: <span t-field="company.vat"/>
-                    <!-- <br />ACN: <span t-field="company.company_registry"/> -->
+                    <span t-field="company.vat"/>
+                    <!-- <span t-field="company.company_registry"/> -->
                 </div>
             </div>
         </div>
