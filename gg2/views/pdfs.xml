@@ -792,16 +792,18 @@
         <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
             <div class="row">
                 <div class="col-4 offset-0">
-            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 100px;" alt="Logo"/>
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 100px;" alt="Logo"/>
                 </div>
                 <div class="col-8 text-right" name="company_address" style="font-weight-bold;">
-            <div t-field="company.partner_id" style="font-size:26px"/>
+                    <div t-field="company.partner_id" style="font-size:26px"/>
                     <span t-field="company.street" />
                     <span t-field="company.city"/>
-            <span t-field="company.state_id"/>
-            <span t-field="company.zip"/>
-            <br />email: <span t-field="company.email"/>
-            <br />phone: <span t-field="company.phone"/>
+                    <span t-field="company.state_id"/>
+                    <span t-field="company.zip"/>
+                    <br />email: <span t-field="company.email"/>
+                    <br />phone: <span t-field="company.phone"/>
+                    <br /> <span t-field="company.vat"/>
+                    <!-- <br /><span t-field="company.company_registry"/> -->
                 </div>
             </div>
         </div>
