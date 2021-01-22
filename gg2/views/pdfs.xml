@@ -1042,45 +1042,46 @@
                 </div>
             </div>
             <div name="bottom_notes" style="font-size:15px;">
-<!--
-            <p t-if="o.reference">
-                Please use the following communication for your payment : <b><span t-field="o.reference"/></b>
-            </p>
--->
-			<p t-if="o.invoice_payment_term_id" name="payment_term">
-				TERMS:
-				<span t-field="o.invoice_payment_term_id.note"/>
-			</p>
 
-            <p t-if="o.type in ('out_invoice', 'in_refund') and o.amount_residual != 0">
-                Please quote the following with your payment : <b><span t-field="o.name"/></b>
-				<p><strong>
-					<p>
-						DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
-						Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
+				<p t-if="o.invoice_payment_term_id" name="payment_term">
+					TERMS:
+					<span t-field="o.invoice_payment_term_id.note"/>
+				</p>
+
+				<p t-if="o.type in ('out_invoice', 'in_refund') and o.amount_residual != 0">
+					Please quote the following with your payment : <b><span t-field="o.name"/></b>
+					<p><strong>
+						<p>
+							DIRECT DEPOSIT DETAILS: BSB 063 503 / Account No 100 979 52 / Account Name: Technical Solutions Australia<br/>
+							Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on bank payment and on remittance advice (email: accounts@tecsol.com.au)
+						</p>
+					</strong></p>
+				</p>
+
+				<p t-if="o.amount_residual == 0">
+					No payment is due.  Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email: accounts@tecsol.com.au
+				</p>
+
+				<p t-if="o.payment_term_id" name="payment_term">
+					<span t-field="o.payment_term_id.note"/>
+				</p>
+				
+				<p t-if="o.narration" name="comment">
+					<span t-field="o.narration"/>
+				</p>
+				<p t-if="o.fiscal_position_id.note" name="note">
+					<span t-field="o.fiscal_position_id.note"/>
+				</p>
+				<div id="qrcode" t-if="(o.partner_id.country_id.code in ['BE', 'AT', 'DE', 'FI', 'NL']) and (o.company_id.qr_code) and (o.currency_id.name == 'EUR') and (o.invoice_partner_bank_id.acc_number != False)">
+					<p t-if="(o.invoice_partner_bank_id.qr_code_valid)">
+						<strong class="text-center">Scan me with your banking app.</strong><br/><br/>
+						<img class="border border-dark rounded" t-att-src="o.invoice_partner_bank_id.build_qr_code_url(o.residual,(o.reference) if (o.reference) else o.number)"/>
 					</p>
-				</strong></p>
-			</p>
-
-            <p t-if="o.amount_residual == 0">
-                No payment is due.  Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email: accounts@tecsol.com.au
-            </p>
-			
-            <p t-if="o.narration" name="comment">
-                <span t-field="o.narration"/>
-            </p>
-            <p t-if="o.fiscal_position_id.note" name="note">
-                <span t-field="o.fiscal_position_id.note"/>
-            </p>
-            <div id="qrcode" t-if="(o.partner_id.country_id.code in ['BE', 'AT', 'DE', 'FI', 'NL']) and (o.company_id.qr_code) and (o.currency_id.name == 'EUR') and (o.invoice_partner_bank_id.acc_number != False)">
-                <p t-if="(o.invoice_partner_bank_id.qr_code_valid)">
-                    <strong class="text-center">Scan me with your banking app.</strong><br/><br/>
-                    <img class="border border-dark rounded" t-att-src="o.invoice_partner_bank_id.build_qr_code_url(o.residual,(o.reference) if (o.reference) else o.number)"/>
-                </p>
-                <p t-if="(o.invoice_partner_bank_id.qr_code_valid == False)">
-                    <strong class="text-center">The SEPA QR Code information is not set correctly.</strong><br/>
-                </p>
-            </div>    
+					<p t-if="(o.invoice_partner_bank_id.qr_code_valid == False)">
+						<strong class="text-center">The SEPA QR Code information is not set correctly.</strong><br/>
+					</p>
+					
+				</div>    
             </div>
         </div>
     </t>
