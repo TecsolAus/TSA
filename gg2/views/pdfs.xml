@@ -1079,8 +1079,7 @@
 					<p t-if="(o.invoice_partner_bank_id.qr_code_valid == False)">
 						<strong class="text-center">The SEPA QR Code information is not set correctly.</strong><br/>
 					</p>
-				</div>
-				</div>    
+				</div>  
             </div>
         </div>
     </t>
