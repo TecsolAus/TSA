@@ -626,7 +626,7 @@
                 <thead>
                     <tr>
                         <th><strong>Description</strong></th>
-            <!--<th class="text-center"><strong>Expected Date</strong></th>-->
+                        <!--<th class="text-center"><strong>Expected Date</strong></th>-->
                         <th class="text-right"><strong>Qty</strong></th>
                     </tr>
                 </thead>
