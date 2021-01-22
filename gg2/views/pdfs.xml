@@ -1062,8 +1062,8 @@
 					No payment is due.  Please quote: " <b t-if="o.name"> <span t-field="o.name"/></b>" on any correspondence.  Email: accounts@tecsol.com.au
 				</p>
 
-				<p t-if="o.payment_term_id" name="payment_term">
-					<span t-field="o.payment_term_id.note"/>
+				<p t-if="o.invoice_payment_term_id" name="payment_term">
+					<span t-field="o.invoice_payment_term_id.note"/>
 				</p>
 				
 				<p t-if="o.narration" name="comment">
