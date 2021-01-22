@@ -802,7 +802,7 @@
                     <span t-field="company.zip"/>
                     <br />email: <span t-field="company.email"/>
                     <br />phone: <span t-field="company.phone"/>
-                    <br /><span t-field="company.vat"/>
+                    <br /> <span t-field="company.vat"/>
                     <!-- <br /><span t-field="company.company_registry"/> -->
                 </div>
             </div>
