@@ -46,7 +46,7 @@ class TsaAccountInvoice(models.Model):
                         else:
                             myinvlist = myinvlist + " & " + dupe.name
                     raise UserError(_(
-                        "Duplicate Vendor Reference, ( " + invoice.ref + " ) detected in: " + myinvlist))
+                        "Duplicate Reference, ( " + invoice.ref + " ) detected in: " + myinvlist))
             # # CUSTOMER INVOICE - DUPE CHECK
             # if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
                 # if invoice.name:
