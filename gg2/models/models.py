@@ -304,7 +304,7 @@ class TsaSaleOrder(models.Model):
                 # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
                  DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
             if DupeOrder:
-				i = 0
+                i = 0
                 for dupe in DupeOrder:
                     i = i + 1
                     if i == 1:
