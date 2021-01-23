@@ -47,30 +47,7 @@ class TsaAccountInvoice(models.Model):
                             myinvlist = myinvlist + " & " + dupe.name
                     raise UserError(_(
                         "Duplicate Reference, ( " + invoice.ref + " ) detected in: " + myinvlist))
-            # # CUSTOMER INVOICE - DUPE CHECK
-            # if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
-                # if invoice.name:
-                    # DupeSet = self.search([('type', '=', invoice.type),
-					            # ('name', '=', invoice.name),
-                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                # ('id', '!=', invoice.id)
-                                # ])
-                    # myref = invoice.name
-                # if (not DupeSet) and (invoice.x_tracking_ref):
-                    # # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
-                    # DupeSet = self.search([('type', '=', invoice.type),
-					                      # ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          # ('id', '!=', invoice.id)
-                                          # ])
-                    # myref = invoice.x_tracking_ref
-                # if DupeSet:
-                    # myinvlist = ""
-                    # for eachdupe in DupeSet:
-                        # myinvlist = myinvlist + ", " + eachdupe.number
-                    # raise UserError(_(
-                        # "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
-        # return super(TsaAccountInvoice, self).invoice_validate()
+        return super(TsaAccountInvoice, self).action_post()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
