@@ -42,9 +42,9 @@ class TsaAccountInvoice(models.Model):
                     for dupe in DupeSet:
                         i = i + 1
                         if i == 1:
-                            myinvlist = dupe.number
+                            myinvlist = dupe.name
                         else:
-                            myinvlist = myinvlist + " & " + dupe.number
+                            myinvlist = myinvlist + " & " + dupe.name
                     raise UserError(_(
                         "Duplicate Vendor Reference, ( " + invoice.ref + " ) detected in: " + myinvlist))
             # # CUSTOMER INVOICE - DUPE CHECK
