@@ -296,16 +296,16 @@ class tsaexto(models.Model):
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
 
-    # @api.depends('partner_id', ' client_order_ref', 'name')
-    # def action_confirm(self):
-        # for order in self:
-            # # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
-            # if order.client_order_ref:
-                # # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-				# DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-                # if DupeOrder:
-                    # raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
-        # return super(TsaSaleOrder, self).action_confirm()
+    @api.depends('partner_id', ' client_order_ref', 'name')
+    def action_confirm(self):
+        for order in self:
+            # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
+            if order.client_order_ref:
+                # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+				DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+                if DupeOrder:
+                    raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
+        return super(TsaSaleOrder, self).action_confirm()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
