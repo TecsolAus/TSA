@@ -28,7 +28,7 @@ class TsaAccountInvoice(models.Model):
     _inherit = ['account.move']
 
     @api.depends('ref', 'commercial_partner_id')
-    def invoice_validate(self):
+    def action_post(self):
         for invoice in self:
             # Refuse to validate a customer invoice, vendor bill, refund or receipt if there already exists one with the same reference for the same partner,
             if invoice.type in ('in_invoice', 'in_refund', 'out_invoice', 'out_refund', 'in_receipt', 'out_receipt') and invoice.ref:
