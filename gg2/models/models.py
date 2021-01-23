@@ -304,7 +304,10 @@ class TsaSaleOrder(models.Model):
                 # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
                  DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
             if DupeOrder:
-                raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
+				DupeNameList = ''
+                for dupe in DupeOrder:
+                    DupeNameList = DupeNameList + dupe.name
+                raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeNameList))
         return super(TsaSaleOrder, self).action_confirm()
 
     @api.depends('partner_id')
