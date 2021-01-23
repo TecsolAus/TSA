@@ -27,48 +27,27 @@ from mock.mock import self
 class TsaAccountInvoice(models.Model):
     _inherit = ['account.move']
 
-    # @api.depends('reference', 'commercial_partner_id', 'x_tracking_ref')
-    # def invoice_validate(self):
-        # for invoice in self:
-            # # refuse to validate a vendor bill/refund if there already exists one with the same reference for the same partner,
-            # # because it's probably a double encoding of the same bill/refund
-            # # VENDOR BILL - DUPE CHECK
-            # if invoice.type in ('in_invoice', 'in_refund') and invoice.reference:
-                # mydupe = self.search([('type', '=', invoice.type), 
-				                # ('reference', '=', invoice.reference),
-                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                # ('id', '!=', invoice.id)
-                                # ])
-                # if mydupe:
-                    # myinvlist = ""
-                    # for eachdupe in mydupe:
-                        # myinvlist = myinvlist + ", " + eachdupe.number
-                    # raise UserError(_(
-                        # "Duplicate Vendor Reference, ( " + invoice.reference + " ) detected in" + myinvlist))
-            # # CUSTOMER INVOICE - DUPE CHECK
-            # if invoice.type in ('out_invoice', 'out_refund') and (invoice.name or invoice.x_tracking_ref):
-                # if invoice.name:
-                    # mydupe = self.search([('type', '=', invoice.type),
-					            # ('name', '=', invoice.name),
-                                # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                # ('id', '!=', invoice.id)
-                                # ])
-                    # myref = invoice.name
-                # if (not mydupe) and (invoice.x_tracking_ref):
-                    # # there is no duplicate invoice reference(name) but since there is a tracking_ref check for dupes on it
-                    # mydupe = self.search([('type', '=', invoice.type),
-					                      # ('x_tracking_ref', '=', invoice.x_tracking_ref),
-                                          # ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
-                                          # ('id', '!=', invoice.id)
-                                          # ])
-                    # myref = invoice.x_tracking_ref
-                # if mydupe:
-                    # myinvlist = ""
-                    # for eachdupe in mydupe:
-                        # myinvlist = myinvlist + ", " + eachdupe.number
-                    # raise UserError(_(
-                        # "Duplicate Reference, ( " + myref + " ) detected in" + myinvlist))
-        # return super(TsaAccountInvoice, self).invoice_validate()
+    @api.depends('ref', 'commercial_partner_id')
+    def action_post(self):
+        for invoice in self:
+            # Refuse to validate a customer invoice, vendor bill, refund or receipt if there already exists one with the same reference for the same partner,
+            if invoice.type in ('in_invoice', 'in_refund', 'out_invoice', 'out_refund', 'in_receipt', 'out_receipt') and invoice.ref:
+                DupeSet = self.search([('type', '=', invoice.type), 
+				                ('ref', '=', invoice.ref),
+                                ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
+                                ('id', '!=', invoice.id)
+                                ])
+                if DupeSet:
+                    i = 0
+                    for dupe in DupeSet:
+                        i = i + 1
+                        if i == 1:
+                            myinvlist = dupe.name
+                        else:
+                            myinvlist = myinvlist + " & " + dupe.name
+                    raise UserError(_(
+                        "Duplicate Reference, ( " + invoice.ref + " ) detected in: " + myinvlist))
+        return super(TsaAccountInvoice, self).action_post()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
@@ -207,12 +186,8 @@ class tsaexti(models.Model):
     x_counted_qty = fields.Float(string='Counted Qty', help='Quantity Counted at last Stocktake (Please complete the Date field too)', copy=True, readonly=False, required=False, selectable=True)
     x_default_location = fields.Char(string='Default Location', help='The location where we normally store this product within our warehouse.', copy=True, readonly=False, required=False, selectable=True)
     x_default_location2 = fields.Char(string='Alternative Location', help='Excess stock will be placed in this location', copy=True, readonly=False, required=False, selectable=True)
-    ## ORIG GG Lookup location
-    #x_default_location = fields.Many2one('stock.location', string='Default Location', help='The location where we normally store this product within our warehouse.', copy=True, readonly=False, required=False, selectable=True)
-    #x_default_location2 = fields.Many2one('stock.location', string='Alternative Location', help='Excess stock will be placed in this location', copy=True, readonly=False, required=False, selectable=True)
     x_default_position = fields.Char(string='Position (Rack, Shelf)', help='Position of the item(s) - e.g. the last time anyone checked.  Rack: numbered from the left when faceing.  Shelf: numbered from the floor upwards  F,1,2,..,T where F=Floor, 1=1st Shelf, 2=2nd Shelf, .. , T=Top Shelf', copy=False, readonly=False, required=False, selectable=True)
     x_default_position2 = fields.Char(string='Alternative Position', help='Position of excess stock:  Rack: numbered from the left when faceing.  Shelf: numbered from the floor upwards  F,1,2,..,T where F=Floor, 1=1st Shelf, 2=2nd Shelf, .. , T=Top Shelf', copy=True, readonly=False, required=False, selectable=True)
-    #x_description = fields.Many2one('product.category', string='Category Description', help='', copy=True, readonly=False, required=True, selectable=True)
     x_expert = fields.Many2one('res.users', string='Who to ask', help='The person to ask about this product - who knows most about it', copy=True, readonly=False, required=False, selectable=True)
     x_expert2 = fields.Many2one('res.users', string='Who to ask (alt)', help='Alternative source of knowledge about this item', copy=True, readonly=False, required=False, selectable=True)
     x_image_filename = fields.Char(string='Image Filename', help='', copy=True, readonly=False, required=False, selectable=True)
@@ -239,23 +214,11 @@ class tsaexti(models.Model):
     x_v8_id = fields.Char(string='v8 id', help='', copy=True, readonly=False, required=False, selectable=True)
     x_volume_cm3 = fields.Float(string='Volume (cm3)', help='', copy=False, readonly=True, required=False, selectable=False, compute='_get_volume_cm3')
 
-#class tsaextj(models.Model):
-#    _inherit = ['project.issue']
-#
-#    x_fixed_by = fields.Many2one(string='Fixed By', help='Who fixed the issue', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#    x_investigated_by = fields.Many2one(string='Investigated By', help='Who investigated the issue', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#    x_logged_by = fields.Many2one(string='Logged By', help='Who logged the issue.', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#    x_reported_by = fields.Many2one(string='Reported By', help='Who reported the issue.', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#
 class tsaextk(models.Model):
     _inherit = ['project.task']
-#
+
     x_external_document_a = fields.Html(string='External Document A', help='Use this field to add a hyperlink to a document or folder on your computer', copy=True, readonly=False, required=False, selectable=True)
     x_external_document_b = fields.Html(string='External Document B', help='', copy=True, readonly=False, required=False, selectable=True)
-#    x_fixed_by = fields.Many2one(string='Fixed By', help='The person who fixed the issue or who performed the task', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#    x_investigated_by = fields.Many2one(string='Investigated By', help='The person who investigated the issue.', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#    x_logged_by = fields.Many2one(string='Logged By', help='The person who logged the issue or task', copy=True, readonly=False, required=False, selectable=True, related='res.users')
-#    x_reported_by = fields.Many2one(string='Reported By', help='The name of the person who reported the issue or need for the task', copy=True, readonly=False, required=False, selectable=True, related='res.users')
 
 class tsaextl(models.Model):
     _inherit = ['purchase.order']
@@ -267,7 +230,6 @@ class tsaextl(models.Model):
 
     x_back_count = fields.Integer(string='No. of <Back> button hits', help='The number of times the Back button has been used', copy=True, readonly=False, required=False, selectable=True)
     x_customer_email = fields.Char(string='Customer Email', help='Read-only display of Customer Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False, compute='_get_customer_email')
-#    x_customer_email = fields.Char(string='Customer Email', help='Read-only display of Customer Email Address (if defined in Contacts)', copy=False, readonly=True, required=False, selectable=False)
     x_ordered_by = fields.Char(string='Ordered By', help='Who Placed this order / Our Ref', copy=True, readonly=False, required=False, selectable=True)
 
 class tsaextm(models.Model):
@@ -275,10 +237,6 @@ class tsaextm(models.Model):
 
     x_sequence = fields.Integer(string='Sequence', help='Sequence No. (e.g. use to assist with cross-checking orders)', copy=True, readonly=False, required=False, selectable=True)
 
-#class tsaextn(models.Model):
-#    _inherit = ['res.company']
-#
-#    x_lock_date = fields.Date(string='(NOT-IN-USE) Accounts Lock Date', help='(NOT-IN-USE) The accounts are locked for all transactions prior or equal to this date', copy=True, readonly=False, required=False, selectable=True)
 
 class tsaexto(models.Model):
     _inherit = ['res.partner']
@@ -296,16 +254,22 @@ class tsaexto(models.Model):
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
 
-    # @api.depends('partner_id', ' client_order_ref', 'name')
-    # def action_confirm(self):
-        # for order in self:
-            # # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
-            # if order.client_order_ref:
-                # # OLD (v12) DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('company_id', '=', order.company_id), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-				# DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
-                # if DupeOrder:
-                    # raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order: " + DupeOrder.name))
-        # return super(TsaSaleOrder, self).action_confirm()
+    @api.depends('partner_id', ' client_order_ref', 'name')
+    def action_confirm(self):
+        for order in self:
+            # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
+            if order.client_order_ref:
+                 DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+            if DupeOrder:
+                i = 0
+                for dupe in DupeOrder:
+                    i = i + 1
+                    if i == 1:
+                        DupeNameList = dupe.name
+                    else:
+                        DupeNameList = DupeNameList + ' & ' + dupe.name
+                raise UserError(_("Duplicate Customer Reference, " + order.client_order_ref + " found in order(s): " + DupeNameList))
+        return super(TsaSaleOrder, self).action_confirm()
 
     @api.depends('partner_id')
     def _get_customer_email(self):
@@ -316,11 +280,7 @@ class TsaSaleOrder(models.Model):
                                    help='Read-only display of Customer Email Address (if defined in Contacts)',
                                    copy=False, readonly=True, required=False, selectable=False,
                                    compute='_get_customer_email')
-    # x_internal_notes = fields.Text(string='TSA Internal Notes', help='e.g. Promise made by TSA staff to customer', copy=False, readonly=False, required=False, selectable=True)
-    # x_promised_by_date = fields.Date(string='Promised by Date', help='e.g. Date customer is expecting some or all of the goods. Avoid cry-wolf!', copy=False, readonly=False, required=False, selectable=True)
     x_tracking_ref = fields.Char(string='Tracking Ref', help='', copy=False, readonly=False, required=False,                               selectable=True)
-    # x_who_next_step = fields.Many2one('res.users', string='Pass To Who', help='Which staff member needs to deal with this next?',                                      copy=False, readonly=False, required=False, selectable=True)
-    # x_items_for_partner_id = fields.Integer()
 
 class tsaextq(models.Model):
     _inherit = ['sale.order.line']
