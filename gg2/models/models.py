@@ -259,7 +259,9 @@ class TsaSaleOrder(models.Model):
         for order in self:
             # Refuse to validate a Sales Order if there already exists one with the same reference for the same partner
             if order.client_order_ref:
-                 DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+                DupeOrder = self.search([('state', '!=', 'cancel'), ('client_order_ref', '=', order.client_order_ref), ('partner_id', '=', order.partner_id.id), ('id', '!=', order.id)])
+            else:
+                DupeOrder = ''
             if DupeOrder:
                 i = 0
                 for dupe in DupeOrder:
