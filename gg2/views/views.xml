@@ -1014,19 +1014,8 @@
 
 
         <!-- CUSTOMER INVOICES and REFUNDS view:  LIST (to include both invoices and refunds) -->
-        <!-- <record id="invoice_refund_tree_tsa" model="ir.ui.view"> -->
-            <!-- <field name="name">Invoice n Refund List TSA Extension</field> -->
-            <!-- <field name="model">account.move</field> -->
-            <!-- <field name="type">tree</field> -->
-            <!-- <field name="inherit_id" ref="account.view_invoice_tree"/> -->
-            <!-- <field name="arch" type="xml"> -->
-                <!-- <xpath expr="//field[@name='invoice_date']" position="replace"> -->
-                <!-- </xpath> -->
-                <!-- <xpath expr="//field[@name='name']" position="after"> -->
-                    <!-- <field name="invoice_date" string="Invoice Date"/> -->
-                <!-- </xpath> -->
-            <!-- </field> -->
-        <!-- </record> -->
+        <!-- !!! PLEASE NOTE !!!: List / Tree view is modified once for Invoices - if you add modifications here they will compound and produce unexpected results -->
+
 
         <!-- CUSTOMER INVOICES and REFUNDS:   ACTION DEFINITION:  both LIST and FORM -->
         <record id="action_invoice_refund_tsa" model="ir.actions.act_window">
@@ -1074,19 +1063,8 @@
 		
 
         <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS view:  LIST (to include invoices, bills and refunds) -->
-        <!-- <record id="invoice_bill_refund_tree_tsa" model="ir.ui.view"> -->
-            <!-- <field name="name">Invoice n Bill n Refund List TSA Extension</field> -->
-            <!-- <field name="model">account.move</field> -->
-            <!-- <field name="type">tree</field> -->
-            <!-- <field name="inherit_id" ref="account.view_invoice_tree"/> -->
-            <!-- <field name="arch" type="xml"> -->
-                <!-- <xpath expr="//field[@name='invoice_partner_display_name']" position="replace"> -->
-                <!-- </xpath> -->
-                <!-- <xpath expr="//field[@name='invoice_date']" position="after"> -->
-                    <!-- <field name="invoice_partner_display_name" string="Customer/Vendor"/> -->
-                <!-- </xpath> -->
-            <!-- </field> -->
-        <!-- </record> -->
+        <!-- !!! PLEASE NOTE !!!: List / Tree view is modified once for Invoices - if you add modifications here they will compound and produce unexpected results -->
+
 
         <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   ACTION DEFINITION (form and list views) -->
         <record id="action_invoice_and_bill_and_refund_tsa" model="ir.actions.act_window">
@@ -1446,6 +1424,46 @@
                 </xpath>
             </field>
         </record>
+
+
+
+		<!-- =============================================================== -->
+		<!--                          INVENTORY                              -->
+		<!-- =============================================================== -->
+
+        <!-- INVENTORY TRANSFER FILTERS -->
+        <record id="view_inventory_transfer_filter_tsa" model="ir.ui.view">
+            <field name="name">Inventory Transfer Search TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="id"/>
+                    <field name="x_ship_in_out_date"/>
+                    <field name="x_extra_notes_ext"/>
+                    <field name="x_extra_notes"/> 
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- INVENTORY TRANSFER LIST VIEW -->
+        <record id="view_tree_inventory_transfer_tsa" model="ir.ui.view">
+            <field name="name">Inventory Transfer List TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="id"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_ship_in_out_date"/>
+                    <field name="x_extra_notes_ext"/>
+                    <field name="x_extra_notes"/>   
+                </xpath>
+            </field>
+        </record>
+
 
 
 		<!-- =============================================================== -->
