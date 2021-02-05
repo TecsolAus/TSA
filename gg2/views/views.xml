@@ -979,6 +979,9 @@
                     <field name="x_tracking_ref"/>
                     <field name="x_extra_notes"/>					
                 </xpath>
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="invoice_origin"/>
+                </xpath>
             </field>
         </record>
 
