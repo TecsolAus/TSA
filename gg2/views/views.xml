@@ -1169,6 +1169,19 @@
             </field>
         </record>
 
+        <!-- JOURNAL ENTRY FORM VIEW -->
+        <record id="view_journal_form_tsa" model="ir.ui.view">
+            <field name="name">Journal Entry Form TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@id='aml_tab']/field[@name='line_ids']/tree" position="after">
+                    <field name="date_maturity" string="Due"/>
+                    <field name="date" string="Date"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- JOURNAL ITEM LIST VIEW -->
         <record id="view_journal_items_tree_tsa" model="ir.ui.view">
             <field name="name">Journal Items List TSA Extension</field>
@@ -1204,7 +1217,7 @@
             </field>
         </record>
 
-        <!-- LIST OF JOURNALS VIEW -->
+        <!-- LIST OF ALL THE JOURNALS THEMSELVES -->
         <record id="view_journal_tree_tsa" model="ir.ui.view">
             <field name="name">List of Journals TSA Extension</field>
             <field name="model">account.journal</field>
