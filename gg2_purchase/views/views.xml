@@ -30,9 +30,9 @@
             <!--<field name="domain">[('state', 'in', ['purchase', 'done'])]</field>-->
             <field name="view_mode">tree,form</field>
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_purchaseorderline_treeview"/>
+            <field name="view_id" ref="gg2_purchase.tsa_purchaseorderline_treeview"/>
             <field name="limit">150</field>
-            <!--<field name="search_view_id" ref="gg2.tsa_productpurchases_searchview"/>-->
+            <!--<field name="search_view_id" ref="gg2_purchase.tsa_productpurchases_searchview"/>-->
         </record>
         <record model="ir.ui.view" id="product_form_view_purchase_order_button">
             <field name="name">product_form_view_purchase_order_button</field>
@@ -42,7 +42,7 @@
 
             <field name="arch" type="xml">
                 <div name="button_box" position="inside">
-                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
+                    <button class="oe_stat_button" name="%(gg2_purchase.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
                         <field string="Purchases" name="x_total_qty_bought"/>
                         <field name="uom_name"/>
                     </button>
