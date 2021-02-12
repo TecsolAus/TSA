@@ -42,8 +42,8 @@
                 <xpath expr="/tree" position="replace">
                     <tree string="Payments" default_order="id desc" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                         <field name="id"/>
-                        <field name="payment_date"/>
-                        <field name="communication" string="Memo"/>
+                        <field name="date"/>
+                        <field name="ref" string="Memo"/>
                         <field name="partner_id" string="Customer"/>
                         <field name="amount" string="Amount" sum="Total (as now filtered / as displayed now)"/>
                         <field name="payment_method_id" string="Type" invisible="1"/>
