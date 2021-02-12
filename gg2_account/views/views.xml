@@ -1,0 +1,443 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+		<!-- =============================================================== -->
+		<!--                       BANK STATEMENT                            -->
+		<!-- =============================================================== -->
+
+		<!-- BANK STATEMENT -->
+        <record id="bank_statement_tsa" model="ir.ui.view">
+            <field name="name">Bank Statement TSA Extension</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/header" position="after">
+                    <button name="%(tsa_bankjou_action)d" string="Journal Bank XRef" type="action"/>
+                </xpath>
+                <xpath expr="//page[@name='statement_line_ids']" position="replace">
+                    <page string="Transactions" name="statement_line_ids">
+                        <field name="line_ids" context="{'date':date}">
+                            <tree editable="bottom" string="Statement lines" decoration-muted="journal_entry_ids" limit="500">
+                                <field name="sequence" string="row"/>
+                                <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="name" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]" context="{'default_supplier': 1}" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one"/>
+                                <field name="amount" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="journal_currency_id" invisible="1"/>
+                                <field name="amount_currency" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="bank_account_id" invisible="1"/>
+                                <field name="journal_entry_ids" invisible="0" string="Reconciled Against"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+		
+
+		<!-- =============================================================== -->
+		<!--                          PAYMENTS                               -->
+		<!-- =============================================================== -->
+
+        <!-- CUSTOMER PAYMENTS LIST -->
+        <record id="view_account_payment_tree_tsa" model="ir.ui.view">
+            <field name="name">Customer Payment List TSA Extension</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Payments" default_order="id desc" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                        <field name="id"/>
+                        <field name="payment_date"/>
+                        <field name="communication" string="Memo"/>
+                        <field name="partner_id" string="Customer"/>
+                        <field name="amount" string="Amount" sum="Total (as now filtered / as displayed now)"/>
+                        <!-- <field name="payment_method_id" string="Type" invisible="1"/> -->
+                        <field name="currency_id" invisible="0"/>
+                        <!-- <field name="x_payment_method" string="Payment Method"/> -->
+                        <field name="x_payment_type" string="Direction"/>
+                        <field name="x_amount_signed" string="Amount(+/-)" sum="Total (with Direction)"/>
+                        <field name="name" string="Journal Ref"/>
+                        <field name="state" string="Stauts"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="partner_type" invisible="1"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- VENDOR PAYMENTS LIST -->
+        <record id="view_account_supplier_payment_tree_tsa" model="ir.ui.view">
+            <field name="name">Supplier Payment List TSA Extension</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Payments" default_order="id desc" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                        <field name="id"/>
+                        <field name="payment_date"/>
+                        <field name="communication" string="Memo"/>
+                        <field name="partner_id" string="Customer"/>
+                        <field name="amount" string="Amount" sum="Total (as now filtered / as displayed now)"/>
+                        <field name="payment_method_id" string="Type" invisible="1"/>
+                        <field name="currency_id" invisible="0"/>
+                        <!-- <field name="x_payment_method" string="Payment Method"/> -->
+                        <field name="x_payment_type" string="Direction"/>
+                        <field name="x_amount_signed" string="Amount(+/-)" sum="Total (with Direction)"/>
+                        <field name="name" string="Journal Ref"/>
+                        <field name="state" string="Stauts"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="partner_type" invisible="1"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+		<!-- =============================================================== -->
+		<!--           CUSTOMER INVOICES AND VENDOR BILLS                    -->
+		<!-- =============================================================== -->
+
+		<!-- INVOICE and BILL SEARCH -->
+        <record id="view_account_invoice_filter_tsa" model="ir.ui.view">
+            <field name="name">Invoice Search TSA Extension</field>
+            <field name="model">account.move</field>			
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Search Invoice">
+                        <field name="name" string="Invoice" filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('invoice_payment_ref', 'ilike',self), ('partner_id', 'child_of', self)]"/>
+                        <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/>
+                        <field name="journal_id"         string="Journal"/>
+                        <field name="invoice_date"       string="Invoice/Bill Date"/>						
+                        <field name="invoice_date_due"   string="Due Date"/>
+                        <field name="create_date"        string="Date Created"/>
+                        <field name="write_date"         string="Date Modified"/>						
+						
+                        <separator/>
+                        <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                        <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                        <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+ 
+                        <separator/>
+                        <filter name="invoices"  string="Invoices" domain="[('state', '=', 'posted'),('type','in',('out_invoice','in_invoice'))]"/>
+                        <filter name="refunds"   string="Refunds/CreditNotes"  domain="[('state', '=', 'posted'),('type','in',('out_refund','in_refund'))]"/>
+                        <filter name="receipts"   string="Sales/Purchase Receipts"  domain="[('state', '=', 'posted'),('type','in',('out_receipt','in_receipt'))]"/>
+
+                        <separator/>
+                        <filter name="in_payment" string="In Payment" domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
+                        <filter name="paid" string="Paid" domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
+                        <filter name="unpaid" string="Not Paid" domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
+                        <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]" help="Overdue invoices, maturity date passed"/>
+
+                        <separator/>
+                        <field name="partner_id"     operator="child_of"/>
+                        <field name="x_tracking_ref" string="Tracking Ref"/>
+						
+                        <separator/>
+                        <filter name="invoice_date"  string="Invoice Date" date="invoice_date"/>
+                        <filter name="due_date"      string="Due Date"     date="invoice_date_due"/>
+
+                        <separator/>						
+                        <field name="transaction_ids"        string="Journal Entry Transaction Ref"/>
+                        <field name="invoice_origin"         string="Source Doc"/>
+                        <field name="invoice_user_id"        string="Salesperson"/>
+
+                        <separator/>
+                        <filter domain="[('invoice_user_id', '=', uid)]" name="myinvoices" help="My Invoices"/>
+
+                        <group expand="0" string="Group By">
+                            <filter name="salesperson"         string="Salesperson" context="{'group_by':'invoice_user_id'}"/>
+                            <filter name="status"              string="Status"      context="{'group_by':'state'}"/>
+							<filter name="group_by_partner_id" string="Partner"     context="{'group_by':'commercial_partner_id'}"/>
+							
+                            <separator/>
+                            <filter name="invoicedate" string="Invoice Date" context="{'group_by': 'invoice_date'}"/>
+                            <filter name="duedate"     string="Due Date"     context="{'group_by': 'invoice_date_due'}"/>
+                        </group>						                           
+                    </search>
+                </xpath>
+            </field>
+        </record>
+		
+		<!-- INVOICE FORM -->
+        <record id="view_form_invoice_tsa" model="ir.ui.view">
+            <field name="name">Invoice Form TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_items_for_partner_id"/>
+                    <field name="x_customer_email"/>
+                    <field name="x_tracking_ref"/>
+                    <field name="x_extra_notes"/>					
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="invoice_origin"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INVOICE LIST (to include both invoices and refunds) -->
+        <record id="invoice_tree_tsa" model="ir.ui.view">
+            <field name="name">Invoice List TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_date']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="invoice_date" string="Invoice Date"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="after">
+                    <field name="invoice_partner_display_name" string="Partner Name"/>				
+                </xpath>
+                <xpath expr="//field[@name='invoice_origin']" position="before">
+                    <field name="x_items_for_partner_id" string="Items For"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_origin']" position="after">
+                    <field name="x_tracking_ref" string="Tracking Ref" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- CUSTOMER INVOICES and REFUNDS view:  LIST (to include both invoices and refunds) -->
+        <!-- !!! PLEASE NOTE !!!: List / Tree view is modified once for Invoices - if you add modifications here they will compound and produce unexpected results -->
+
+
+        <!-- CUSTOMER INVOICES and REFUNDS:   ACTION DEFINITION:  both LIST and FORM -->
+        <record id="action_invoice_refund_tsa" model="ir.actions.act_window">
+            <field name="name">Invoices and Refunds</field>
+            <field name="res_model">account.move</field>
+            <field name="views">[["gg2.invoice_tree_tsa","tree"],["account.view_move_form","form"]]</field>
+            <field name="domain">[('type', 'in', ['out_invoice', 'out_refund', 'out_receipt'])]</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+
+        <!-- CUSTOMER INVOICES and REFUNDS:  MENU -->
+        <menuitem id="invoices_and_refunds"
+            name="Customer Invoices and Refunds"
+            parent="account.menu_finance_receivables"
+            groups="account.group_account_user"
+            action="action_invoice_refund_tsa"
+            sequence="0"/>
+
+		<!-- ============================= -->
+		<!--        VENDOR BILLS           -->
+		<!-- ============================= -->
+		
+        <!-- VENDOR BILLS ACTION DEFINITION (form and list views) -->
+        <record id="action_bill_refund_tsa" model="ir.actions.act_window">
+            <field name="name">Bills and Refunds</field>
+            <field name="res_model">account.move</field>
+            <field name="views">[["gg2.invoice_tree_tsa","tree"],["account.view_move_form","form"]]</field>
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt'])]</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+        </record>
+ 
+
+        <!-- MENU for VENDOR BILLS AND REFUNDS -->
+        <menuitem id="bills_and_refunds"
+            name="Vendor Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_bill_refund_tsa"
+            sequence="0"/>
+
+		<!-- ========================================== -->
+		<!-- CUST INVOICES and VENDOR BILLS combined    -->
+		<!-- ========================================== -->
+		
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS view:  LIST (to include invoices, bills and refunds) -->
+        <!-- !!! PLEASE NOTE !!!: List / Tree view is modified once for Invoices - if you add modifications here they will compound and produce unexpected results -->
+
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   ACTION DEFINITION (form and list views) -->
+        <record id="action_invoice_and_bill_and_refund_tsa" model="ir.actions.act_window">
+            <field name="name">Invoices Bills and Refunds</field>
+            <field name="res_model">account.move</field>
+            <field name="views">[["gg2.invoice_bill_refund_tree_tsa","tree"],["account.view_move_form","form"]]</field>		
+            <field name="domain">[('type', 'in', ['in_invoice', 'in_refund', 'in_receipt', 'out_invoice', 'out_refund', 'out_receipt'])]</field>
+            <field name="search_view_id" ref="view_account_invoice_filter_tsa"/>
+        </record>
+
+        <!-- CUSTOMER INVOICES and VENDOR BILLS and REFUNDS:   MENU -->
+        <menuitem id="invoices_and_bills_and_refunds"
+            name="Invoices and Bills and Refunds"
+            parent="account.menu_finance_payables"
+            groups="account.group_account_user"
+            action="action_invoice_and_bill_and_refund_tsa"
+            sequence="200"/>
+
+
+
+		<!-- =============================================================== -->
+		<!--                            JOURNALS                             -->
+		<!-- =============================================================== -->
+		
+        <!-- JOURNAL ENTRY SEARCH -->
+        <record id="view_journal_entry_search_tsa" model="ir.ui.view">
+            <field name="name">Journal Entry Search TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="amount_total"/>
+                    <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Amount Contains"/>
+					<field name="amount_tax"/>
+                    <field name="amount_tax" filter_domain="[('amount_tax','ilike',self)]" string="Tax Contains"/>
+					<field name="amount_residual"/>
+                    <field name="amount_residual" filter_domain="[('amount_residual','ilike',self)]" string="Residual Amt Contains"/>					
+                </xpath>
+            </field>
+        </record>
+		
+        <!-- JOURNAL ITEM SEARCH -->
+        <record id="view_journal_items_search_tsa" model="ir.ui.view">
+            <field name="name">Journal Items Search TSA Extension</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search" position="replace">
+                    <search string="Search Journal Items">
+                        <field name="name" filter_domain="['|', ('name','ilike',self), ('ref','ilike',self)]" string="Move"/>
+                        <field name="date"/>
+                        <field name="debit"/>
+                        <field name="credit"/>
+                        <field name="balance"/>
+                        <field name="balance" filter_domain="[('balance','ilike',self)]" string="Balance Contains"/>
+                        <separator/>
+                        <filter string="Unposted" name="unposted" domain="[('move_id.state','=','draft')]" help="Unposted Journal Items"/>
+                        <filter name="posted" string="Posted" domain="[('move_id.state','=','posted')]" help="Posted Journal Items"/>
+                        <separator/>
+                        <filter string="Unreconciled" domain="[('full_reconcile_id', '=', False), ('balance','!=', 0), ('account_id.reconcile','=',True)]" help="Journal items where matching number isn't set" name="unreconciled"/>
+                        <separator/>
+                        <filter string="No Bank Statement" domain="[('statement_line_id', '=', False)]" help="No associated Bank Statement" name="nobankstmt"/>
+                        <filter string="Bank Statement" domain="[('statement_line_id', '!=', False)]" help="Has associated Bank Statement" name="bankstmt"/>
+                        <separator/>
+                        <filter string="Payable" domain="[('account_id.internal_type', '=', 'payable')]" help="From Payable accounts" name="payable"/>
+                        <filter string="Receivable" domain="[('account_id.internal_type', '=', 'receivable')]" help="From Receivable accounts" name="receivable"/>
+                        <separator/>
+                        <filter string="MainBank" domain="[('account_id', '=', '11111')]" help="Main Bank Account" name="mainbank"/>
+                        <filter string="Visa" domain="[('account_id', '=', '21113')]" help="Visa Account" name="visa"/>
+                        <filter string="Jetstar" domain="[('account_id', '=', '21114')]" help="Jetstar Account" name="jetstar"/>
+                        <filter string="Paypal" domain="[('account_id', '=', '11112')]" help="Paypal Account" name="mainbank"/>
+                        <filter string="InterestBearing" domain="[('account_id', '=', '11110')]" help="Interest Bearing Bank Account" name="mainbank"/>
+                        <separator/>
+                        <field name="account_id"/>
+                        <field name="partner_id"/>
+                        <field name="journal_id"/>
+                        <field name="move_id" string="Number (Move)"/>
+                        <field name="tax_line_id"/>
+                        <field name="tax_ids"/>
+                        <group expand="0" string="Group By">
+                            <filter string="Partner" name="partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                            <filter string="Journal" name="journal" domain="[]" context="{'group_by':'journal_id'}"/>
+                            <filter string="Account" name="account" context="{'group_by':'account_id'}"/>
+                            <filter string="Bank Statement" name="bankstmtgp" context="{'group_by':'statement_id'}"/>
+                            <filter string="Date" name="groupby_date" domain="[]" context="{'group_by':'date'}"/>
+                        </group>
+                    </search>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- JOURNAL ENTRY LIST VIEW  -->
+        <record id="tsa_journal_list_ext" model="ir.ui.view">
+            <field name="name">Journal List TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="x_credit_or_debit_note"/>
+                    <field name="x_gst_clearing"/>				
+                </xpath>			
+            </field>
+        </record>
+
+        <!-- JOURNAL ENTRY FORM VIEW -->
+        <record id="view_journal_form_tsa" model="ir.ui.view">
+            <field name="name">Journal Entry Form TSA Extension</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@id='aml_tab']/field[@name='line_ids']/tree/field[@name='account_id']" position="before">
+                    <field name="date_maturity" string="Due"/>
+                    <field name="date" string="Date"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- JOURNAL ITEM LIST VIEW -->
+        <record id="view_journal_items_tree_tsa" model="ir.ui.view">
+            <field name="name">Journal Items List TSA Extension</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Journal Items" create="false">
+                        <field name="date"/>
+                        <field name="move_id" required="0" groups="account.group_account_user"/>
+                        <field name="journal_id" options="{&quot;no_open&quot;:True}"/>
+                        <field name="name"/>
+                        <field name="ref"/>
+                        <field name="statement_id" string="BankStmt" invisible="0"/>
+                        <field name="statement_line_id" string="StmtLine"/>
+                        <field name="partner_id"/>
+                        <field name="account_id" options="{'no_open': True}" groups="account.group_account_user"/>
+                        <field name="analytic_account_id" groups="account.group_account_user"/>
+                        <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_tags"/>
+                        <field name="reconciled" invisible="1"/>
+                        <field name="full_reconcile_id"/>
+                        <field name="debit" sum="Total Debit"/>
+                        <field name="credit" sum="Total Credit"/>
+                        <field name="balance" sum="Total Balance"/>
+                        <field name="amount_currency" readonly="True" groups="base.group_multi_currency"/>
+                        <field name="currency_id" readonly="True" invisible="1"/>
+                        <field name="date_maturity"/>
+                        <field name="company_currency_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- LIST OF ALL THE JOURNALS THEMSELVES -->
+        <record id="view_journal_tree_tsa" model="ir.ui.view">
+            <field name="name">List of Journals TSA Extension</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Account Journal">
+                        <field name="sequence" widget="handle"/>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="default_debit_account_id"/>
+                        <field name="default_credit_account_id"/>
+                        <field name="restrict_mode_hash_table" string="Lock Posted"/>
+                        <field name="type"/>
+                        <!-- <field name="belongs_to_company" invisible="1"/> -->
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
