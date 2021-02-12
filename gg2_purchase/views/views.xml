@@ -2,112 +2,115 @@
 <odoo>
     <data>
 
+        <!--PURCHASE ORDERS BUTTON ON PRODUCT FORM-->
+        <record id="tsa_purchaseorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_purchaseorderline_treeview</field>
+            <field name="model">purchase.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Purchases for selected product">
+                    <field name="order_id"/>
+                    <field name="partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_id" invisible="0"/>
+                    <field name="product_uom_qty" string="Qty" sum="Total"/>
+                    <field name="qty_received" sum="Total"/>
+                    <field name="qty_invoiced" sum="Total"/>
+                    <field name="product_uom" string="Units"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_product_purchases_list" model="ir.actions.act_window">
+            <field name="name">Purchase Order Lines</field>
+            <field name="res_model">purchase.order.line</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="domain">[]</field>
+            <!--Many fields in purchase.order.line have state=NULL .. when fixed use the following line-->
+            <!--<field name="domain">[('state', 'in', ['purchase', 'done'])]</field>-->
+            <field name="view_mode">tree,form</field>
+            <field name="views">[]</field>
+            <field name="view_id" ref="gg2.tsa_purchaseorderline_treeview"/>
+            <field name="limit">150</field>
+            <!--<field name="search_view_id" ref="gg2.tsa_productpurchases_searchview"/>-->
+        </record>
+        <record model="ir.ui.view" id="product_form_view_purchase_order_button">
+            <field name="name">product_form_view_purchase_order_button</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" name="%(gg2.action_product_purchases_list)d" type="action" string="Purchases=" icon="fa-shopping-cart">
+                        <field string="Purchases" name="x_total_qty_bought"/>
+                        <field name="uom_name"/>
+                    </button>
+                </div>
+            </field>
+        </record>
+	
+
 		<!-- =============================================================== -->
-		<!--                       SALES ORDERS                              -->
+		<!--                       PURCHASE ORDERS                           -->
 		<!-- =============================================================== -->
 
-        <!-- SALES ORDER FILTERS -->
-        <record id="view_sales_order_filter_tsa" model="ir.ui.view">
-            <field name="name">Sale Order Search TSA Extension</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <!-- PURCHASE ORDER FILTERS -->
+        <record id="view_purchase_order_filter_tsa" model="ir.ui.view">
+            <field name="name">Purchase Order Search TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='order_line']" position="replace">
-                    <field name="order_line" string="Product" filter_domain="['|',('order_line.product_id.default_code','ilike',self),('order_line.product_id.name', 'ilike', self)]"/>
-                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="amount_total" string="Total Equals"/>
                     <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Total Contains"/>
+                    <field name="amount_untaxed" string="Untaxed Amt Equals"/>
+                    <field name="amount_untaxed" filter_domain="[('amount_untaxed','ilike',self)]" string="Untaxed Amt Contains"/>
                 </xpath>
             </field>
         </record>
 
-        <!-- SALES ORDER FORM VIEW -->
-        <record id="view_form_sale_order_tsa" model="ir.ui.view">
-            <field name="name">Sales Order TSA Extension</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='partner_shipping_id']" position="after">
-                    <field name="x_customer_email"/>
-                </xpath>
-                <xpath expr="//field[@name='reference']" position="replace">
-                </xpath>
-                <xpath expr="//field[@name='client_order_ref']" position="replace">
-                </xpath>
-                <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="client_order_ref"/>
-                    <field name="reference" readonly="1" attrs="{'invisible': [('reference', '=', False)]}"/>
-                </xpath>
-            </field>
-        </record>
-
-        <!-- SALES ORDERS and QUOTATIONS -->
-        <record id="action_orders_tsa" model="ir.actions.act_window">
-            <field name="name">Sales Orders and Quotations</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">sale.order</field>
-            <field name="domain">[]</field>
-        </record>
-
-        <!-- MENU for SALES ORDERS and QUOTATIONS -->
-        <menuitem id="sales_and_quotes"
-            name="Sales and Quotations"
-            parent="sale.sale_order_menu"
-            groups="base.group_user"
-            action="action_orders_tsa"
-            sequence="0"/>
-
-
-        <!-- SALES ORDER LIST VIEW -->
-        <record id="view_saleorder_tree_tsa" model="ir.ui.view">
-            <field name="name">Sale Order List TSA Extension</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_tree"/>
+        <!-- PURCHASE ORDER LIST VIEW -->
+        <record id="view_purchaseorder_tree_tsa" model="ir.ui.view">
+            <field name="name">Purchase Order List TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="replace">
-                    <tree string="Sales Orders" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
-                        <field name="message_needaction" invisible="1"/>
-                        <field name="name" string="Quotation Number"/>
-                        <!-- <field name="confirmation_date" string="Confirmation Date"/> -->
-                        <field name="date_order" string="Ordered"/>
-                        <!-- The following line had to be commented out for v14 - error said that field did not exist in sale.order model even through it clearly does exist -->
-                        <!-- <field name="effective_date" string="Delivered"/>						 -->
-                        <field name="commitment_date" string="Promised" groups="sale.group_sale_order_dates"/>
-                        <field name="expected_date" string="Earliest" groups="sale.group_sale_order_dates"/>
+                    <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'" decoration-info="state in ('wait','confirmed')" string="Purchase Order" default_order="id desc">
+                        <field name="message_unread" invisible="1"/>
+                        <field name="name" string="Reference"/>
+                        <field name="date_order"/>
                         <field name="partner_id"/>
-                        <field name="client_order_ref"/>						
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        <field name="date_planned" invisible="context.get('quotation_only', False)"/>
                         <field name="user_id"/>
-                        <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
-                        <field name="currency_id" invisible="1"/>
-                        <field name="invoice_status" invisible="1"/>
-                        <field name="state" invisible="0"/>
-                        <field name="id" invisible="0"/>
-                    </tree>
-                </xpath>
-            </field>
-        </record>
-
-        <!-- SALES QUOTATION LIST VIEW -->
-        <record id="view_quotation_tree_tsa" model="ir.ui.view">
-            <field name="name">Sale Order Quotation List TSA Extension</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_quotation_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="/tree" position="replace">
-                    <tree string="Quotation" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" default_order="id desc">
-                        <field name="message_needaction" invisible="1"/>
-                        <field name="id" invisible="1"/>
-                        <field name="name" string="Quotation Number"/>
-                        <field name="date_order" string="Quotation Date"/>
-                        <field name="commitment_date" groups="sale.group_sale_order_dates"/>
-                        <field name="expected_date" groups="sale.group_sale_order_dates"/>
-                        <field name="partner_id"/>
-                        <field name="user_id"/>
-                        <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                        <field name="origin"/>
+                        <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"/>
+                        <field name="amount_total" sum="Total amount" widget="monetary"/>
                         <field name="currency_id" invisible="1"/>
                         <field name="state"/>
+                        <field name="invoice_status" attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
+                        <field name="id"/>
                     </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PURCHASE ORDER FORM VIEW -->
+        <record id="view_form_purchase_order_inherited" model="ir.ui.view">
+            <field name="name">Purchase Order TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_customer_email" string="Vendor Email"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_ref']" position="after">
+                    <field name="x_ordered_by"/>
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="after">
+                    <field name="x_back_count"/>
                 </xpath>
             </field>
         </record>
