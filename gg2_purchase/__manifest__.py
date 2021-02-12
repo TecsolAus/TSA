@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "gg2_sale",
+    'name': "gg2_purchase",
 
     'summary': """
         TSA Customisations - Purchase""",
