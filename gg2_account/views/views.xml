@@ -106,7 +106,8 @@
                         <filter name="due_date"      string="Due Date"     date="invoice_date_due"/>
 
                         <separator/>						
-                        <field name="transaction_ids"        string="Journal Entry Transaction Ref"/>
+                        <field name="ref"                    string="TSA Tracking Ref"/>
+                        <field name="x_tracking_ref"         string="Journal Entry Transaction Ref"/>
                         <field name="invoice_origin"         string="Source Doc"/>
                         <field name="invoice_user_id"        string="Salesperson"/>
 
