@@ -36,7 +36,7 @@
 				</p>
             </div>
             <h2 name="invheading" style="padding-bottom:15px; padding-top:20px;">
-                <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.invoice_payment_state == 'paid')">Tax Invoice :</span>
+                <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.payment_state == 'paid')">Tax Invoice :</span>
                 <!-- <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span> -->
                 <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice :</span>
                 <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice :</span>
@@ -82,7 +82,7 @@
                     <strong>Invoice Date: </strong>
                     <span t-field="o.invoice_date"/>
                 </div>
-                <div name="due_date" class="col-4" t-if="o.invoice_date_due and o.type == 'out_invoice' and (o.invoice_payment_state == 'not_paid' or o.invoice_payment_state == 'paid' or o.invoice_payment_state == 'in_payment')">
+                <div name="due_date" class="col-4" t-if="o.invoice_date_due and o.type == 'out_invoice' and (o.payment_state == 'not_paid' or o.payment_state == 'paid' or o.payment_state == 'in_payment')">
                     <strong>Due Date: </strong>
                     <span t-field="o.invoice_date_due"/>
                 </div>
