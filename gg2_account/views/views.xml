@@ -392,8 +392,8 @@
                         <field name="sequence" widget="handle"/>
                         <field name="code"/>
                         <field name="name"/>
-                        <field name="default_debit_account_id"/>
-                        <field name="default_credit_account_id"/>
+                        <field name="default_account_id"/>
+                        <field name="default_account_type"/>
                         <field name="restrict_mode_hash_table" string="Lock Posted"/>
                         <field name="type"/>
                         <!-- <field name="belongs_to_company" invisible="1"/> -->
