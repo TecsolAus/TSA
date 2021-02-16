@@ -91,10 +91,11 @@
                         <filter name="receipts"   string="Sales/Purchase Receipts"  domain="[('state', '=', 'posted'),('move_type','in',('out_receipt','in_receipt'))]"/>
 
                         <separator/>
-                        <filter name="in_payment" string="In Payment" domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
-                        <filter name="paid" string="Paid" domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
-                        <filter name="unpaid" string="Not Paid" domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
-                        <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]" help="Overdue invoices, maturity date passed"/>
+                        <filter name="in_payment" string="In Payment" domain="[('payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
+                        <filter name="paid" string="Paid" domain="[('payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
+                        <filter name="unpaid" string="Not Paid" domain="[('payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
+                        <filter name="partpaid" string="Part Paid" domain="[('payment_state', '=', 'partial'), ('state', '=', 'posted')]"/>
+                        <filter name="late" string="Overdue" domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('payment_state', 'in', ('not_paid', 'partial'))]" help="Overdue invoices, maturity date passed"/>
 
                         <separator/>
                         <field name="partner_id"     operator="child_of"/>
