@@ -10,16 +10,16 @@
         <div class="page">
             <div class="row mt-0 mb-0" style="font-size:19px;">
                 <div class="col-6" style="">            
-                    <span t-if="o.type in ('out_invoice', 'in_refund')">
+                    <span t-if="o.move_type in ('out_invoice', 'in_refund')">
 						<strong>INVOICE TO</strong>
 					</span>
-                    <span t-elif="o.type in ('in_invoice', 'out_refund')">
+                    <span t-elif="o.move_type in ('in_invoice', 'out_refund')">
 						<strong>INVOICE FROM</strong>
 					</span>
-                    <span t-elif="o.type == 'in_receipt'">
+                    <span t-elif="o.move_type == 'in_receipt'">
 						<strong>RECEIPT FROM</strong>
 					</span>
-                    <span t-elif="o.type == 'out_receipt'">
+                    <span t-elif="o.move_type == 'out_receipt'">
 						<strong>RECEIPT TO</strong>
 					</span>						
 					<span t-if="o.partner_id">
@@ -27,7 +27,7 @@
 					</span>
                 </div>
 				<!-- Add a 2nd address in Customer Invoices where there is a different delivery address or the custom field 'items_for' has been completed  -->
-				<p t-if="o.type in ('out_invoice', 'in_refund')">
+				<p t-if="o.move_type in ('out_invoice', 'in_refund')">
 					<div class="col-6" style="">
 						<span t-if="((o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id)) or (o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)))"><strong>ITEMS FOR</strong></span>
 						<div t-field="o.x_items_for_partner_id" t-if="(o.x_items_for_partner_id and (o.x_items_for_partner_id != o.partner_id))" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
@@ -36,13 +36,13 @@
 				</p>
             </div>
             <h2 name="invheading" style="padding-bottom:15px; padding-top:20px;">
-                <span t-if="o.type == 'out_invoice' and (o.state == 'posted' or o.payment_state == 'paid')">Tax Invoice :</span>
-                <!-- <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span> -->
-                <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice :</span>
-                <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice :</span>
-                <span t-if="o.type == 'out_refund'">Refund / Credit Note :</span>
-                <span t-if="o.type == 'in_refund'">Vendor Refund / Credit Note :</span>
-                <span t-if="o.type == 'in_invoice'">Vendor Bill :</span>
+                <span t-if="o.move_type == 'out_invoice' and (o.state == 'posted' or o.payment_state == 'paid')">Tax Invoice :</span>
+                <!-- <span t-if="o.move_type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Invoice</span> -->
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice :</span>
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice :</span>
+                <span t-if="o.move_type == 'out_refund'">Refund / Credit Note :</span>
+                <span t-if="o.move_type == 'in_refund'">Vendor Refund / Credit Note :</span>
+                <span t-if="o.move_type == 'in_invoice'">Vendor Bill :</span>
                 <span t-if="o.name != '/'" t-field="o.name"/>
 				<span t-if="o.state == 'cancel'">( CANCELLED )</span>
             </h2>
@@ -82,7 +82,7 @@
                     <strong>Invoice Date: </strong>
                     <span t-field="o.invoice_date"/>
                 </div>
-                <div name="due_date" class="col-4" t-if="o.invoice_date_due and o.type == 'out_invoice' and (o.payment_state == 'not_paid' or o.payment_state == 'paid' or o.payment_state == 'in_payment')">
+                <div name="due_date" class="col-4" t-if="o.invoice_date_due and o.move_type == 'out_invoice' and (o.payment_state == 'not_paid' or o.payment_state == 'paid' or o.payment_state == 'in_payment')">
                     <strong>Due Date: </strong>
                     <span t-field="o.invoice_date_due"/>
                 </div>
@@ -230,7 +230,7 @@
 					<span t-field="o.invoice_payment_term_id.note"/>
 				</p>
 
-				<p t-if="o.type in ('out_invoice', 'in_refund') and o.amount_residual != 0">
+				<p t-if="o.move_type in ('out_invoice', 'in_refund') and o.amount_residual != 0">
 					Please quote the following with your payment : <b><span t-field="o.name"/></b>
 					<p><strong>
 						<p>
