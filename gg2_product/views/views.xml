@@ -1,0 +1,472 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <!-- DEFAULT PRODUCT SEARCHES - remove Consumable filter !-->
+
+        <!-- PRODUCT FORM Modifications -->
+        <record id="view_form_product_template_tsa" model="ir.ui.view">
+            <field name="name">Product Template TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//div[@class='oe_title']" position="replace">-->
+                <xpath expr="//sheet/div[2]" position="replace">
+                    <div class="oe_title" name="product_title_dots">
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                    </div>
+                    <div class="col-12" style="font-size:16px">
+                        <i><label for="name" string="Short Description: " style="padding-left:16px"/></i>
+                        <b><field name="name" placeholder="Product Description (brief)"/></b>
+                    </div>
+                    <div class="col-12" name="options" groups="base.group_user">
+                        <label for="x_bcause" style="padding-left:16px"/>
+                        <field name="x_bcause"/>
+                        <label for="sale_ok" style="padding-left:16px"/>
+                        <field name="sale_ok"/>
+                        <label for="purchase_ok" style="padding-left:16px"/>
+                        <field name="purchase_ok"/>
+                        <!--<label for="can_be_expensed" style="padding-left:16px"/>-->
+                        <!--<field name="can_be_expensed"/>-->
+                    </div>
+                </xpath>
+                <xpath expr="//div[@name='product_title_dots']" position="after">
+                        <div class="col-12" style="font-size:16px" name="two_codes">
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="default_code" string="TSA Code: "/></i>
+                                <b><field name="default_code" placeholder="TSA Item Code a.k.a. Internal Reference)" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="barcode" string="Barcode: "/></i>
+                                <b><field name="barcode" placeholder="Barcode  COPY FROM   TSA Code" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                        </div>
+                        <div class="col-12" style="font-size:16px" name="cat_type">
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="categ_id" string="Product Category: "/></i></b>
+                                <b><field name="categ_id" placeholder="Product Category" style="font-size:15px"/></b>
+                            </span>
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="type" string="Product Type: "/></i></b>
+                                <b><field name="type" placeholder="Product Type" style="font-size:15px"/></b>
+                            </span>
+                        </div>
+                </xpath>
+
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="x_cost_price" string="Cost Price (TSA)"/>
+                </xpath>
+
+                <!--<xpath expr="//field[@name='type']" position="before">-->
+                    <!--<field name="id" string="product_tmpl_id"/>-->
+                <!--</xpath>-->
+
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="TSA" name="page_tsa">
+                        <group>
+                            <group string="TSA Location Info">
+                                <field name="x_default_location"/>
+                                <field name="x_default_position"/>
+                                <field name="x_default_location2"/>
+                                <field name="x_default_position2"/>
+                                <field name="x_expert"/>
+                                <field name="x_expert2"/>
+                            </group>
+                            <group string="TSA Dimensions" name="group_tsa_dimensions">
+                                <label for="x_item_height" string="H x L x D (cm)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height"> </field><b> x </b>
+                                    <field name="x_item_length"> </field><b> x </b>
+                                    <field name="x_item_depth"> </field><b> = </b>
+                                    <field name="x_volume_cm3"> </field><b> cm 3</b>
+                                </div>
+                                <label for="x_item_height" string="H x L x D (cm) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height_mfr"> </field><b> x </b>
+                                    <field name="x_item_width_mfr"> </field><b> x </b>
+                                    <field name="x_item_depth_mfr"> </field><b> = </b>
+                                    <field name="x_item_volume_mfr_cm3"> </field><b> cm 3 (MFR)</b>
+                                </div>
+                                <label for="volume" string="Volume (m3)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="volume" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="volume"/><b> m 3</b><i> (divide cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="x_item_volume_mfr" string="Volume (m3) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_volume_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_volume_mfr"/><b> m 3</b><i> (divide MFR cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="weight" string="Weight"/><b> kg</b>
+                                </div>
+                                <label for="x_item_weight_mfr" string="Weight MFR (kg)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_weight_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_weight_mfr" string="Weight"/><b> kg (MFR)</b>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="TSA Notes" name="group_tsa_notes">
+                            <field name="x_comment"/>
+                            <!--<field name="x_description"/>-->
+                            <field name="x_shortcut"/>
+                            <field name="x_image_filename"/>
+                            <field name="x_jos_product_id"/>
+                            <field name="x_imported_date"/>
+                        </group>
+                        <group>
+                            <group string="Stocktake" name="group_tsa_stocktake">
+                                <field name="x_counted_date"/>
+                                <field name="x_counted_qty"/>
+                                <field name="x_odoo_qty_b4_stocktake"/>
+                                <field name="x_odoo_qty_capture_date"/>
+                                <field name="x_odoo_qty_last_30Jun"/>
+                            </group>
+                            <group string="TSA SBT Info" name="group_tsa_sbt">
+                                <field name="x_sbt_fields"/>
+                                <field name="x_sbt_item"/>
+                                <field name="x_sbt_last_buy"/>
+                                <field name="x_sbt_last_sold"/>
+                                <field name="x_sbt_product_sku"/>
+                                <field name="x_v8_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+ 
+       <record model="ir.ui.view" id="product_form_view_a_tsa">
+            <field name="name">Product Template TSA Mod A</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='group_general']" position="replace">
+                    <group name="group_general">
+                        <field name="active"/>					
+                        <field name="categ_id"/>
+                        <field name="type"/>
+                        <field name="default_code" invisible="True"/>
+                        <field name="barcode" invisible="True"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='categ_id']/following-sibling::field[@name='default_code']" position="replace">
+                    <field name="default_code" invisible="True"/>
+                </xpath>
+                <xpath expr="//field[@name='categ_id']/following-sibling::field[@name='default_code']//following-sibling::field[@name='barcode']" position="replace">
+                    <field name="barcode" invisible="True"/>
+                </xpath>
+            </field>
+        </record>
+
+		<!-- =============================================================== -->
+		<!--                          PRODUCTS                               -->
+		<!-- =============================================================== -->
+
+        <!-- PRODUCT CATEGORY LIST VIEW -->
+        <record id="product_category_list_view_tsa" model="ir.ui.view">
+            <field name="name">Product Category List TSA Extension</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_list_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Product Categories">
+                        <field name="id"/>
+                        <field name="parent_id"/>
+                        <field name="display_name" string="Product Category"/>
+                        <field name="x_description"/>
+                        <field name="property_account_income_categ_id"/>
+                        <field name="property_account_expense_categ_id"/>
+                        <field name="property_stock_account_output_categ_id"/>
+                        <field name="property_stock_account_input_categ_id"/>
+                        <field name="property_stock_valuation_account_id"/>
+                        <field name="create_uid"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PRODUCT CATEGORY FORM VIEW -->
+        <record id="view_form_product_category_inherited" model="ir.ui.view">
+            <field name="name">Product Category TSA Extension</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="before">
+                    <field name="x_description"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PRODUCT SEARCH No.2 -->
+        <record id="product_template_search2_tsa" model="ir.ui.view">
+            <field name="name">Product Search TSA Extension2</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Product">
+                        <field name="name" string="1) Product (Ignore Case)" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
+                        <field name="name" string="2) Internal Ref (match entire + case. e.g. KA% starts with KA, %Ab ends with Ab)" filter_domain="[('default_code','=like',self)]"/>
+                        <field name="name" string="3) Product (match entire, excl case)" filter_domain="['|',('default_code','=ilike',self),('name','=ilike',self)]"/>
+                        <field name="name" string="4) Internal Ref (Ignore Case)" filter_domain="[('default_code','ilike',self)]"/>
+                        <field name="name" string="5) Description (Ignore Case)" filter_domain="[('name','ilike',self)]"/>
+                        <field name="name" string="6) Description (Case Sensitive)" filter_domain="[('name','like',self)]"/>
+
+                        <separator/>
+
+                        <filter string="Services" name="services" domain="[('type','=','service')]"/>
+                        <filter string="Consumable" name="consumable" domain="[('type','=','consu')]" help="Consumable Products (Non-Inventory)"/>
+                        <filter string="Inventory Stock" name="inventory" domain="[('type','=','product')]" help="Products you store in the inventory"/>
+
+                        <separator/>
+
+                        <filter string="Tracking" name="tracking" domain="[('tracking','=','serial')]" help="Products with Serial No."/>
+                        <filter string="No Tracking" name="notracking" domain="[('tracking','=','none')]" help="Products without Serial No."/>
+
+                        <separator/>
+
+                        <filter string="Can be Sold" name="filter_to_sell" domain="[('sale_ok','=',1)]"/>
+                        <filter string="Can be Purchased" name="filter_to_purchase" domain="[('purchase_ok', '=', 1)]"/>
+                        <filter string="BCause" name="filter_bcause" domain="[('x_bcause', '=', 1)]"/>
+                        <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                        <field name="x_sbt_item" filter_domain="[('x_sbt_item', 'ilike', self)]"/>
+
+                        <separator/>
+
+                        <field name="x_shortcut" string="OurShortcuts" filter_domain="[('x_shortcut','ilike', self)]"/>
+                        <field name="type" string="Product Type" filter_domain="[('type','ilike',self)]"/>
+
+                        <field name="standard_price" string="Cost to Us" filter_domain="[('standard_price','ilike',self)]"/>
+                        <field name="list_price" string="Retail Price" filter_domain="[('list_price','ilike',self)]"/>
+
+                        <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                        <field string="Attributes" name="attribute_line_ids"/>
+                        <field string="id" name="id"/>
+                        <field name="pricelist_id" widget="selection" context="{'pricelist': self}" filter_domain="[]" groups="product.group_sale_pricelist"/> <!-- Keep widget=selection on this field to pass numeric `self` value, which is not the case for regular m2o widgets! -->
+
+                        <separator/>
+                        <field name="seller_ids" string="Vendor"  filter_domain="[('seller_ids','ilike',self)]"/>
+
+                    </search>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PRODUCT SEARCH No.1 -->
+        <record id="product_template_search_tsa" model="ir.ui.view">
+            <field name="name">Product Search TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Product">
+                        <field name="name" string="1) Product (Ignore Case)" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>
+                        <field name="name" string="2) Internal Ref (match entire + case. e.g. KA% starts with KA, %Ab ends with Ab)" filter_domain="[('default_code','=like',self)]"/>
+                        <field name="name" string="3) Product (match entire, excl case)" filter_domain="['|',('default_code','=ilike',self),('name','=ilike',self)]"/>
+                        <field name="name" string="4) Internal Ref (Ignore Case)" filter_domain="[('default_code','ilike',self)]"/>
+                        <field name="name" string="5) Description (Ignore Case)" filter_domain="[('name','ilike',self)]"/>
+                        <field name="name" string="6) Description (Case Sensitive)" filter_domain="[('name','like',self)]"/>
+
+                        <separator/>
+
+                        <filter string="Services" name="services" domain="[('type','=','service')]"/>
+                        <filter string="Consumable" name="consumable" domain="[('type','=','consu')]" help="Consumable Products (Non-Inventory)"/>
+                        <filter string="Inventory Stock" name="inventory" domain="[('type','=','product')]" help="Products you store in the inventory"/>
+
+                        <separator/>
+
+                        <filter string="Tracking" name="tracking" domain="[('tracking','=','serial')]" help="Products with Serial No."/>
+                        <filter string="No Tracking" name="notracking" domain="[('tracking','=','none')]" help="Products without Serial No."/>
+
+                        <separator/>
+
+                        <filter string="Can be Sold" name="filter_to_sell" domain="[('sale_ok','=',1)]"/>
+                        <filter string="Can be Purchased" name="filter_to_purchase" domain="[('purchase_ok', '=', 1)]"/>
+                        <filter string="BCause" name="filter_bcause" domain="[('x_bcause', '=', 1)]"/>
+                        <field name="categ_id" filter_domain="[('categ_id', 'child_of', self)]"/>
+                        <field name="x_sbt_item" filter_domain="[('x_sbt_item', 'ilike', self)]"/>
+
+                        <separator/>
+
+                        <field name="x_shortcut" string="OurShortcuts" filter_domain="[('x_shortcut','ilike', self)]"/>
+                        <field name="type" string="Product Type" filter_domain="[('type','ilike',self)]"/>
+
+                        <field name="standard_price" string="Cost to Us" filter_domain="[('standard_price','ilike',self)]"/>
+                        <field name="list_price" string="Retail Price" filter_domain="[('list_price','ilike',self)]"/>
+
+                        <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                        <field string="Attributes" name="attribute_line_ids"/>
+                        <field string="id" name="id"/>
+                        <field name="pricelist_id" widget="selection" context="{'pricelist': self}" filter_domain="[]" groups="product.group_sale_pricelist"/> <!-- Keep widget=selection on this field to pass numeric `self` value, which is not the case for regular m2o widgets! -->
+
+                        <separator/>
+                        <field name="seller_ids" string="Vendor"  filter_domain="[('seller_ids','ilike',self)]"/>
+
+                    </search>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PRODUCT LIST VIEW -->
+        <record id="view_tree_product_tsa" model="ir.ui.view">
+            <field name="name">Product List TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree string="Product" default_order="default_code, name">
+                        <!-- NOTE: To allow EDITS within TreeView use the following line instead of the one above
+                        <tree string="Product" default_order='default_code, name' editable="top">
+                        -->
+                        <field name="sequence" widget="handle"/>
+                        <field name="categ_id" string="Category"/>
+                        <field name="x_shortcut" invisible="1"/>
+                        <field name="default_code" string="Code" invisible="0"/>
+                        <field name="name"/>
+                        <field name="qty_available" string="OnHand"/>
+                        <field name="virtual_available" string="ForecastQty"/>
+                        <field name="x_default_location" string="Location"/>
+                        <field name="x_default_position" string="Pos'n"/>
+                        <field name="standard_price" string="Costs Us"/>
+                        <field name="list_price" string="Retail"/>
+                        <field name="volume" invisible="1"/>
+                        <field name="weight" invisible="1"/>
+                        <field name="uom_id" invisible="1"/>
+                        <field name="purchase_ok" string="WeBuy"/>
+                        <field name="sale_ok" string="WeSell"/>
+                        <field name="x_bcause" string="BCos"/>
+                        <field name="type" string="Type" invisible="1"/>
+                        <!--<field name="seller_ids" expand="1" string="Vendors"/>-->
+                        <field name="tracking" string="SerialNo"/>
+                        <field name="write_date" string="LastUpdate"/>
+                        <field name="create_date" invisible="1"/>
+                        <field name="write_uid" invisible="1"/>
+                        <field name="id" string="tmpl id"/>
+                        <field name="x_total_qty_sold" invisible="0"/>
+                        <field name="x_total_qty_bought" invisible="0"/>
+                        <field name="x_total_qty_made" invisible="0"/>
+                        <!--<field name="barcode" invisible="1"/>-->
+                        <!--<field name="property_account_expense_id" invisible="1"/>-->
+                        <!--<field name="property_account_income_id" invisible="1"/>-->
+                        <!--<field name="x_sbt_last_sold" string="SBT Last Sold"/>-->
+                        <!--<field name="x_sbt_last_buy" string="SBT Last Buy"/>-->
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PRODUCT FORM VIEW  -->
+        <record id="view_form_product_template_inherited" model="ir.ui.view">
+            <field name="name">Product Template TSA Extension</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_title']" position="replace">
+                    <div class="oe_title">
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                        <p>.</p>
+                    </div>
+                    <div class="col-12" style="font-size:16px">
+                        <!-- <label class="oe_edit_only" for="name" string="Product Name"/>-->
+                        <b><field name="name" placeholder="Product Description"/></b>
+                    </div>
+                    <div class="col-12" name="options" groups="base.group_user">
+                        <div>
+                            <label for="x_bcause"/>
+                            <field name="x_bcause"/>
+                            <label for="sale_ok"/>
+                            <field name="sale_ok"/>
+                            <label for="purchase_ok"/>
+                            <field name="purchase_ok"/>
+                            <label for="visible_expense_policy"/>
+                            <field name="visible_expense_policy"/>
+                            <label for="expense_policy"/>
+                            <field name="expense_policy"/>							
+                        </div>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="x_cost_price" string="Cost Price (TSA)"/>
+                    <!--<label for="x_cost_price" string="Cost Price (TSA Copy)"/>-->
+                </xpath>
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="TSA" name="page_tsa">
+                        <group>
+                            <group string="TSA Location Info">
+                                <field name="x_default_location"/>
+                                <field name="x_default_position"/>
+                                <field name="x_default_location2"/>
+                                <field name="x_default_position2"/>
+                                <field name="x_expert"/>
+                                <field name="x_expert2"/>
+                            </group>
+                            <group string="TSA Dimensions" name="group_tsa_dimensions">
+                                <label for="x_item_height" string="H x L x D (cm)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height"> </field><b> x </b>
+                                    <field name="x_item_length"> </field><b> x </b>
+                                    <field name="x_item_depth"> </field><b> = </b>
+                                    <field name="x_volume_cm3"> </field><b> cm 3</b>
+                                </div>
+                                <label for="x_item_height" string="H x L x D (cm) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_height_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_height_mfr"> </field><b> x </b>
+                                    <field name="x_item_width_mfr"> </field><b> x </b>
+                                    <field name="x_item_depth_mfr"> </field><b> = </b>
+                                    <field name="x_item_volume_mfr_cm3"> </field><b> cm 3 (MFR)</b>
+                                </div>
+                                <label for="volume" string="Volume (m3)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="volume" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="volume"/><b> m 3</b><i> (divide cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="x_item_volume_mfr" string="Volume (m3) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_volume_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_volume_mfr"/><b> m 3</b><i> (divide MFR cm3 by 1,000,000)</i>
+                                </div>
+                                <label for="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="weight" string="Weight"/><b> kg</b>
+                                </div>
+                                <label for="x_item_weight_mfr" string="Weight MFR (kg)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                                <div class="o_row" name="x_item_weight_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                                    <field name="x_item_weight_mfr" string="Weight"/><b> kg (MFR)</b>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="TSA Notes" name="group_tsa_notes">
+                            <field name="x_comment"/>
+                            <!--<field name="x_description"/>-->
+                            <field name="x_shortcut"/>
+                            <field name="x_image_filename"/>
+                            <field name="x_jos_product_id"/>
+                            <field name="x_imported_date"/>
+                        </group>
+                        <group>
+                            <group string="Stocktake" name="group_tsa_stocktake">
+                                <field name="x_counted_date"/>
+                                <field name="x_counted_qty"/>
+                                <field name="x_odoo_qty_b4_stocktake"/>
+                                <field name="x_odoo_qty_capture_date"/>
+                                <field name="x_odoo_qty_last_30Jun"/>
+                            </group>
+                            <group string="TSA SBT Info" name="group_tsa_sbt">
+                                <field name="x_sbt_fields"/>
+                                <field name="x_sbt_item"/>
+                                <field name="x_sbt_last_buy"/>
+                                <field name="x_sbt_last_sold"/>
+                                <field name="x_sbt_product_sku"/>
+                                <field name="x_v8_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
