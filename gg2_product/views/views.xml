@@ -320,30 +320,28 @@
                 <tree string="Product" default_order='default_code, name' editable="top">
                 -->
                 <xpath expr="/tree/field[@name='uom_id']" position="after">
-                    <tree string="Product" default_order="default_code, name">
-                        <field name="x_shortcut" invisible="1"/>
-                        <field name="qty_available" string="OnHand"/>
-                        <field name="virtual_available" string="ForecastQty"/>
-                        <field name="x_default_location" string="Location"/>
-                        <field name="x_default_position" string="Pos'n"/>
-                        <field name="volume" invisible="1"/>
-                        <field name="weight" invisible="1"/>
-                        <field name="purchase_ok" string="WeBuy"/>
-                        <field name="sale_ok" string="WeSell"/>
-                        <field name="x_bcause" string="BCos"/>
-                        <field name="type" string="Type" invisible="1"/>
-                        <!--<field name="seller_ids" expand="1" string="Vendors"/>-->
-                        <field name="tracking" string="SerialNo"/>
-                        <field name="write_date" string="LastUpdate"/>
-                        <field name="create_date" invisible="1"/>
-                        <field name="write_uid" invisible="1"/>
-                        <field name="id" string="tmpl id"/>
-                        <field name="x_total_qty_sold" invisible="0"/>
-                        <field name="x_total_qty_bought" invisible="0"/>
-                        <field name="x_total_qty_made" invisible="0"/>
-                        <!--<field name="property_account_expense_id" invisible="1"/>-->
-                        <!--<field name="property_account_income_id" invisible="1"/>-->
-                    </tree>
+                    <field name="x_shortcut" invisible="1"/>
+                    <field name="qty_available" string="OnHand"/>
+                    <field name="virtual_available" string="ForecastQty"/>
+                    <field name="x_default_location" string="Location"/>
+                    <field name="x_default_position" string="Pos'n"/>
+                    <field name="volume" invisible="1"/>
+                    <field name="weight" invisible="1"/>
+                    <field name="purchase_ok" string="WeBuy"/>
+                    <field name="sale_ok" string="WeSell"/>
+                    <field name="x_bcause" string="BCos"/>
+                    <field name="type" string="Type" invisible="1"/>
+                    <!--<field name="seller_ids" expand="1" string="Vendors"/>-->
+                    <field name="tracking" string="SerialNo"/>
+                    <field name="write_date" string="LastUpdate"/>
+                    <field name="create_date" invisible="1"/>
+                    <field name="write_uid" invisible="1"/>
+                    <field name="id" string="tmpl id"/>
+                    <field name="x_total_qty_sold" invisible="0"/>
+                    <field name="x_total_qty_bought" invisible="0"/>
+                    <field name="x_total_qty_made" invisible="0"/>
+                    <!--<field name="property_account_expense_id" invisible="1"/>-->
+                    <!--<field name="property_account_income_id" invisible="1"/>-->
                 </xpath>
             </field>
         </record>
@@ -444,14 +442,14 @@
                                 <field name="x_odoo_qty_capture_date"/>
                                 <field name="x_odoo_qty_last_30Jun"/>
                             </group>
-                            <group string="TSA SBT Info" name="group_tsa_sbt">
-                                <field name="x_sbt_fields"/>
-                                <field name="x_sbt_item"/>
-                                <field name="x_sbt_last_buy"/>
-                                <field name="x_sbt_last_sold"/>
-                                <field name="x_sbt_product_sku"/>
-                                <field name="x_v8_id"/>
-                            </group>
+                            <!-- <group string="TSA SBT Info" name="group_tsa_sbt"> -->
+                                <!-- <field name="x_sbt_fields"/> -->
+                                <!-- <field name="x_sbt_item"/> -->
+                                <!-- <field name="x_sbt_last_buy"/> -->
+                                <!-- <field name="x_sbt_last_sold"/> -->
+                                <!-- <field name="x_sbt_product_sku"/> -->
+                                <!-- <field name="x_v8_id"/> -->
+                            <!-- </group> -->
                         </group>
                     </page>
                 </xpath>
