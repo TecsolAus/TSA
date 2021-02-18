@@ -7,7 +7,7 @@ import pdb
 from mock.mock import self
 
 class TsaRpt050BankJouA(models.Model):
-    _name = "gg2.bankjou"
+    _name = "gg2_reports.bankjou"
     _description = "Bank Statement to Journal X-Ref"
     _auto = False
 
@@ -93,7 +93,7 @@ class TsaRpt050BankJouA(models.Model):
         }
 
 class TsaRpt080SalesToDeliverD(models.Model):
-    _name = "gg2.rpt080"
+    _name = "gg2_reports.rpt080"
     _description = "Invoiced Items not yet delivered"
     _auto = False
 
@@ -196,7 +196,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
     # OLD CODE (v12) was     def showsalesorder(self, values):
     def showsalesorder(self):
         self.ensure_one()
-        sale_order_view_id = self.env.ref('gg2.view_form_sale_order_tsa').id
+        sale_order_view_id = self.env.ref('gg2_reports.view_form_sale_order_tsa').id
         mysaleorderlineid = self.ids[0]
         mysaleorderline = self.env['sale.order.line'].search([('id','=',mysaleorderlineid)])
         mysaleorderid = mysaleorderline.order_id.id  # type: Union[int, Any]
@@ -215,7 +215,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
         }
 
 class TsaRpt082SalesToDeliverD(models.Model):
-    _name = "gg2.rpt082"
+    _name = "gg2_reports.rpt082"
     _description = "SOs Invoiced but not yet delivered"
     _auto = False
 
@@ -266,7 +266,7 @@ class TsaRpt082SalesToDeliverD(models.Model):
 
     def showsalesorder(self):
         self.ensure_one()
-        sale_order_view_id = self.env.ref('gg2.view_form_sale_order_tsa').id
+        sale_order_view_id = self.env.ref('gg2_reports.view_form_sale_order_tsa').id
         mysaleorderid = self.ids[0]
         print("My Sale Order ID=%d" % mysaleorderid)
         # raise UserError(_('view id is: %d   sale order id is: %d') % sale_order_view_id, % mysaleorderid)
@@ -283,7 +283,7 @@ class TsaRpt082SalesToDeliverD(models.Model):
         }
 
 class TsaRpt090BalanceSheetH(models.Model):
-    _name = "gg2.rpt090"
+    _name = "gg2_reports.rpt090"
     _description = "Balance Sheet"
     _auto = False
 

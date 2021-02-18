@@ -47,8 +47,8 @@
             <field name="res_model">account.full.reconcile</field>
             <field name="view_mode">tree,form</field>
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt100_treeview"/>
-            <!--<field name="search_view_id" ref="gg2.tsa_rpt090_searchview"/>-->
+            <field name="view_id" ref="gg2_reports.tsa_rpt100_treeview"/>
+            <!--<field name="search_view_id" ref="gg2_reports.tsa_rpt090_searchview"/>-->
             <field name="target">current</field>
             <field name="context">{}</field>
             <field name="domain">[]</field>
@@ -62,7 +62,7 @@
         />
         <record id="tsa_rpt090_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt_090_treeview</field>
-            <field name="model">gg2.rpt090</field>
+            <field name="model">gg2_reports.rpt090</field>
             <field name="arch" type="xml">
                 <tree string="Balance Sheet">
                     <field name="date" string="Date" widget="date" options="{'format': 'dd/MM/yyyy'}"/>
@@ -77,7 +77,7 @@
         </record>
         <record id="tsa_rpt090_searchview" model="ir.ui.view">
             <field name="name">tsa_rpt_090_searchview</field>
-            <field name="model">gg2.rpt090</field>
+            <field name="model">gg2_reports.rpt090</field>
             <field name="arch" type="xml">
                 <search string="Search Balance Sheet">
                     <field name="date" filter_domain="[('date','&lt;=',self)]" string="Balance At Date"/>
@@ -86,11 +86,11 @@
         </record>
         <record id="tsa_rpt090_action" model="ir.actions.act_window">
             <field name="name">Rpt No90  Balance Sheet (Note: Please enter date into search  dd/mm/yyyy )</field>
-            <field name="res_model">gg2.rpt090</field>
+            <field name="res_model">gg2_reports.rpt090</field>
             <field name="view_mode">tree,form</field>
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt090_treeview"/>
-            <field name="search_view_id" ref="gg2.tsa_rpt090_searchview"/>
+            <field name="view_id" ref="gg2_reports.tsa_rpt090_treeview"/>
+            <field name="search_view_id" ref="gg2_reports.tsa_rpt090_searchview"/>
             <field name="target">current</field>
             <field name="context">{'group_by':'codename'}</field>
             <field name="domain">[]</field>
@@ -105,7 +105,7 @@
 
         <record id="tsa_rpt080_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt_080test_treeview</field>
-            <field name="model">gg2.rpt080</field>
+            <field name="model">gg2_reports.rpt080</field>
             <field name="arch" type="xml">
                 <tree string="Invoiced Not Delivered" default_order="orderdate desc">
                     <button name="showsalesorder" string=".." type="object"/>
@@ -130,10 +130,10 @@
         </record>
         <record id="tsa_rpt080_action" model="ir.actions.act_window">
             <field name="name">Invoiced Items not yet delivered (detail)</field>
-            <field name="res_model">gg2.rpt080</field>
+            <field name="res_model">gg2_reports.rpt080</field>
             <field name="view_mode">tree,form</field>
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt080_treeview"/>
+            <field name="view_id" ref="gg2_reports.tsa_rpt080_treeview"/>
             <field name="target">current</field>
             <field name="context">{}</field>
             <field name="domain">[]</field>
@@ -147,7 +147,7 @@
         <!-- Rpt082 LIST VIEW -->
         <record id="tsa_rpt082_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt_082_treeview</field>
-            <field name="model">gg2.rpt082</field>
+            <field name="model">gg2_reports.rpt082</field>
             <field name="arch" type="xml">
                 <tree string="Sales Orders Invoiced - but not all the items on the order have been Delivered yet" default_order="orderdate desc">
                     <button name="showsalesorder" string=".." type="object"/>
@@ -163,10 +163,10 @@
         <!-- Rpt082 ACTION DEFINITION -->
         <record id="tsa_rpt082_action" model="ir.actions.act_window">
             <field name="name">Rpt No82 Sales Orders Invoiced - but not all the items on the order have been Delivered yet</field>
-            <field name="res_model">gg2.rpt082</field>
+            <field name="res_model">gg2_reports.rpt082</field>
             <field name="view_mode">tree,form</field>
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt082_treeview"/>
+            <field name="view_id" ref="gg2_reports.tsa_rpt082_treeview"/>
             <field name="target">current</field>
             <field name="context">{}</field>
             <field name="domain">[]</field>
@@ -185,7 +185,7 @@
         <!-- Rpt050 SEARCH -->
         <record id="tsa_rpt050_searchview" model="ir.ui.view">
             <field name="name">tsa_rpt_050_searchview</field>
-            <field name="model">gg2.bankjou</field>
+            <field name="model">gg2_reports.bankjou</field>
             <field name="arch" type="xml">
                 <search string="Search Bank Jou XRef">
                     <field name="stmt" filter_domain="[('stmt','ilike',self)]" string="Bank Statement"/>
@@ -207,7 +207,7 @@
         <!-- Rpt050 LIST VIEW -->
         <record id="tsa_rpt050_treeview" model="ir.ui.view">
             <field name="name">tsa_rpt050_treeview</field>
-            <field name="model">gg2.bankjou</field>
+            <field name="model">gg2_reports.bankjou</field>
             <field name="arch" type="xml">
                 <tree string="Rpt No50 Bank Jou XRef" default_order="stmtid desc, stmt_row">
                     <button name="showjournalentry" string="Jou" type="object"/>
@@ -234,13 +234,13 @@
         <!-- Rpt050 ACTION DEFINITION -->
         <record id="tsa_bankjou_action" model="ir.actions.act_window">
             <field name="name">Rpt No50 Bank Journal X-Ref</field>
-            <field name="res_model">gg2.bankjou</field>
+            <field name="res_model">gg2_reports.bankjou</field>
             <!--<field name="view_type">tree</field>-->
             <field name="view_mode">tree</field>
-            <!--<field name="views">["gg2.tsa_bankjou", "tree"]</field>--><!-- EXAMPLE -->
+            <!--<field name="views">["gg2_reports.tsa_bankjou", "tree"]</field>--><!-- EXAMPLE -->
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_rpt050_treeview"/>
-            <field name="search_view_id" ref="gg2.tsa_rpt050_searchview"/>
+            <field name="view_id" ref="gg2_reports.tsa_rpt050_treeview"/>
+            <field name="search_view_id" ref="gg2_reports.tsa_rpt050_searchview"/>
             <field name="target">current</field>
             <field name="context">{}</field>
             <field name="domain">[]</field>
