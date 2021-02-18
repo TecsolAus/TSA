@@ -16,11 +16,11 @@
                     <search string="Search Partner">
                         <field name="name" filter_domain="['|','|',('display_name','ilike',self),('ref','ilike',self),('email','ilike',self)]"/>
                         <!--<filter help="My Partners" domain="[('user_id','=',uid)]"/>-->
-                        <field name="parent_id" domain="[('company_type','=','company')]" operator="child_of"/>
+                        <field name="parent_id" domain="[('is_company', '=', True)]" operator="child_of"/>
                         <filter name="filter_my_partners" help="My Contacts" domain="[('user_id','=',uid)]"/>
                         <separator/>
-                        <filter string="Individuals" name="type_person" domain="[('company_type','=','person')]"/>
-                        <filter string="Companies" name="type_company" domain="[('company_type','=','company')]"/>
+                        <filter string="Individuals" name="type_person" domain="[('is_company', '=', False)]"/>
+                        <filter string="Companies" name="type_company" domain="[('is_company', '=', True)]"/>
                         <separator/>
                         <filter string="Customers" name="customer" domain="[('customer_rank','>',0), ('parent_id', '=', False)]"/>
                         <filter string="Vendors" name="supplier" domain="[('supplier_invoice_count','>',1), ('parent_id', '=', False)]"/>
