@@ -420,6 +420,14 @@
                     <page string="Transactions" name="statement_line_ids">
                         <field name="line_ids" context="{'date':date}">
                             <tree editable="bottom" string="Statement lines" decoration-muted="is_reconciled" limit="500">
+
+                                <!-- Invisible fields -->
+                                <field name="company_id" invisible="1"/>
+                                <field name="state" invisible="1"/>
+                                <field name="is_reconciled" invisible="1"/>
+                                <field name="country_code" invisible="1"/>
+
+                                <!-- Visible fields -->
                                 <field name="sequence" string="row"/>
                                 <field name="date" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
                                 <field name="name" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
