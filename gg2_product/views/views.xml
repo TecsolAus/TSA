@@ -316,25 +316,18 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_tree_view"/>
             <field name="arch" type="xml">
-                <xpath expr="/tree" position="replace">
+                <!-- NOTE: To allow EDITS within TreeView use the following line instead of the one above
+                <tree string="Product" default_order='default_code, name' editable="top">
+                -->
+                <xpath expr="/tree/field[@name='uom_id']" position="after">
                     <tree string="Product" default_order="default_code, name">
-                        <!-- NOTE: To allow EDITS within TreeView use the following line instead of the one above
-                        <tree string="Product" default_order='default_code, name' editable="top">
-                        -->
-                        <field name="sequence" widget="handle"/>
-                        <field name="categ_id" string="Category"/>
                         <field name="x_shortcut" invisible="1"/>
-                        <field name="default_code" string="Code" invisible="0"/>
-                        <field name="name"/>
                         <field name="qty_available" string="OnHand"/>
                         <field name="virtual_available" string="ForecastQty"/>
                         <field name="x_default_location" string="Location"/>
                         <field name="x_default_position" string="Pos'n"/>
-                        <field name="standard_price" string="Costs Us"/>
-                        <field name="list_price" string="Retail"/>
                         <field name="volume" invisible="1"/>
                         <field name="weight" invisible="1"/>
-                        <field name="uom_id" invisible="1"/>
                         <field name="purchase_ok" string="WeBuy"/>
                         <field name="sale_ok" string="WeSell"/>
                         <field name="x_bcause" string="BCos"/>
@@ -348,11 +341,8 @@
                         <field name="x_total_qty_sold" invisible="0"/>
                         <field name="x_total_qty_bought" invisible="0"/>
                         <field name="x_total_qty_made" invisible="0"/>
-                        <!--<field name="barcode" invisible="1"/>-->
                         <!--<field name="property_account_expense_id" invisible="1"/>-->
                         <!--<field name="property_account_income_id" invisible="1"/>-->
-                        <!--<field name="x_sbt_last_sold" string="SBT Last Sold"/>-->
-                        <!--<field name="x_sbt_last_buy" string="SBT Last Buy"/>-->
                     </tree>
                 </xpath>
             </field>
