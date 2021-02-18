@@ -373,8 +373,8 @@
                             <field name="sale_ok"/>
                             <label for="purchase_ok"/>
                             <field name="purchase_ok"/>
-                            <label for="visible_expense_policy"/>
-                            <field name="visible_expense_policy"/>
+                            <!-- <label for="visible_expense_policy"/> -->
+                            <!-- <field name="visible_expense_policy"/> -->
                             <label for="expense_policy"/>
                             <field name="expense_policy"/>							
                         </div>
