@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+		<!-- =============================================================== -->
+		<!--                          INVENTORY                              -->
+		<!-- =============================================================== -->
+
+        <!-- INVENTORY TRANSFER FILTERS -->
+        <record id="view_inventory_transfer_filter_tsa" model="ir.ui.view">
+            <field name="name">Inventory Transfer Search TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="id"/>
+                    <field name="x_ship_in_out_date"/>
+                    <field name="x_extra_notes_ext"/>
+                    <field name="x_extra_notes"/> 
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INVENTORY TRANSFER LIST VIEW -->
+        <record id="view_tree_inventory_transfer_tsa" model="ir.ui.view">
+            <field name="name">Inventory Transfer List TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="id"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_ship_in_out_date"/>
+                    <field name="x_extra_notes_ext"/>
+                    <field name="x_extra_notes"/>   
+                </xpath>
+            </field>
+        </record>
+
+
+		<!-- =============================================================== -->
+		<!--                   INVENTORY MOVES                               -->
+		<!-- =============================================================== -->
+
+        <!-- STOCK PICKING FORM VIEW -->
+        <record id="view_form_stock_picking_inherited" model="ir.ui.view">
+            <field name="name">Stock Picking TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='button_scrap']" position="after">
+                    <button name="quick_do" type="object" string="Do Remainder"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_special_address"/>
+                </xpath>
+                <xpath expr="//field[@name='date_done']" position="after">
+                    <field name="x_ship_in_out_date" string="Date Sent/Received"/>
+                </xpath>
+                <xpath expr="//field[@name='backorder_id']" position="after">
+                    <field name="x_extra_notes" placeholder="Enter notes to appear on packing slip (e.g. Customer Ref. or PO No.)"/>
+                </xpath>
+                <xpath expr="//field[@name='owner_id']" position="after">
+                    <field name="x_extra_notes_ext" placeholder="Notes for TSA staff only (won't appear on packing slip)"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
