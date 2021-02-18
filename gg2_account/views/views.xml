@@ -406,5 +406,45 @@
             </field>
         </record>
 
+		<!-- =============================================================== -->
+		<!--                       BANK STATEMENT                            -->
+		<!-- =============================================================== -->
+
+		<!-- BANK STATEMENT -->
+        <record id="bank_statement_tsa" model="ir.ui.view">
+            <field name="name">Bank Statement TSA Extension</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='statement_line_ids']" position="replace">
+                    <page string="Transactions" name="statement_line_ids">
+                        <field name="line_ids" context="{'date':date}">
+                            <tree editable="bottom" string="Statement lines" decoration-muted="journal_entry_ids" limit="500">
+                                <field name="sequence" string="row"/>
+                                <field name="date" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
+                                <field name="name" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
+                                <field name="partner_id" attrs="{'readonly': [('parent.state', '!=', 'open')]}" domain="['|', ('parent_id','=', False), ('is_company','=',True)]"/>
+                                <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one"/>
+                                <field name="amount" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="account_number" optional="hidden"/>
+                                <field name="ref" optional="hidden"/>
+                                <field name="narration" string="Notes" optional="hidden"/>
+                                <field name="amount_currency" optional="hidden" groups="base.group_multi_currency" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
+                                <field name="currency_id" optional="hidden"/>
+                                <field name="bank_partner_id" optional="hidden"/>
+                                <field name="foreign_currency_id" optional="hidden" groups="base.group_multi_currency" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
+                                <!-- <field name="journal_entry_ids" optional="hidden" string="Reconciled Against"/> -->
+                                <!-- <field name="journal_currency_id" optional="hidden"/> -->
+
+                                <!-- Buttons -->
+                                <button name="button_undo_reconciliation" type="object" attrs="{'invisible': [('is_reconciled', '=', False)], 'column_invisible': [('parent.state', '!=', 'posted')]}" string="Revert reconciliation" icon="fa-undo"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+		
+
     </data>
 </odoo>
