@@ -46,7 +46,6 @@ class TsaRpt050BankJouA(models.Model):
             account_bank_statement.name AS stmt,
             account_bank_statement_line.id AS stmtlineid,
             account_bank_statement_line.sequence AS stmt_row,
-            account_bank_statement_line.name AS stmt_line_desc,
             account_bank_statement_line.amount AS amount,
             account_move.date AS joudate
         FROM 
