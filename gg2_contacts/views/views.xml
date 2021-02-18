@@ -27,9 +27,9 @@
                         <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
                         <separator/>
                         <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>
-                        <field name="x_sbt_custno" string="SBT custno" filter_domain="[('x_sbt_custno','ilike',self)]"/>
-                        <field name="x_sbt_vendno" string="SBT vendno" filter_domain="[('x_sbt_vendno','ilike',self)]"/>
-                        <field name="x_sbt_fields" string="SBT fields" filter_domain="[('x_sbt_fields','ilike',self)]"/>
+                        <!-- <field name="x_sbt_custno" string="SBT custno" filter_domain="[('x_sbt_custno','ilike',self)]"/> -->
+                        <!-- <field name="x_sbt_vendno" string="SBT vendno" filter_domain="[('x_sbt_vendno','ilike',self)]"/> -->
+                        <!-- <field name="x_sbt_fields" string="SBT fields" filter_domain="[('x_sbt_fields','ilike',self)]"/> -->
                         <field name="x_shortcut" string="Shortcut" filter_domain="[('x_shortcut','ilike',self)]"/>
                         <field name="street" string="Name and Address" filter_domain="['|','|',('display_name','ilike',self),('street','ilike',self),('street2','ilike',self)]"/>
                         <field name="zip" string="Zip" filter_domain="[('zip','ilike',self)]"/>
@@ -99,17 +99,17 @@
                 <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='misc']/field[@name='company_id']" position="before">
                     <field name="debit"/>
                 </xpath>
-                <xpath expr="//page[@name='sales_purchases']" position="after">
-                    <page string="TSA" name="page_tsa">
-                        <group>
-                            <field name="x_sbt_fields" placeholder="Used to store values from SBT for future reference"/>
-                            <field name="x_sbt_custno"/>
-                            <field name="x_sbt_vendno"/>
-                            <field name="x_sbt_disc"/>
-                            <field name="x_sbt_ref"/>
-                        </group>
-                    </page>
-                </xpath>
+                <!-- <xpath expr="//page[@name='sales_purchases']" position="after"> -->
+                    <!-- <page string="TSA" name="page_tsa"> -->
+                        <!-- <group> -->
+                            <!-- <field name="x_sbt_fields" placeholder="Used to store values from SBT for future reference"/> -->
+                            <!-- <field name="x_sbt_custno"/> -->
+                            <!-- <field name="x_sbt_vendno"/> -->
+                            <!-- <field name="x_sbt_disc"/> -->
+                            <!-- <field name="x_sbt_ref"/> -->
+                        <!-- </group> -->
+                    <!-- </page> -->
+                <!-- </xpath> -->
             </field>
         </record>
 		     
