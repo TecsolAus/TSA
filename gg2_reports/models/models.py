@@ -30,7 +30,7 @@ class TsaRpt050BankJouA(models.Model):
 
     @api.model
     def init(self):
-        self._cr.execute("""CREATE OR REPLACE VIEW gg2_bankjou AS (
+        self._cr.execute("""CREATE OR REPLACE VIEW gg2_reports_bankjou AS (
         SELECT
             account_move_line.id,
             account_move_line.move_id AS jou_entry_id,
