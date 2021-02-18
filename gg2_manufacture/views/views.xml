@@ -48,7 +48,7 @@
             <field name="domain">[]</field>
             <field name="view_mode">tree,form</field>
             <field name="views">[]</field>
-            <field name="view_id" ref="gg2.tsa_manufactureorders_treeview"/>
+            <field name="view_id" ref="gg2_manufacture.tsa_manufactureorders_treeview"/>
             <field name="limit">150</field>
         </record>
         <record model="ir.ui.view" id="product_form_view_manufacture_order_button">
@@ -58,7 +58,7 @@
             <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
             <field name="arch" type="xml">
                 <div name="button_box" position="inside">
-                    <button class="oe_stat_button" name="%(gg2.action_product_manufacture_list)d" type="action" string="Manufactured=" icon="fa-list-alt" attrs="{'invisible': [('type', 'not in', ['product'])]}">
+                    <button class="oe_stat_button" name="%(gg2_manufacture.action_product_manufacture_list)d" type="action" string="Manufactured=" icon="fa-list-alt" attrs="{'invisible': [('type', 'not in', ['product'])]}">
                         <field string="Manufactured" name="x_total_qty_made"/>
                         <field name="uom_name"/>
                     </button>
