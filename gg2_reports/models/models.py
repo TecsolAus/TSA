@@ -24,7 +24,7 @@ class TsaRpt050BankJouA(models.Model):
     stmt = fields.Char(string='StmtName', readonly=True)
     stmtlineid = fields.Many2one('account.bank.statement.line', string='StmtLineId', readonly=True)
     stmt_row = fields.Integer(string='StmtRow', readonly=True)
-    stmt_line_desc = fields.Char(string='StmtLineDesc', readonly=True)
+    # stmt_line_desc = fields.Char(string='StmtLineDesc', readonly=True)
     amount = fields.Float(string='Amount', readonly=True)
     joudate = fields.Date(string='JouDate', readonly=True)
 
