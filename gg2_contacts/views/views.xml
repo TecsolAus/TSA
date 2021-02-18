@@ -58,9 +58,9 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree" position="replace">
                     <tree string="Contacts" default_order="display_name, zip">
-                        <field name="x_sbt_vendno" invisible="1"/>
-                        <field name="x_sbt_custno" invisible="1"/>
-                        <field name="x_sbt_disc" string="discount" invisible="1"/>
+                        <!-- <field name="x_sbt_vendno" invisible="1"/> -->
+                        <!-- <field name="x_sbt_custno" invisible="1"/> -->
+                        <!-- <field name="x_sbt_disc" string="discount" invisible="1"/> -->
                         <field name="company_type" string="ContactType"/>
                         <field name="type" string="AddrType"/>
                         <field name="display_name"/>
