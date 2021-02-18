@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!--REPAIR ORDER-->
+        <record id="repair_order_form_view_tsa" model="ir.ui.view">
+            <field name="name">repair_order_form_view_tsa</field>
+            <field name="model">repair.order</field>
+            <field name="inherit_id" ref="repair.view_repair_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='address_id']" position="after">
+                    <field name="x_received_by"/>
+                    <field name="x_reported_by_customer"/>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="x_serial"/>
+                    <field name="x_technician"/>
+                    <field name="x_time_spent"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
