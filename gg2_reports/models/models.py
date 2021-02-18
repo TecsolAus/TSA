@@ -196,7 +196,7 @@ class TsaRpt080SalesToDeliverD(models.Model):
     # OLD CODE (v12) was     def showsalesorder(self, values):
     def showsalesorder(self):
         self.ensure_one()
-        sale_order_view_id = self.env.ref('gg2_reports.view_form_sale_order_tsa').id
+        sale_order_view_id = self.env.ref('gg2_sale.view_form_sale_order_tsa').id
         mysaleorderlineid = self.ids[0]
         mysaleorderline = self.env['sale.order.line'].search([('id','=',mysaleorderlineid)])
         mysaleorderid = mysaleorderline.order_id.id  # type: Union[int, Any]
@@ -266,7 +266,7 @@ class TsaRpt082SalesToDeliverD(models.Model):
 
     def showsalesorder(self):
         self.ensure_one()
-        sale_order_view_id = self.env.ref('gg2_reports.view_form_sale_order_tsa').id
+        sale_order_view_id = self.env.ref('gg2_sale.view_form_sale_order_tsa').id
         mysaleorderid = self.ids[0]
         print("My Sale Order ID=%d" % mysaleorderid)
         # raise UserError(_('view id is: %d   sale order id is: %d') % sale_order_view_id, % mysaleorderid)
