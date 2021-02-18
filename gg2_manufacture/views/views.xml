@@ -35,7 +35,7 @@
                     <field name="product_qty" sum="Total Qty" string="Quantity"/>
                     <field name="product_uom_id" string="Unit of Measure" options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
                     <field name="delivery_count"/>
-                    <field name="routing_id" groups="mrp.group_mrp_routings"/>
+                    <!-- <field name="routing_id" groups="mrp.group_mrp_routings"/> -->
                     <field name="state"/>
                 </tree>
             </field>
