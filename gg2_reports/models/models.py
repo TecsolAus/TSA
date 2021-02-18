@@ -228,32 +228,32 @@ class TsaRpt082SalesToDeliverD(models.Model):
         with_ = ("WITH %s" % with_clause) if with_clause else ""
 
         select_ = """
-            gg2_rpt080.soid AS id,
-            gg2_rpt080.sostate AS sostate,
-            gg2_rpt080.soname AS soname,
-            gg2_rpt080.orderdate AS orderdate,
-            gg2_rpt080.whotoinvoice AS whotoinvoice
+            gg2_reports_rpt080.soid AS id,
+            gg2_reports_rpt080.sostate AS sostate,
+            gg2_reports_rpt080.soname AS soname,
+            gg2_reports_rpt080.orderdate AS orderdate,
+            gg2_reports_rpt080.whotoinvoice AS whotoinvoice
         """
 
         for field in fields.values():
             select_ += field
 
         from_ = """
-            gg2_rpt080
+            gg2_reports_rpt080
             %s
         """ % from_clause
 
         groupby_ = """
-            gg2_rpt080.soid,
-            gg2_rpt080.sostate,
-            gg2_rpt080.soname,
-            gg2_rpt080.orderdate,
-            gg2_rpt080.whotoinvoice
+            gg2_reports_rpt080.soid,
+            gg2_reports_rpt080.sostate,
+            gg2_reports_rpt080.soname,
+            gg2_reports_rpt080.orderdate,
+            gg2_reports_rpt080.whotoinvoice
             %s
         """ % groupby
 
         order_ = """
-            gg2_rpt080.soid DESC
+            gg2_reports_rpt080.soid DESC
         """
 
         return '%s (SELECT %s FROM %s GROUP BY %s ORDER BY %s)' % (with_, select_, from_, groupby_, order_)
