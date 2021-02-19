@@ -30,7 +30,7 @@
                         <field name="sale_ok"/>
                         <label for="purchase_ok" style="padding-left:16px"/>
                         <field name="purchase_ok"/>
-                        <label for="expense_policy" style="padding-left:16px"/>
+                        <label for="expense_policy" string="Re-Invoice Expense Policy: " style="padding-left:16px"/>
                         <field name="expense_policy"/>
                     </div>
                 </xpath>
