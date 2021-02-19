@@ -2,67 +2,46 @@
 <odoo>
     <data>
 
-        <!-- DEFAULT PRODUCT SEARCHES - remove Consumable filter !-->
+		<!-- =============================================================== -->
+		<!--                          PRODUCTS                               -->
+		<!-- =============================================================== -->
 
-        <!-- PRODUCT FORM Modifications -->
-        <record id="view_form_product_template_tsa" model="ir.ui.view">
+        <!-- PRODUCT FORM VIEW  -->
+        <record id="view_form_product_template_inherited" model="ir.ui.view">
             <field name="name">Product Template TSA Extension</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <!--<xpath expr="//div[@class='oe_title']" position="replace">-->
-                <xpath expr="//sheet/div[2]" position="replace">
-                    <div class="oe_title" name="product_title_dots">
+                <xpath expr="//div[@class='oe_title']" position="replace">
+                    <div class="oe_title">
                         <p>.</p>
                         <p>.</p>
                         <p>.</p>
                         <p>.</p>
                     </div>
                     <div class="col-12" style="font-size:16px">
-                        <i><label for="name" string="Short Description: " style="padding-left:16px"/></i>
-                        <b><field name="name" placeholder="Product Description (brief)"/></b>
+                        <!-- <label class="oe_edit_only" for="name" string="Product Name"/>-->
+                        <b><field name="name" placeholder="Product Description"/></b>
                     </div>
                     <div class="col-12" name="options" groups="base.group_user">
-                        <label for="x_bcause" style="padding-left:16px"/>
-                        <field name="x_bcause"/>
-                        <label for="sale_ok" style="padding-left:16px"/>
-                        <field name="sale_ok"/>
-                        <label for="purchase_ok" style="padding-left:16px"/>
-                        <field name="purchase_ok"/>
-                        <!--<label for="can_be_expensed" style="padding-left:16px"/>-->
-                        <!--<field name="can_be_expensed"/>-->
+                        <div>
+                            <label for="x_bcause"/>
+                            <field name="x_bcause"/>
+                            <label for="sale_ok"/>
+                            <field name="sale_ok"/>
+                            <label for="purchase_ok"/>
+                            <field name="purchase_ok"/>
+                            <!-- <label for="visible_expense_policy"/> -->
+                            <!-- <field name="visible_expense_policy"/> -->
+                            <label for="expense_policy"/>
+                            <field name="expense_policy"/>							
+                        </div>
                     </div>
                 </xpath>
-                <xpath expr="//div[@name='product_title_dots']" position="after">
-                        <div class="col-12" style="font-size:16px" name="two_codes">
-                            <span class="col-4" style="font-size:16px">
-                                <i><label for="default_code" string="TSA Code: "/></i>
-                                <b><field name="default_code" placeholder="TSA Item Code a.k.a. Internal Reference)" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
-                            </span>
-                            <span class="col-4" style="font-size:16px">
-                                <i><label for="barcode" string="Barcode: "/></i>
-                                <b><field name="barcode" placeholder="Barcode  COPY FROM   TSA Code" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
-                            </span>
-                        </div>
-                        <div class="col-12" style="font-size:16px" name="cat_type">
-                            <span class="col-6" style="font-size:16px">
-                                <b><i><label for="categ_id" string="Product Category: "/></i></b>
-                                <b><field name="categ_id" placeholder="Product Category" style="font-size:15px"/></b>
-                            </span>
-                            <span class="col-6" style="font-size:16px">
-                                <b><i><label for="type" string="Product Type: "/></i></b>
-                                <b><field name="type" placeholder="Product Type" style="font-size:15px"/></b>
-                            </span>
-                        </div>
-                </xpath>
-
                 <xpath expr="//field[@name='company_id']" position="before">
                     <field name="x_cost_price" string="Cost Price (TSA)"/>
+                    <!--<label for="x_cost_price" string="Cost Price (TSA Copy)"/>-->
                 </xpath>
-
-                <!--<xpath expr="//field[@name='type']" position="before">-->
-                    <!--<field name="id" string="product_tmpl_id"/>-->
-                <!--</xpath>-->
 
                 <xpath expr="//page[@name='general_information']" position="after">
                     <page string="TSA" name="page_tsa">
@@ -124,20 +103,22 @@
                                 <field name="x_odoo_qty_capture_date"/>
                                 <field name="x_odoo_qty_last_30Jun"/>
                             </group>
-                            <group string="TSA SBT Info" name="group_tsa_sbt">
-                                <field name="x_sbt_fields"/>
-                                <field name="x_sbt_item"/>
-                                <field name="x_sbt_last_buy"/>
-                                <field name="x_sbt_last_sold"/>
-                                <field name="x_sbt_product_sku"/>
-                                <field name="x_v8_id"/>
-                            </group>
+                            <!-- <group string="TSA SBT Info" name="group_tsa_sbt"> -->
+                                <!-- <field name="x_sbt_fields"/> -->
+                                <!-- <field name="x_sbt_item"/> -->
+                                <!-- <field name="x_sbt_last_buy"/> -->
+                                <!-- <field name="x_sbt_last_sold"/> -->
+                                <!-- <field name="x_sbt_product_sku"/> -->
+                                <!-- <field name="x_v8_id"/> -->
+                            <!-- </group> -->
                         </group>
                     </page>
                 </xpath>
+
             </field>
         </record>
- 
+
+       <!-- PRODUCT TEMPLATE FORM VIEW a  -->
        <record model="ir.ui.view" id="product_form_view_a_tsa">
             <field name="name">Product Template TSA Mod A</field>
             <field name="model">product.template</field>
@@ -160,10 +141,6 @@
                 </xpath>
             </field>
         </record>
-
-		<!-- =============================================================== -->
-		<!--                          PRODUCTS                               -->
-		<!-- =============================================================== -->
 
         <!-- PRODUCT CATEGORY LIST VIEW -->
         <record id="product_category_list_view_tsa" model="ir.ui.view">
@@ -342,116 +319,6 @@
                     <field name="x_total_qty_made" invisible="0"/>
                     <!--<field name="property_account_expense_id" invisible="1"/>-->
                     <!--<field name="property_account_income_id" invisible="1"/>-->
-                </xpath>
-            </field>
-        </record>
-
-        <!-- PRODUCT FORM VIEW  -->
-        <record id="view_form_product_template_inherited" model="ir.ui.view">
-            <field name="name">Product Template TSA Extension</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//div[@class='oe_title']" position="replace">
-                    <div class="oe_title">
-                        <p>.</p>
-                        <p>.</p>
-                        <p>.</p>
-                        <p>.</p>
-                    </div>
-                    <div class="col-12" style="font-size:16px">
-                        <!-- <label class="oe_edit_only" for="name" string="Product Name"/>-->
-                        <b><field name="name" placeholder="Product Description"/></b>
-                    </div>
-                    <div class="col-12" name="options" groups="base.group_user">
-                        <div>
-                            <label for="x_bcause"/>
-                            <field name="x_bcause"/>
-                            <label for="sale_ok"/>
-                            <field name="sale_ok"/>
-                            <label for="purchase_ok"/>
-                            <field name="purchase_ok"/>
-                            <!-- <label for="visible_expense_policy"/> -->
-                            <!-- <field name="visible_expense_policy"/> -->
-                            <label for="expense_policy"/>
-                            <field name="expense_policy"/>							
-                        </div>
-                    </div>
-                </xpath>
-                <xpath expr="//field[@name='company_id']" position="before">
-                    <field name="x_cost_price" string="Cost Price (TSA)"/>
-                    <!--<label for="x_cost_price" string="Cost Price (TSA Copy)"/>-->
-                </xpath>
-                <xpath expr="//page[@name='general_information']" position="after">
-                    <page string="TSA" name="page_tsa">
-                        <group>
-                            <group string="TSA Location Info">
-                                <field name="x_default_location"/>
-                                <field name="x_default_position"/>
-                                <field name="x_default_location2"/>
-                                <field name="x_default_position2"/>
-                                <field name="x_expert"/>
-                                <field name="x_expert2"/>
-                            </group>
-                            <group string="TSA Dimensions" name="group_tsa_dimensions">
-                                <label for="x_item_height" string="H x L x D (cm)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
-                                <div class="o_row" name="x_item_height" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
-                                    <field name="x_item_height"> </field><b> x </b>
-                                    <field name="x_item_length"> </field><b> x </b>
-                                    <field name="x_item_depth"> </field><b> = </b>
-                                    <field name="x_volume_cm3"> </field><b> cm 3</b>
-                                </div>
-                                <label for="x_item_height" string="H x L x D (cm) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
-                                <div class="o_row" name="x_item_height_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
-                                    <field name="x_item_height_mfr"> </field><b> x </b>
-                                    <field name="x_item_width_mfr"> </field><b> x </b>
-                                    <field name="x_item_depth_mfr"> </field><b> = </b>
-                                    <field name="x_item_volume_mfr_cm3"> </field><b> cm 3 (MFR)</b>
-                                </div>
-                                <label for="volume" string="Volume (m3)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
-                                <div class="o_row" name="volume" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
-                                    <field name="volume"/><b> m 3</b><i> (divide cm3 by 1,000,000)</i>
-                                </div>
-                                <label for="x_item_volume_mfr" string="Volume (m3) MFR" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
-                                <div class="o_row" name="x_item_volume_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
-                                    <field name="x_item_volume_mfr"/><b> m 3</b><i> (divide MFR cm3 by 1,000,000)</i>
-                                </div>
-                                <label for="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
-                                <div class="o_row" name="weight" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
-                                    <field name="weight" string="Weight"/><b> kg</b>
-                                </div>
-                                <label for="x_item_weight_mfr" string="Weight MFR (kg)" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
-                                <div class="o_row" name="x_item_weight_mfr" attrs="{'invisible':[('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
-                                    <field name="x_item_weight_mfr" string="Weight"/><b> kg (MFR)</b>
-                                </div>
-                            </group>
-                        </group>
-                        <group string="TSA Notes" name="group_tsa_notes">
-                            <field name="x_comment"/>
-                            <!--<field name="x_description"/>-->
-                            <field name="x_shortcut"/>
-                            <field name="x_image_filename"/>
-                            <field name="x_jos_product_id"/>
-                            <field name="x_imported_date"/>
-                        </group>
-                        <group>
-                            <group string="Stocktake" name="group_tsa_stocktake">
-                                <field name="x_counted_date"/>
-                                <field name="x_counted_qty"/>
-                                <field name="x_odoo_qty_b4_stocktake"/>
-                                <field name="x_odoo_qty_capture_date"/>
-                                <field name="x_odoo_qty_last_30Jun"/>
-                            </group>
-                            <!-- <group string="TSA SBT Info" name="group_tsa_sbt"> -->
-                                <!-- <field name="x_sbt_fields"/> -->
-                                <!-- <field name="x_sbt_item"/> -->
-                                <!-- <field name="x_sbt_last_buy"/> -->
-                                <!-- <field name="x_sbt_last_sold"/> -->
-                                <!-- <field name="x_sbt_product_sku"/> -->
-                                <!-- <field name="x_v8_id"/> -->
-                            <!-- </group> -->
-                        </group>
-                    </page>
                 </xpath>
             </field>
         </record>
