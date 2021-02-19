@@ -6,42 +6,65 @@
 		<!--                          PRODUCTS                               -->
 		<!-- =============================================================== -->
 
-        <!-- PRODUCT FORM VIEW  -->
-        <record id="view_form_product_template_inherited" model="ir.ui.view">
+        <!-- PRODUCT FORM Modifications -->
+        <record id="view_form_product_template_tsa" model="ir.ui.view">
             <field name="name">Product Template TSA Extension</field>
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@class='oe_title']" position="replace">
-                    <div class="oe_title">
+                <!--<xpath expr="//div[@class='oe_title']" position="replace">-->
+                <xpath expr="//sheet/div[2]" position="replace">
+                    <div class="oe_title" name="product_title_dots">
                         <p>.</p>
                         <p>.</p>
                         <p>.</p>
                         <p>.</p>
                     </div>
                     <div class="col-12" style="font-size:16px">
-                        <!-- <label class="oe_edit_only" for="name" string="Product Name"/>-->
-                        <b><field name="name" placeholder="Product Description"/></b>
+                        <i><label for="name" string="Short Description: " style="padding-left:16px"/></i>
+                        <b><field name="name" placeholder="Product Description (brief)"/></b>
                     </div>
                     <div class="col-12" name="options" groups="base.group_user">
-                        <div>
-                            <label for="x_bcause"/>
-                            <field name="x_bcause"/>
-                            <label for="sale_ok"/>
-                            <field name="sale_ok"/>
-                            <label for="purchase_ok"/>
-                            <field name="purchase_ok"/>
-                            <!-- <label for="visible_expense_policy"/> -->
-                            <!-- <field name="visible_expense_policy"/> -->
-                            <!-- <label for="expense_policy"/> -->
-                            <!-- <field name="expense_policy"/>							 -->
-                        </div>
+                        <!-- <label for="x_bcause" style="padding-left:16px"/> -->
+                        <!-- <field name="x_bcause"/> -->
+                        <label for="sale_ok" style="padding-left:16px"/>
+                        <field name="sale_ok"/>
+                        <label for="purchase_ok" style="padding-left:16px"/>
+                        <field name="purchase_ok"/>
+                        <!--<label for="can_be_expensed" style="padding-left:16px"/>-->
+                        <!--<field name="can_be_expensed"/>-->
                     </div>
                 </xpath>
+                <xpath expr="//div[@name='product_title_dots']" position="after">
+                        <div class="col-12" style="font-size:16px" name="two_codes">
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="default_code" string="TSA Code: "/></i>
+                                <b><field name="default_code" placeholder="TSA Item Code a.k.a. Internal Reference)" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                            <span class="col-4" style="font-size:16px">
+                                <i><label for="barcode" string="Barcode: "/></i>
+                                <b><field name="barcode" placeholder="Barcode  COPY FROM   TSA Code" required="True"/></b> <!-- attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/> -->
+                            </span>
+                        </div>
+                        <div class="col-12" style="font-size:16px" name="cat_type">
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="categ_id" string="Product Category: "/></i></b>
+                                <b><field name="categ_id" placeholder="Product Category" style="font-size:15px"/></b>
+                            </span>
+                            <span class="col-6" style="font-size:16px">
+                                <b><i><label for="type" string="Product Type: "/></i></b>
+                                <b><field name="type" placeholder="Product Type" style="font-size:15px"/></b>
+                            </span>
+                        </div>
+                </xpath>
+
                 <xpath expr="//field[@name='company_id']" position="before">
                     <field name="x_cost_price" string="Cost Price (TSA)"/>
-                    <!--<label for="x_cost_price" string="Cost Price (TSA Copy)"/>-->
                 </xpath>
+
+                <!--<xpath expr="//field[@name='type']" position="before">-->
+                    <!--<field name="id" string="product_tmpl_id"/>-->
+                <!--</xpath>-->
 
                 <xpath expr="//page[@name='general_information']" position="after">
                     <page string="TSA" name="page_tsa">
@@ -114,7 +137,6 @@
                         </group>
                     </page>
                 </xpath>
-
             </field>
         </record>
 
