@@ -44,8 +44,8 @@
 		<!-- =============================================================== -->
 
         <!-- STOCK PICKING - CARRIER INFO (IMPORTANT - intended to be used with the record following) -->
-        <record id="view_form_stock_picking_inherited" model="ir.ui.view">
-            <field name="name">Stock Picking TSA Extension</field>
+        <record id="view_picking_withcarrier_out_form_tsa" model="ir.ui.view">
+            <field name="name">Stock Picking TSA Extension Part A</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
             <field name="arch" type="xml">
