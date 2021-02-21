@@ -43,8 +43,20 @@
 		<!--                   INVENTORY MOVES                               -->
 		<!-- =============================================================== -->
 
-        <!-- STOCK PICKING FORM VIEW -->
+        <!-- STOCK PICKING - CARRIER INFO (IMPORTANT - intended to be used with the record following) -->
         <record id="view_form_stock_picking_inherited" model="ir.ui.view">
+            <field name="name">Stock Picking TSA Extension</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='carrier_tracking_ref']" position="replace">
+                    <!-- remove carrier_tracking_ref from it's existing position under "Additional Info" tab, so that it can be re-positioned into the header of the parent form by the xpath following this one -->
+                </xpath>
+            </field>
+        </record>
+
+        <!-- STOCK PICKING FORM VIEW -->
+        <record id="view_picking_form_tsa" model="ir.ui.view">
             <field name="name">Stock Picking TSA Extension</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
@@ -60,9 +72,6 @@
                 </xpath>
                 <xpath expr="//field[@name='backorder_id']" position="after">
                     <field name="x_extra_notes" placeholder="Enter notes to appear on packing slip (e.g. Customer Ref. or PO No.)"/>
-                </xpath>
-                <xpath expr="//field[@name='carrier_tracking_ref']" position="replace">
-                    <!-- remove carrier_tracking_ref from it's existing position under "Additional Info" tab, so that it can be re-positioned by the xpath following this one -->
                 </xpath>
                 <xpath expr="//field[@name='owner_id']" position="after">
                     <field name="x_extra_notes_ext" placeholder="Notes for TSA staff only (won't appear on packing slip)"/>
