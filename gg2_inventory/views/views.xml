@@ -61,6 +61,9 @@
                 <xpath expr="//field[@name='backorder_id']" position="after">
                     <field name="x_extra_notes" placeholder="Enter notes to appear on packing slip (e.g. Customer Ref. or PO No.)"/>
                 </xpath>
+                <xpath expr="//field[@name='carrier_tracking_ref']" position="replace">
+                    <!-- remove carrier_tracking_ref from it's existing position under "Additional Info" tab, so that it can be re-positioned by the xpath following this one -->
+                </xpath>
                 <xpath expr="//field[@name='owner_id']" position="after">
                     <field name="x_extra_notes_ext" placeholder="Notes for TSA staff only (won't appear on packing slip)"/>
                     <field name="carrier_tracking_ref"/>
