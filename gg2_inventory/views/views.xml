@@ -63,6 +63,7 @@
                 </xpath>
                 <xpath expr="//field[@name='owner_id']" position="after">
                     <field name="x_extra_notes_ext" placeholder="Notes for TSA staff only (won't appear on packing slip)"/>
+                    <field name="carrier_tracking_ref"/>
                 </xpath>
             </field>
         </record>
