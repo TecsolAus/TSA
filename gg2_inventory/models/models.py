@@ -16,21 +16,12 @@ class tsaextt(models.Model):
             raise UserError(_('Please add some items to move.'))
         i = 0
         
-        for pick in self.move_line_ids_without_package:
+        for pick in self.move_line_ids:
             if (pick.qty_done == 0) or (pick.qty_done > pick.product_uom_qty):
                 pick.qty_done = pick.product_uom_qty
                 i = i + 1
-                # SYNTAX ERROR raise UserError(_('Number of items processed: %d line_id= %d') % i, % pick.id)
-        raise UserError(_('Number of items processed: %d') % i)
-
-    # def quick_do (self, cr, uid, ids, context=None):
-        # pack_op_obj = self.pool['stock.pack.operation']
-        # data_obj = self.pool['ir.model.data']
-        # for pick in self.browse(cr, uid, ids, context=context):
-            # for operation in pick.pack_operation_ids:
-                # if (operation.qty_done == 0) or (operation.qty_done > operation.product_qty):
-                    # operation.qty_done = operation.product_qty
-
+        if i == 0:
+			raise UserError(_('Number of items processed: %d') % i)
 
     x_extra_notes = fields.Text(string='Notes / References', help='Use this field to add extra notes and references (e.g. to appear on packing slips ..)', copy=True, readonly=False, required=False, selectable=True)
     x_extra_notes_ext = fields.Text(string='Notes for TSA Staff', help='Will *not appear on delivery docket', copy=True, readonly=False, required=False, selectable=True)
