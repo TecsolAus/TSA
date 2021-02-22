@@ -49,6 +49,9 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//label[@for='carrier_tracking_ref']" position="replace">
+                    <!-- remove carrier_tracking_ref label -->
+                </xpath>
                 <xpath expr="//field[@name='carrier_tracking_ref']" position="replace">
                     <!-- remove carrier_tracking_ref from it's existing position under "Additional Info" tab, so that it can be re-positioned into the header of the parent form by the xpath following this one -->
                 </xpath>
