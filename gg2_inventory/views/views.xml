@@ -43,21 +43,6 @@
 		<!--                   INVENTORY MOVES                               -->
 		<!-- =============================================================== -->
 
-        <!-- STOCK PICKING - CARRIER INFO (IMPORTANT - intended to be used with the record following) -->
-        <record id="view_picking_withcarrier_out_form_tsa" model="ir.ui.view">
-            <field name="name">Stock Picking TSA Extension Part A</field>
-            <field name="model">stock.picking</field>
-            <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//label[@for='carrier_tracking_ref']" position="replace">
-                    <!-- remove carrier_tracking_ref label -->
-                </xpath>
-                <xpath expr="//field[@name='carrier_tracking_ref']" position="replace">
-                    <!-- remove carrier_tracking_ref from it's existing position under "Additional Info" tab, so that it can be re-positioned into the header of the parent form by the xpath following this one -->
-                </xpath>
-            </field>
-        </record>
-
         <!-- STOCK PICKING FORM VIEW -->
         <record id="view_picking_form_tsa" model="ir.ui.view">
             <field name="name">Stock Picking TSA Extension</field>
