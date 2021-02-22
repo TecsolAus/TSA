@@ -16,12 +16,12 @@ class tsaextt(models.Model):
             raise UserError(_('Please add some items to move.'))
         i = 0
         
-        # for pick in self.move_line_ids:
-            # if (pick.qty_done == 0) or (pick.qty_done > pick.product_uom_qty):
-                # pick.qty_done = pick.product_uom_qty
-                # i = i + 1
-                # # SYNTAX ERROR raise UserError(_('Number of items processed: %d line_id= %d') % i, % pick.id)
-        raise UserError(_('STILL UNDER CONSTRUCTION: Number of items processed: %d') % i)
+        for pick in self.move_line_ids_without_package:
+            if (pick.quantity_done == 0) or (pick.quantity_done > pick.product_uom_qty):
+                pick.quantity_done = pick.product_uom_qty
+                i = i + 1
+                # SYNTAX ERROR raise UserError(_('Number of items processed: %d line_id= %d') % i, % pick.id)
+        raise UserError(_('Number of items processed: %d') % i)
 
     # def quick_do (self, cr, uid, ids, context=None):
         # pack_op_obj = self.pool['stock.pack.operation']
@@ -31,7 +31,7 @@ class tsaextt(models.Model):
                 # if (operation.qty_done == 0) or (operation.qty_done > operation.product_qty):
                     # operation.qty_done = operation.product_qty
 
-#    x_carrier_id = fields.Many2one(string='Carrier:', help='Carrier company - who delivers the items', copy=False, readonly=False, required=False, selectable=True, related='delivery.carrier')
+
     x_extra_notes = fields.Text(string='Notes / References', help='Use this field to add extra notes and references (e.g. to appear on packing slips ..)', copy=True, readonly=False, required=False, selectable=True)
     x_extra_notes_ext = fields.Text(string='Notes for TSA Staff', help='Will *not appear on delivery docket', copy=True, readonly=False, required=False, selectable=True)
     x_my_location = fields.Many2one('stock.location', string='My Location', help='Use with the To My Location button to change the To location', copy=True, readonly=False, required=False, selectable=True)
