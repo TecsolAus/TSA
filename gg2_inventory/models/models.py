@@ -17,8 +17,8 @@ class tsaextt(models.Model):
         i = 0
         
         for pick in self.move_line_ids_without_package:
-            if (pick.quantity_done == 0) or (pick.quantity_done > pick.product_uom_qty):
-                pick.quantity_done = pick.product_uom_qty
+            if (pick.qty_done == 0) or (pick.qty_done > pick.product_uom_qty):
+                pick.qty_done = pick.product_uom_qty
                 i = i + 1
                 # SYNTAX ERROR raise UserError(_('Number of items processed: %d line_id= %d') % i, % pick.id)
         raise UserError(_('Number of items processed: %d') % i)
