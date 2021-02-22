@@ -21,7 +21,7 @@ class tsaextt(models.Model):
                 pick.qty_done = pick.product_uom_qty
                 i = i + 1
         if i == 0:
-			raise UserError(_('Number of items processed: %d') % i)
+            raise UserError(_('Number of items processed: %d') % i)
 
     x_extra_notes = fields.Text(string='Notes / References', help='Use this field to add extra notes and references (e.g. to appear on packing slips ..)', copy=True, readonly=False, required=False, selectable=True)
     x_extra_notes_ext = fields.Text(string='Notes for TSA Staff', help='Will *not appear on delivery docket', copy=True, readonly=False, required=False, selectable=True)
