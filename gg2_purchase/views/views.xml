@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+		<!-- =============================================================== -->
+		<!--                       PURCHASE ORDERS                           -->
+		<!-- =============================================================== -->
+
+        <!--PURCHASE ORDERS BUTTON ON PRODUCT FORM-->
+        <record id="tsa_purchaseorderline_treeview" model="ir.ui.view">
+            <field name="name">tsa_purchaseorderline_treeview</field>
+            <field name="model">purchase.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Purchases for selected product">
+                    <field name="order_id"/>
+                    <field name="partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_id" invisible="0"/>
+                    <field name="product_uom_qty" string="Qty" sum="Total"/>
+                    <field name="qty_received" sum="Total"/>
+                    <field name="qty_invoiced" sum="Total"/>
+                    <field name="product_uom" string="Units"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- PURCHASE ORDER FILTERS -->
+        <record id="view_purchase_order_filter_tsa" model="ir.ui.view">
+            <field name="name">Purchase Order Search TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="amount_total" string="Total Equals"/>
+                    <field name="amount_total" filter_domain="[('amount_total','ilike',self)]" string="Total Contains"/>
+                    <field name="amount_untaxed" string="Untaxed Amt Equals"/>
+                    <field name="amount_untaxed" filter_domain="[('amount_untaxed','ilike',self)]" string="Untaxed Amt Contains"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PURCHASE ORDER LIST VIEW -->
+        <record id="view_purchaseorder_tree_tsa" model="ir.ui.view">
+            <field name="name">Purchase Order List TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree" position="replace">
+                    <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'" decoration-info="state in ('wait','confirmed')" string="Purchase Order" default_order="id desc">
+                        <field name="message_unread" invisible="1"/>
+                        <field name="name" string="Reference"/>
+                        <field name="date_order"/>
+                        <field name="partner_id"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        <field name="date_planned" invisible="context.get('quotation_only', False)"/>
+                        <field name="user_id"/>
+                        <field name="origin"/>
+                        <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"/>
+                        <field name="amount_total" sum="Total amount" widget="monetary"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="state"/>
+                        <field name="invoice_status" attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
+                        <field name="id"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PURCHASE ORDER FORM VIEW -->
+        <record id="view_form_purchase_order_inherited" model="ir.ui.view">
+            <field name="name">Purchase Order TSA Extension</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="x_customer_email" string="Vendor Email"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_ref']" position="after">
+                    <field name="x_ordered_by"/>
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="after">
+                    <field name="x_back_count"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
