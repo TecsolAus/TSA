@@ -14,7 +14,7 @@ class TsaAccountInvoice(models.Model):
         for invoice in self:
             # Refuse to validate a customer invoice, vendor bill, refund or receipt if there already exists one with the same reference for the same partner,
             if invoice.move_type in ('in_invoice', 'in_refund', 'out_invoice', 'out_refund', 'in_receipt', 'out_receipt') and invoice.ref:
-                DupeSet = self.search([('type', '=', invoice.move_type), 
+                DupeSet = self.search([('move_type', '=', invoice.move_type), 
 				                ('ref', '=', invoice.ref),
                                 ('commercial_partner_id', '=', invoice.commercial_partner_id.id),
                                 ('id', '!=', invoice.id)
