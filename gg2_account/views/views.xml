@@ -72,7 +72,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//search" position="replace">
                     <search string="Search Invoice">
-                        <field name="name" string="Invoice" filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('invoice_payment_ref', 'ilike',self), ('partner_id', 'child_of', self)]"/>
+                        <field name="name" string="Invoice" filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('payment_reference', 'ilike',self), ('partner_id', 'child_of', self)]"/>
                         <field name="amount_total"  filter_domain="[('amount_total','ilike',self)]"/>
                         <field name="journal_id"         string="Journal"/>
                         <field name="invoice_date"       string="Invoice/Bill Date"/>						
