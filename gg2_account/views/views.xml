@@ -16,15 +16,16 @@
                     <tree string="Payments" default_order="id desc" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                         <field name="id"/>
                         <field name="date"/>
+                        <field name="name" string="Journal Ref"/>
+                        <field name="journal_id"/>
                         <field name="ref" string="Memo"/>
                         <field name="partner_id" string="Customer"/>
                         <field name="amount" string="Amount" sum="Total (as now filtered / as displayed now)"/>
-                        <!-- <field name="payment_method_id" string="Type" invisible="1"/> -->
+                        <field name="payment_method_id" string="Type" invisible="0"/>
                         <field name="currency_id" invisible="0"/>
                         <!-- <field name="x_payment_method" string="Payment Method"/> -->
-                        <field name="x_payment_type" string="Direction"/>
+                        <!-- <field name="x_payment_type" string="Direction"/> -->
                         <field name="x_amount_signed" string="Amount(+/-)" sum="Total (with Direction)"/>
-                        <field name="name" string="Journal Ref"/>
                         <field name="state" string="Stauts"/>
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="partner_type" invisible="1"/>
