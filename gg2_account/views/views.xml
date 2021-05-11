@@ -431,6 +431,7 @@
                                 <field name="sequence" string="row"/>
                                 <field name="date" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
                                 <field name="name" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
+                                <field name="payment_ref" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
                                 <field name="partner_id" optional="hidden" attrs="{'readonly': [('parent.state', '!=', 'open')]}" domain="['|', ('parent_id','=', False), ('is_company','=',True)]"/>
                                 <field name="ref" optional="hidden"/>
                                 <field name="amount" attrs="{'readonly': [('parent.state', '!=', 'open')]}"/>
