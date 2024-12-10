@@ -4,7 +4,7 @@ from typing import Any, Union
 from odoo import models, fields, api, tools, _
 from odoo.exceptions import UserError
 import pdb
-from mock.mock import self
+# from mock.mock import self
 
 # TO DO: Make database name always appear in the top banner by changing the Java Script
 # /odoo/odoo-server/addons/web/static/src/js/chrome/user_menu.js
