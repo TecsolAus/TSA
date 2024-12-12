@@ -4,7 +4,7 @@ from typing import Any, Union
 from odoo import models, fields, api, tools, _
 from odoo.exceptions import UserError
 import pdb
-from mock.mock import self
+# from mock.mock import self
 
 class TsaSaleOrder(models.Model):
     _inherit = ['sale.order']
