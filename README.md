@@ -1,1 +1,1 @@
-# TSA gg2
+# Upgrade test, uninstalled some GG2 modules
