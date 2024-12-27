@@ -1,1 +1,1 @@
-# Upgrade test, uninstalled some GG2 modules
+# Upgrade test, uninstalled all GG2 modules
